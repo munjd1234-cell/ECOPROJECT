@@ -82,6 +82,25 @@
                 flex: 0 0 100%;
                 margin: 10px 0;
             }
+            /* Mobile: Header title visibility */
+            #page-container {
+                padding-top: 130px; /* Adjust based on header height to prevent content being hidden */
+            }
+            header {
+                position: fixed; /* Fix header on mobile */
+                width: 100%;
+                top: 0;
+            }
+            /* Ensure the page content itself doesn't have extra top margin under fixed header */
+            .page-content {
+                margin-top: 0;
+            }
+        }
+
+        /* Language Button Active State for PC */
+        .lang-footer button.active {
+            background-color: var(--card-bg); /* White background */
+            color: var(--secondary); /* Secondary text color */
         }
     </style>
 </head>
@@ -111,6 +130,81 @@
             <section id="overview" class="page-content bg-white p-6 md:p-10 rounded-xl shadow-lg">
                 <h1 data-key="title_overview" class="section-title text-3xl md:text-4xl mb-6 border-b-2 border-primary pb-3">AI Eco-Predict Overview</h1>
                 <p data-key="text_overview" class="text-gray-700 leading-relaxed text-base md:text-lg whitespace-pre-wrap"></p>
+                
+                <!-- New content: Module expansion -->
+                <div class="mt-8 p-6 bg-gray-50 rounded-lg border-l-4 border-secondary">
+                    <h3 class="text-xl font-semibold text-secondary mb-4" data-key="overview_module_title">Configuration: Scalable Modules (1 to Infinite)</h3>
+                    <p data-key="overview_module_text" class="text-gray-600 mb-4">The system can be infinitely expanded with modules to cover any building size or pollution measurement range.</p>
+                    <div class="plan-image-container mb-8">
+                        <img src="p11.jpg" alt="AI Eco-Predict Solution Architecture Image" class="w-full h-auto rounded-lg shadow-md"
+                             onerror="this.onerror=null;this.src='https://placehold.co/800x450/00796b/ffffff?text=Product+Architecture+Diagram'; this.title='Image Load Failed';" />
+                        <p data-key="text_tech_image" class="text-sm text-center text-gray-500 italic mt-2"></p>
+                    </div>
+                    <h4 class="text-lg font-semibold text-secondary mb-3" data-key="overview_module_visual_title">Basic Configuration Visualization (10 Example Locations)</h4>
+                    <ul class="list-disc list-inside text-gray-600 space-y-4">
+                        <li data-key="module_bathroom"><strong>Bathroom (Humidity & Mold Risk Diagnosis)</strong>
+                            <p class="text-sm text-gray-500 mt-1">A small, white Eco-module is minimally attached to a clean bathroom tile wall. Positioned in a moisture-sensitive upper corner, it discreetly collects key data.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                        <li data-key="module_refrigerator"><strong>Refrigerator (Food Storage Environment Diagnosis)</strong>
+                            <p class="text-sm text-gray-500 mt-1">The module is attached inside or on the side of a refrigerator storing food. It subtly detects temperature changes next to food items when the refrigerator door is opened.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                        <li data-key="module_balcony"><strong>Near Balcony Window (Condensation & Temperature Difference Diagnosis)</strong>
+                            <p class="text-sm text-gray-500 mt-1">The module is attached near the top of a balcony wall with insulation, close to the window frame. It detects subtle temperature differences between the outer and inner walls to predict condensation risks.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                        <li data-key="module_shoe_cabinet"><strong>Inside Shoe Cabinet (Odor/VOC & Humidity Diagnosis)</strong>
+                            <p class="text-sm text-gray-500 mt-1">When the shoe cabinet door is opened, a small module is visible attached to the interior wall. It visualizes its function of detecting odors and pollutants by measuring humidity and VOCs (Volatile Organic Compounds) from shoes.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                        <li data-key="module_sink"><strong>Under Kitchen Sink (Pipe Moisture & Early Leak Detection)</strong>
+                            <p class="text-sm text-gray-500 mt-1">Inside the open lower cabinet of the sink. The module is attached in the dark, damp space around the pipes, emphasizing its role in monitoring subtle humidity increases before leaks or mold occur.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                        <li data-key="module_bedroom"><strong>Bedroom Headboard (Sleeping Air Quality Diagnosis)</strong>
+                            <p class="text-sm text-gray-500 mt-1">The module is harmoniously attached to the wall next to the bedside lamp. It shows its function of analyzing the quality of the sleeping environment by measuring eCO2 and fine VOCs exhaled during sleep.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                        <li data-key="module_dressing_room"><strong>Inside Dressing Room/Closet (Mold Prevention Diagnosis)</strong>
+                            <p class="text-sm text-gray-500 mt-1">The module is attached in a corner or on the back wall inside a closet with clothes. It emphasizes its role in delicately managing humidity and temperature to prevent damage to expensive clothing or leather goods.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                        <li data-key="module_utility_room"><strong>Utility Room/Storage (Long-term Storage Environment Monitoring)</strong>
+                            <p class="text-sm text-gray-500 mt-1">The module is attached near a shelf in a storage room or utility room. It visualizes its function of continuously monitoring environmental changes in spaces not frequently opened.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                        <li data-key="module_living_room"><strong>Living Room Wall (Main Air Quality & Temperature Baseline)</strong>
+                            <p class="text-sm text-gray-500 mt-1">The module is neatly attached to an open wall in the living room where the main hub is located. It emphasizes its crucial role in providing a baseline for the entire home's environmental data.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                        <li data-key="module_boiler_room"><strong>Boiler Room (Safety & Harmful Gas Diagnosis)</strong>
+                            <p class="text-sm text-gray-500 mt-1">The module is attached near the ventilation opening in the boiler room. This module emphasizes its safety function, going beyond simple environmental diagnosis to detect potential gas leaks or overheating risks.</p>
+                            <div class="flex justify-center my-4"> 
+                                
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
                 <div class="mt-8 p-6 bg-gray-50 rounded-lg border-l-4 border-secondary">
                     <h3 class="text-xl font-semibold text-secondary mb-2" data-key="overview_summary_title">Product Core Summary: Proactive Maintenance</h3>
                     <ul class="list-disc list-inside text-gray-600 space-y-2">
@@ -124,13 +218,6 @@
             <!-- 2. Technology Page -->
             <section id="technology" class="page-content bg-white p-6 md:p-10 rounded-xl shadow-lg">
                 <h2 data-key="title_tech" class="section-header text-3xl mb-6 border-b-2 border-primary pb-3">Core Technology: The AI Prediction Engine and IoT Architecture</h2>
-
-                <div class="plan-image-container mb-8">
-                    <img src="p11.jpg" alt="AI Eco-Predict Solution Architecture Image" class="w-full h-auto rounded-lg shadow-md"
-                         onerror="this.onerror=null;this.src='https://placehold.co/800x450/00796b/ffffff?text=Product+Architecture+Diagram'; this.title='Image Load Failed';" />
-                </div>
-                <p data-key="text_tech_image" class="text-sm text-center text-gray-500 italic mt-[-15px] mb-8"></p>
-
                 <p data-key="text_tech" class="text-gray-700 leading-relaxed whitespace-pre-wrap"></p>
             </section>
 
@@ -195,6 +282,19 @@
                 overview_summary_1: "Prediction: AI predicts the time/location of mold/corrosion 3-6 months in advance.",
                 overview_summary_2: "Core Technology: RNN-LSTM Deep Learning + 12+ multi-sensor data points.",
                 overview_summary_3: "Value: Up to 70% reduction in emergency repair costs and 40% asset life extension.",
+                overview_module_title: "Configuration: Scalable Modules (1 to Infinite)",
+                overview_module_text: "The system can be infinitely expanded with modules to cover any building size or pollution measurement range.",
+                overview_module_visual_title: "Basic Configuration Visualization (10 Example Locations)",
+                module_bathroom: "<strong>Bathroom (Humidity & Mold Risk Diagnosis)</strong>",
+                module_refrigerator: "<strong>Refrigerator (Food Storage Environment Diagnosis)</strong>",
+                module_balcony: "<strong>Near Balcony Window (Condensation & Temperature Difference Diagnosis)</strong>",
+                module_shoe_cabinet: "<strong>Inside Shoe Cabinet (Odor/VOC & Humidity Diagnosis)</strong>",
+                module_sink: "<strong>Under Kitchen Sink (Pipe Moisture & Early Leak Detection)</strong>",
+                module_bedroom: "<strong>Bedroom Headboard (Sleeping Air Quality Diagnosis)</strong>",
+                module_dressing_room: "<strong>Inside Dressing Room/Closet (Mold Prevention Diagnosis)</strong>",
+                module_utility_room: "<strong>Utility Room/Storage (Long-term Storage Environment Monitoring)</strong>",
+                module_living_room: "<strong>Living Room Wall (Main Air Quality & Temperature Baseline)</strong>",
+                module_boiler_room: "<strong>Boiler Room (Safety & Harmful Gas Diagnosis)</strong>",
                 title_tech: "Core Technology: The AI Prediction Engine and IoT Architecture",
                 text_tech_image: "Image description: The comprehensive AI Eco-Predict solution architecture, highlighting sensor, cloud, and predictive UI integration.",
                 text_tech: "The AI Eco-Predict solution is underpinned by a robust, multi-layered technology stack, combining bespoke IoT hardware with proprietary machine learning algorithms.\n\n**1. Data Acquisition Layer (IoT Sensor Network):** We utilize small, unobtrusive, battery-optimized IoT sensors that measure over 12 critical environmental parameters, including temperature, relative humidity (RH), dew point, volatile organic compounds (VOCs), particulate matter, CO₂, and subtle vibrational frequencies.\n\n**2. Data Processing and Feature Engineering:** Our patented algorithms generate complex *Environmental Aging Indices (EAIs)* by cross-correlating various sensor inputs (e.g., the synergistic effect of high RH and high VOCs on mold potential). These derived features are the key input for the predictive models.\n\n**3. AI Prediction Engine (RNN-LSTM):** We employ a deep Recurrent Neural Network with Long Short-Term Memory (RNN-LSTM) units. LSTMs are uniquely suited for analyzing and predicting time-series data with long-term dependencies, allowing us to predict risks 3-6 months in advance.\n\n**4. User Interface (UI) and API:** The **Predictive Dashboard** provides a clear, traffic-light system visualization of risk and offers specific, actionable maintenance recommendations. A robust **RESTful API** allows seamless integration with existing Building Management Systems (BMS) and CMMS.",
@@ -214,6 +314,19 @@
                 overview_summary_1: "예측: AI가 곰팡이/부식의 발생 시점 및 위치를 3~6개월 전에 예측합니다.",
                 overview_summary_2: "핵심 기술: RNN-LSTM 딥러닝 모델 + 12가지 이상의 다중 센서 데이터 포인트.",
                 overview_summary_3: "가치: 긴급 수리 비용 최대 70% 절감 및 자산 수명 40% 연장.",
+                overview_module_title: "구성: 모듈의 확장 (1개 부터 무한)",
+                overview_module_text: "본체와 모듈의 확장으로 건물의 규모나 오염 측정의 범위를 무한으로 확대 가능합니다.",
+                overview_module_visual_title: "기초적인 구성 시각화 (10가지 장소)",
+                module_bathroom: "<strong>화장실 (습도 및 곰팡이 위험 진단)</strong>",
+                module_refrigerator: "<strong>냉장고 (식자재 보관 환경 진단)</strong>",
+                module_balcony: "<strong>베란다 창문 근처 (결로 및 온도차 진단)</strong>",
+                module_shoe_cabinet: "<strong>신발장 내부 (악취/VOC 및 습도 진단)</strong>",
+                module_sink: "<strong>주방 싱크대 아래 (배관 습기 및 누수 초기 감지)</strong>",
+                module_bedroom: "<strong>안방 침실 머리맡 (수면 중 공기질 진단)</strong>",
+                module_dressing_room: "<strong>드레스룸/옷장 내부 (곰팡이 예방 진단)</strong>",
+                module_utility_room: "<strong>다용도실/창고 (장기 보관 환경 모니터링)</strong>",
+                module_living_room: "<strong>거실 벽면 (메인 공기질 및 온도 기준점)</strong>",
+                module_boiler_room: "<strong>보일러실 (안전 및 유해 가스 진단)</strong>",
                 title_tech: "핵심 기술: AI 예측 엔진 및 다중 IoT 센서 아키텍처 심층 분석",
                 text_tech_image: "이미지 설명: AI Eco-Predict 솔루션의 종합적인 아키텍처로, 센서, 클라우드, 예측 UI 통합을 강조하는 제품/기술 구성도입니다.",
                 text_tech: "AI Eco-Predict 솔루션은 맞춤형 IoT 하드웨어와 독점적인 머신러닝 알고리즘을 결합한 견고한 다층 기술 스택을 기반으로 합니다.\n\n**1. 데이터 수집 계층 (IoT 센서 네트워크):** 온도, 상대 습도(RH), VOCs, 미세 진동 주파수 등 12가지 이상의 주요 환경 매개변수를 측정하는 배터리 최적화된 IoT 센서를 사용합니다. 이는 고밀도 센서 배포에 최적화된 구조입니다.\n\n**2. 데이터 처리 및 피처 엔지니어링:** 당사의 특허 출원 중인 알고리즘은 센서 입력값을 상호 연관시켜 복합적인 **'환경 노후화 지표(EAI)'**를 생성합니다. 이러한 파생 피처는 예측 모델의 정확도를 극적으로 높이는 핵심 입력값입니다.\n\n**3. AI 예측 엔진 (RNN-LSTM 기반 시계열 예측):** 장단기 메모리(LSTM) 유닛을 갖춘 심층 순환 신경망(RNN-LSTM)을 채택합니다. LSTM은 장기 의존성을 가진 시계열 데이터를 분석하고 예측하는 데 독보적인 성능을 발휘하여 3~6개월 전에 위험을 예측할 수 있습니다.\n\n**4. 사용자 인터페이스 (UI) 및 API 통합:** 예측 대시보드는 위험도를 명확한 신호등 시스템으로 시각화하며, 구체적이고 **실행 가능한 유지보수 권장 사항**을 제시합니다. 견고한 RESTful API를 통해 기존 건물 관리 시스템(BMS) 및 CMMS와의 원활한 통합을 지원합니다.",
@@ -233,6 +346,19 @@
                 overview_summary_1: "预测: AI 在 3-6 个月前预测霉菌/腐蚀的发生时间和位置。",
                 overview_summary_2: "核心技术: RNN-LSTM 深度学习 + 12 种以上多传感器数据点。",
                 overview_summary_3: "价值: 紧急维修成本降低高达 70%，资产寿命延长 40%。",
+                overview_module_title: "配置：模块的扩展（1个到无限个）",
+                overview_module_text: "系统可通过扩展模块无限扩大，覆盖任何建筑规模或污染测量范围。",
+                overview_module_visual_title: "基本配置可视化（10个示例位置）",
+                module_bathroom: "<strong>卫生间 (湿度与霉菌风险诊断)</strong>",
+                module_refrigerator: "<strong>冰箱 (食材储存环境诊断)</strong>",
+                module_balcony: "<strong>阳台窗户附近 (凝露与温差诊断)</strong>",
+                module_shoe_cabinet: "<strong>鞋柜内部 (异味/VOC与湿度诊断)</strong>",
+                module_sink: "<strong>厨房水槽下方 (管道湿度与早期漏水检测)</strong>",
+                module_bedroom: "<strong>卧室床头 (睡眠期间空气质量诊断)</strong>",
+                module_dressing_room: "<strong>衣帽间/衣柜内部 (霉菌预防诊断)</strong>",
+                module_utility_room: "<strong>杂物间/储藏室 (长期储存环境监测)</strong>",
+                module_living_room: "<strong>客厅墙面 (主要空气质量与温度基准点)</strong>",
+                module_boiler_room: "<strong>锅炉房 (安全与有害气体诊断)</strong>",
                 title_tech:"核心技术：AI 预测引擎及物联网架构",
                 text_tech_image: "图片说明: AI Eco-Predict 综合解决方案架构，突出传感器、云和预测性 UI 集成。",
                 text_tech: "AI Eco-Predict 解决方案基于定制化的 IoT 硬件和专有机器学习算法。 **1. 数据采集层：** 我们使用非侵入式、低功耗的 IoT 传感器套件，可测量 12 项以上的关键环境参数，包括温度、相对湿度 (RH)、露点、VOCs、PM 颗粒物和微妙的振动频率。 **2. 数据处理与特征工程：** 我们的专利算法通过交叉关联传感器输入，生成复杂的**“环境老化指数 (EAI)”**。这些派生特征是提高模型精度的关键。 **3. AI 预测引擎：** 采用 RNN 结合 LSTM 单元的深度学习架构。它非常适合分析和预测具有长期依赖性的时间序列数据，使我们能够提前 3-6 个月预测风险。 **4. 用户界面与集成：** 预测仪表板提供清晰的风险可视化（红绿灯系统），并提供具体的维护建议。RESTful API 可无缝集成到现有的建筑管理系统 (BMS) 和 CMMS 中。",
@@ -252,6 +378,19 @@
                 overview_summary_1: "予測: AI がカビ/腐食の発生時期と場所を 3-6 ヶ月前に予測。",
                 overview_summary_2: "コア技術: RNN-LSTM ディープラーニング + 12 以上のマルチセンサーデータポイント。",
                 overview_summary_3: "価値: 緊急修理コストを最大 70% 削減、資産寿命を 40% 延長。",
+                overview_module_title: "構成：モジュールの拡張（1つから無限大）",
+                overview_module_text: "本体とモジュールの拡張により、建物の規模や汚染測定の範囲を無限に拡大できます。",
+                overview_module_visual_title: "基本的な構成の視覚化（10の例示場所）",
+                module_bathroom: "<strong>バスルーム (湿度とカビのリスク診断)</strong>",
+                module_refrigerator: "<strong>冷蔵庫 (食材保管環境診断)</strong>",
+                module_balcony: "<strong>ベランダ窓付近 (結露と温度差診断)</strong>",
+                module_shoe_cabinet: "<strong>下駄箱内部 (悪臭/VOCと湿度診断)</strong>",
+                module_sink: "<strong>キッチンシンク下 (配管の湿気と初期の水漏れ検知)</strong>",
+                module_bedroom: "<strong>寝室の枕元 (睡眠中の空気質診断)</strong>",
+                module_dressing_room: "<strong>ドレッシングルーム/クローゼット内部 (カビ予防診断)</strong>",
+                module_utility_room: "<strong>多目的室/倉庫 (長期保管環境モニタリング)</strong>",
+                module_living_room: "<strong>リビング壁面 (主要な空気質と温度の基準点)</strong>",
+                module_boiler_room: "<strong>ボイラー室 (安全と有害ガス診断)</strong>",
                 title_tech:"コア技術：AI予測エンジンとIoTアーキテクチャの詳細",
                 text_tech_image: "画像の説明: AI Eco-Predict ソリューションの包括的なアーキテクチャ。センサー、クラウド、予測 UI の統合を強調しています。",
                 text_tech: "AI Eco-Predict ソリューションは、カスタムメイドの IoT ハードウェアと独自の機械学習アルゴリズムを組み合わせた強固な技術スタックに基づいています。 **1. データ取得レイヤー：** 温度、相対湿度 (RH)、VOCs、微細な振動周波数など、12 以上の重要な環境パラメーターを測定するセンサーを使用します。 **2. データ処理と特徴量エンジニアリング：** 当社の特許出願中のアルゴリズムは、センサー入力を相互に関連付けることで、複雑な**「環境老化指数 (EAI)」**を生成します。 **3. AI予測エンジン：** 長短期記憶 (LSTM) ユニットを備えた深層リカレントニューラルネットワーク (RNN-LSTM) を採用。長期的な依存性を持つ時系列データの分析に優れており、3〜6ヶ月前のリスク予測を可能にします。 **4. UIとAPI：** 予測ダッシュボードは、信号システムでリスクを視覚化し、具体的なメンテナンス推奨事項を提供します。RESTful API は、既存の BMS や CMMS とのシームレスな統合を可能にします。",
