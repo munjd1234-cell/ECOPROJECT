@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Eco-Predict</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>AI Eco-Predict Business Plan</title>
+    <!-- Tailwind CSS CDN 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
             --primary: #00c49a; /* Fresh Green */
@@ -15,550 +19,443 @@
             --card-bg: #ffffff;
         }
 
+        /* 폰트 설정 및 기본 스타일 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background: var(--background);
+            background-color: var(--background);
             color: var(--text-dark);
-            overflow-x: hidden;
-            font-size: 16px; /* Base font size */
+            min-height: 100vh;
         }
 
-        /* Splash: 흰색 화면 노출 최소화를 위해 애니메이션 시간을 단축 */
-        .splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000 url('p1.jpg') center/cover no-repeat;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: fadeOut 0.1s ease-in-out forwards; /* 2s -> 0.1s 단축 */
-            z-index: 9999;
-        }
-        @keyframes fadeOut {
-            to { opacity: 0; visibility: hidden; }
-        }
-
-        /* Main Content */
-        .main-content {
+        /* 주요 콘텐츠 숨기기/보이기 */
+        .page-content {
             display: none;
-            animation: fadeIn 1s ease-in-out forwards;
-            padding-bottom: 50px; /* Space for the fixed language footer */
+            padding-bottom: 50px; /* Footer space */
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .page-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out forwards;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Header (Optimized for Mobile) */
+        /* Header Navigation Styles */
         header {
-            background: var(--card-bg);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 5%;
             position: sticky;
             top: 0;
             z-index: 10;
         }
-        header img {
-            height: 40px; /* Mobile focused logo size */
-            margin-bottom: 5px;
-        }
-        nav {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            width: 100%;
-            padding-top: 5px;
-        }
-        nav a {
-            margin: 5px 8px;
-            text-decoration: none;
-            color: var(--text-light);
-            font-weight: 500;
-            font-size: 0.85rem;
-            transition: 0.3s;
-            padding-bottom: 3px;
-        }
-        nav a:hover, nav a.active {
-            color: var(--primary);
+        nav a.active {
+            color: var(--primary) !important;
             border-bottom: 2px solid var(--primary);
         }
-        
-        /* Section Styling */
-        section {
-            padding: 40px 5%; /* Mobile friendly padding */
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        section:nth-child(even) {
-            background: var(--card-bg);
-        }
-
-        h1, h2 {
-            color: var(--secondary);
-            margin-bottom: 1rem;
-            font-weight: 700;
-            font-size: 1.8rem; /* Mobile H2 size */
-        }
-        h1 {
-            font-size: 2.2rem;
-            text-align: center;
-            color: var(--primary);
-        }
-        p {
-            line-height: 1.8; /* 가독성을 위해 줄 간격 확대 */
-            color: var(--text-dark); /* 텍스트 색상을 더 진하게 변경 */
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            white-space: pre-wrap; /* \n 개행 문자 반영 */
-        }
-
-        /* Stats (Modern Card Design) */
-        .stats {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
         .stat {
-            flex: 0 0 45%; /* Two per row on mobile */
-            text-align: center;
-            margin: 8px 0;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            border-bottom: 4px solid var(--primary);
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         .stat:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        }
-        .count {
-            font-size: 2em;
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        .stat p {
-            font-size: 0.9rem;
-            margin: 0;
-            color: var(--text-dark);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        /* Chart */
-        .chart-container {
-            margin-top: 30px;
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        /* Section Specific Styles */
+        .section-header {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        .section-title {
+            color: var(--primary);
+            font-weight: 800;
         }
         
-        /* Image container for p11.jpg */
-        .plan-image-container {
-            margin-bottom: 30px;
-            padding: 10px;
-            border: 1px solid var(--background);
-            border-radius: 10px;
-            background-color: var(--card-bg);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        .plan-image-container img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-
-        /* Language Footer (Sticky bottom) */
-        .lang-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--secondary);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 0;
-            z-index: 100;
-        }
-        .lang-footer button {
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            transition: 0.3s;
-        }
-        .lang-footer button:hover, .lang-footer button.active {
-            background: #fff;
-            color: var(--secondary);
-            border-color: #fff;
-        }
-
-        /* Tablet/Desktop adjustments (Minor) */
-        @media (min-width: 768px) {
-            header {
-                flex-direction: row;
-                padding: 12px 10%;
-            }
-            header img {
-                height: 70px; /* PC 로고 크기 재조정 */
-                margin-bottom: 0;
-            }
-            nav {
-                justify-content: flex-end;
-                width: auto;
-                padding-top: 0;
-            }
-            nav a {
-                font-size: 1rem;
-                margin: 0 12px;
-            }
-            section {
-                padding: 80px 10%;
-            }
-            h1 {
-                text-align: left;
-                font-size: 2.5rem;
-            }
-            h2 {
-                font-size: 2rem;
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .stats {
+                flex-direction: column;
             }
             .stat {
-                flex: 1 1 250px; /* Three per row on desktop */
-                margin: 20px;
+                flex: 0 0 100%;
+                margin: 10px 0;
             }
         }
     </style>
 </head>
-<body>
-
-    <div class="splash-screen"></div>
+<body class="bg-gray-100">
 
     <div class="main-content">
-        <header>
-            <img src="logo.jpg" alt="Eco-Predict logo" />
-            <nav>
-                <a href="#overview" data-key="menu_overview">Overview</a>
-                <a href="#technology" data-key="menu_tech">Technology</a>
-                <a href="#market" data-key="menu_market">Market</a>
-                <a href="#finance" data-key="menu_finance">Finance</a>
-                <a href="#investment" data-key="menu_invest">Investment</a>
+        <!-- Header & Navigation -->
+        <header class="bg-white p-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-3 md:mb-0">
+                <img src="logo.jpg" alt="Eco-Predict logo" class="h-10 mr-3"
+                     onerror="this.onerror=null;this.src='https://placehold.co/100x40/00796b/ffffff?text=Logo';">
+                <span class="text-xl font-bold text-gray-800">AI Eco-Predict</span>
+            </div>
+            <nav id="main-nav" class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2">
+                <a href="#overview" data-key="menu_overview" class="nav-link text-gray-600 font-medium hover:text-primary transition duration-200 pb-1 text-sm md:text-base">Overview</a>
+                <a href="#technology" data-key="menu_tech" class="nav-link text-gray-600 font-medium hover:text-primary transition duration-200 pb-1 text-sm md:text-base">Technology</a>
+                <a href="#market" data-key="menu_market" class="nav-link text-gray-600 font-medium hover:text-primary transition duration-200 pb-1 text-sm md:text-base">Market</a>
+                <a href="#finance" data-key="menu_finance" class="nav-link text-gray-600 font-medium hover:text-primary transition duration-200 pb-1 text-sm md:text-base">Finance</a>
+                <a href="#investment" data-key="menu_invest" class="nav-link text-gray-600 font-medium hover:text-primary transition duration-200 pb-1 text-sm md:text-base">Investment</a>
             </nav>
         </header>
 
-        <section id="overview">
-            <h1 data-key="title_overview">AI Eco-Predict Overview</h1>
-            <p data-key="text_overview">
-                **AI Eco-Predict** is an AI-driven system that forecasts environmental aging and hazards in buildings and facilities.
-                By predicting mold, corrosion, and pollution before they occur, it enables **proactive maintenance** and significantly reduces long-term operational costs.
-            </p>
-        </section>
+        <!-- Dynamic Page Container -->
+        <div id="page-container" class="container mx-auto p-4 md:p-10">
 
-        <section id="technology">
-            <h2 data-key="title_tech">Core Technology</h2>
-            
-            <!-- MOVED: Image p11.jpg as the product/technology visual -->
-            <div class="plan-image-container">
-                <img src="p11.jpg" alt="AI Eco-Predict Solution Architecture Image"
-                     onerror="this.onerror=null;this.src='https://placehold.co/800x450/00796b/ffffff?text=p11.jpg+Image+Not+Found'; this.title='Image Load Failed';" />
-            </div>
-            
-            <p data-key="text_tech_image" style="font-size: 0.9rem; text-align: center; margin-top: -15px; margin-bottom: 30px;">
-                Image description: The comprehensive AI Eco-Predict solution architecture, highlighting sensor, cloud, and predictive UI integration.
-            </p>
-            <!-- END MOVED CONTENT -->
-
-            <p data-key="text_tech">
-                Our proprietary **AI Prediction Engine** analyzes environmental data collected by IoT sensors (temperature, humidity, VOCs, CO₂).
-                Using advanced **RNN (Recurrent Neural Network)** models, we precisely identify risk patterns and predict deterioration days before visible damage occurs, offering unparalleled insight.
-            </p>
-        </section>
-
-        <section id="market">
-            <h2 data-key="title_market">Market and Growth</h2>
-            <p data-key="text_market">
-                The global smart environment management market is expanding rapidly, growing at over **15% annually**.
-                Driven by global **ESG** and sustainability mandates, AI-powered diagnostic systems are quickly becoming an essential part of modern facility management infrastructure.
-            </p>
-        </section>
-
-        <section id="finance">
-            <h2 data-key="title_finance">Financial Forecast</h2>
-            <p data-key="text_finance">
-                We project robust and steady revenue growth over the next 3 years through strategic **B2B** and **B2G** partnerships. Our scalable SaaS model ensures high-margin returns.
-            </p>
-
-            <div class="stats">
-                <div class="stat">
-                    <div class="count" data-target="35">0</div>
-                    <p data-key="stat_growth">Annual Growth (%)</p>
+            <!-- 1. Overview Page (Initial Page) -->
+            <section id="overview" class="page-content bg-white p-6 md:p-10 rounded-xl shadow-lg">
+                <h1 data-key="title_overview" class="section-title text-3xl md:text-4xl mb-6 border-b-2 border-primary pb-3">AI Eco-Predict Overview</h1>
+                <p data-key="text_overview" class="text-gray-700 leading-relaxed text-base md:text-lg whitespace-pre-wrap"></p>
+                <div class="mt-8 p-6 bg-gray-50 rounded-lg border-l-4 border-secondary">
+                    <h3 class="text-xl font-semibold text-secondary mb-2" data-key="overview_summary_title">Product Core Summary: Proactive Maintenance</h3>
+                    <ul class="list-disc list-inside text-gray-600 space-y-2">
+                        <li data-key="overview_summary_1">**Prediction:** AI predicts the time/location of mold/corrosion 3-6 months in advance.</li>
+                        <li data-key="overview_summary_2">**Core Technology:** RNN-LSTM Deep Learning + 12+ multi-sensor data points.</li>
+                        <li data-key="overview_summary_3">**Value:** Up to 70% reduction in emergency repair costs and 40% asset life extension.</li>
+                    </ul>
                 </div>
-                <div class="stat">
-                    <div class="count" data-target="1200">0</div>
-                    <p data-key="stat_clients">Target Clients</p>
-                </div>
-                <div class="stat">
-                    <div class="count" data-target="100">0</div>
-                    <p data-key="stat_accuracy">AI Prediction Accuracy (%)</p>
-                </div>
-            </div>
+            </section>
 
-            <div class="chart-container">
-                <canvas id="revenueChart"></canvas>
-            </div>
-        </section>
+            <!-- 2. Technology Page -->
+            <section id="technology" class="page-content bg-white p-6 md:p-10 rounded-xl shadow-lg">
+                <h2 data-key="title_tech" class="section-header text-3xl mb-6 border-b-2 border-primary pb-3">Core Technology: The AI Prediction Engine and IoT Architecture</h2>
 
-        <section id="investment">
-            <h2 data-key="title_invest">Investment Opportunity</h2>
-            <p data-key="text_invest">
-                Eco-Predict offers a highly scalable, data-driven business model with significant social impact.
-                Your investment will accelerate essential hardware production, **AI model enhancement**, and crucial international certification.
-                Join us in building a sustainable and highly profitable future.
-            </p>
-        </section>
+                <div class="plan-image-container mb-8">
+                    <img src="p11.jpg" alt="AI Eco-Predict Solution Architecture Image" class="w-full h-auto rounded-lg shadow-md"
+                         onerror="this.onerror=null;this.src='https://placehold.co/800x450/00796b/ffffff?text=Product+Architecture+Diagram'; this.title='Image Load Failed';" />
+                </div>
+                <p data-key="text_tech_image" class="text-sm text-center text-gray-500 italic mt-[-15px] mb-8"></p>
+
+                <p data-key="text_tech" class="text-gray-700 leading-relaxed whitespace-pre-wrap"></p>
+            </section>
+
+            <!-- 3. Market Page -->
+            <section id="market" class="page-content bg-white p-6 md:p-10 rounded-xl shadow-lg">
+                <h2 data-key="title_market" class="section-header text-3xl mb-6 border-b-2 border-primary pb-3">Market and Growth: Analysis, Segmentation, and Entry Strategy</h2>
+                <p data-key="text_market" class="text-gray-700 leading-relaxed whitespace-pre-wrap"></p>
+            </section>
+
+            <!-- 4. Finance Page -->
+            <section id="finance" class="page-content bg-white p-6 md:p-10 rounded-xl shadow-lg">
+                <h2 data-key="title_finance" class="section-header text-3xl mb-6 border-b-2 border-primary pb-3">Financial Forecast: Detailed Projections and Business Model</h2>
+                <p data-key="text_finance" class="text-gray-700 leading-relaxed whitespace-pre-wrap"></p>
+
+                <div class="stats flex flex-wrap justify-around gap-4 mt-8">
+                    <div class="stat flex-1 bg-gray-50 p-6 rounded-lg shadow-md border-b-4 border-primary min-w-[200px]">
+                        <div class="count text-4xl font-extrabold text-primary" data-target="35">0</div>
+                        <p data-key="stat_growth" class="text-sm font-medium text-gray-600 mt-1">Annual Growth (%)</p>
+                    </div>
+                    <div class="stat flex-1 bg-gray-50 p-6 rounded-lg shadow-md border-b-4 border-primary min-w-[200px]">
+                        <div class="count text-4xl font-extrabold text-primary" data-target="1200">0</div>
+                        <p data-key="stat_clients" class="text-sm font-medium text-gray-600 mt-1">Target Clients</p>
+                    </div>
+                    <div class="stat flex-1 bg-gray-50 p-6 rounded-lg shadow-md border-b-4 border-primary min-w-[200px]">
+                        <div class="count text-4xl font-extrabold text-primary" data-target="99">0</div>
+                        <p data-key="stat_accuracy" class="text-sm font-medium text-gray-600 mt-1">AI Prediction Accuracy (%)</p>
+                    </div>
+                </div>
+
+                <div class="chart-container mt-8 bg-white p-6 rounded-lg shadow-md">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </section>
+
+            <!-- 5. Investment Page -->
+            <section id="investment" class="page-content bg-white p-6 md:p-10 rounded-xl shadow-lg">
+                <h2 data-key="title_invest" class="section-header text-3xl mb-6 border-b-2 border-primary pb-3">Investment Opportunity: Use of Funds and Valuation</h2>
+                <p data-key="text_invest" class="text-gray-700 leading-relaxed whitespace-pre-wrap"></p>
+            </section>
+
+        </div>
     </div>
 
-    <div class="lang-footer">
-        <button data-lang="en" class="active">🇬🇧 English</button>
-        <button data-lang="ko">🇰🇷 한국어</button>
-        <button data-lang="zh">🇨🇳 中文</button>
-        <button data-lang="jp">🇯🇵 日本語</button>
+    <!-- Language Selector Footer -->
+    <div class="lang-footer fixed bottom-0 left-0 w-full bg-secondary text-white flex justify-center items-center gap-4 p-3 shadow-2xl">
+        <button data-lang="en" class="text-xs md:text-sm bg-secondary border border-white/50 hover:bg-white hover:text-secondary transition duration-200 px-3 py-1 rounded">🇬🇧 English</button>
+        <button data-lang="ko" class="text-xs md:text-sm bg-secondary border border-white/50 hover:bg-white hover:text-secondary transition duration-200 px-3 py-1 rounded">🇰🇷 한국어</button>
+        <button data-lang="zh" class="text-xs md:text-sm bg-secondary border border-white/50 hover:bg-white hover:text-secondary transition duration-200 px-3 py-1 rounded">🇨🇳 中文</button>
+        <button data-lang="jp" class="text-xs md:text-sm bg-secondary border border-white/50 hover:bg-white hover:text-secondary transition duration-200 px-3 py-1 rounded">🇯🇵 日本語</button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Chart.js 인스턴스를 저장하여 재사용 및 파괴 관리
         let myChart = null; 
 
-        // Splash transition: 2000ms -> 100ms로 단축하여 흰색 화면 노출 최소화 (모바일 이슈 대비)
-        setTimeout(() => {
-            const splash = document.querySelector('.splash-screen');
-            const main = document.querySelector('.main-content');
-            if (splash) splash.style.display = 'none';
-            if (main) main.style.display = 'block';
-        }, 100);
+        const translations = {
+            en: {
+                menu_overview: "Overview", menu_tech: "Technology", menu_market: "Market", menu_finance: "Finance", menu_invest: "Investment",
+                title_overview: "AI Eco-Predict: Comprehensive Business Overview and Vision",
+                text_overview: "**AI Eco-Predict is an Artificial Intelligence-driven 'Predictive Maintenance (PdM) Platform' that simulates and forecasts the environmental aging and potential risks of facilities.**\n\n**Product Definition (What is it?):**\n1.  **AI Engine:** Our proprietary **RNN-LSTM** deep learning model analyzes 12+ environmental and structural data points (temperature, humidity, vibration, VOCs, etc.) as time-series data to simulate how and at what speed a facility will degrade.\n2.  **IoT Sensor Network:** A network of high-precision sensors deployed throughout the building collects real-time environmental data.\n\n**What it does (Key Functionality):**\nAI Eco-Predict identifies the **'Aging Threshold'** and accurately predicts the exact time and location of issues—such as mold outbreaks, equipment corrosion, or concrete micro-cracking—**3 to 6 months before they actually occur**. It then provides specific, **proactive intervention guides** to maintenance teams.\n\n**Core Value:** Eliminates the unpredictability of environmental hazards, resulting in up to 70% reduction in emergency repair costs, 40% asset life extension, and 100% predictive maintenance capability across **10+ diverse facility types**.",
+                overview_summary_title: "Product Core Summary: Proactive Maintenance",
+                overview_summary_1: "Prediction: AI predicts the time/location of mold/corrosion 3-6 months in advance.",
+                overview_summary_2: "Core Technology: RNN-LSTM Deep Learning + 12+ multi-sensor data points.",
+                overview_summary_3: "Value: Up to 70% reduction in emergency repair costs and 40% asset life extension.",
+                title_tech: "Core Technology: The AI Prediction Engine and IoT Architecture",
+                text_tech_image: "Image description: The comprehensive AI Eco-Predict solution architecture, highlighting sensor, cloud, and predictive UI integration.",
+                text_tech: "The AI Eco-Predict solution is underpinned by a robust, multi-layered technology stack, combining bespoke IoT hardware with proprietary machine learning algorithms.\n\n**1. Data Acquisition Layer (IoT Sensor Network):** We utilize small, unobtrusive, battery-optimized IoT sensors that measure over 12 critical environmental parameters, including temperature, relative humidity (RH), dew point, volatile organic compounds (VOCs), particulate matter, CO₂, and subtle vibrational frequencies.\n\n**2. Data Processing and Feature Engineering:** Our patented algorithms generate complex *Environmental Aging Indices (EAIs)* by cross-correlating various sensor inputs (e.g., the synergistic effect of high RH and high VOCs on mold potential). These derived features are the key input for the predictive models.\n\n**3. AI Prediction Engine (RNN-LSTM):** We employ a deep Recurrent Neural Network with Long Short-Term Memory (RNN-LSTM) units. LSTMs are uniquely suited for analyzing and predicting time-series data with long-term dependencies, allowing us to predict risks 3-6 months in advance.\n\n**4. User Interface (UI) and API:** The **Predictive Dashboard** provides a clear, traffic-light system visualization of risk and offers specific, actionable maintenance recommendations. A robust **RESTful API** allows seamless integration with existing Building Management Systems (BMS) and CMMS.",
+                title_market: "Market and Growth: Analysis, Segmentation, and Entry Strategy",
+                text_market: "The Smart Facility Management and Predictive Maintenance (PdM) market is a high-growth sector. Valued at $45 billion in 2024, it is projected to exceed $150 billion by 2030, reflecting a compounded annual growth rate (CAGR) of over **20%**.\n\n**1. Market Segmentation (Focus Areas):** We target B2B Industrial (40% Target), B2G Public Infrastructure (35% Target), and B2B Commercial/Residential (25% Target). Our focus is on high-value, high-risk facilities where unplanned downtime or health hazards lead to massive costs.\n\n**2. Go-to-Market Strategy:** **Phase 1 (12 Months):** Target 5-10 key reference clients in South Korea and Singapore. Secure case studies demonstrating 25% OpEx savings. **Phase 2 (13-36 Months):** Expand sales teams into Japan, the US, and Germany. Focus on strategic partnerships with large CMMS vendors (e.g., IBM Maximo, SAP). **Phase 3 (36+ Months):** Establish global channel partnerships and introduce AI-driven automated preventative maintenance scheduling.",
+                title_finance: "Financial Forecast: Detailed Projections and Business Model",
+                text_finance: "Our financial model is built upon a high-margin, recurring revenue structure typical of enterprise SaaS (Software-as-a-Service), complemented by initial setup fees for hardware deployment.\n\n**1. Revenue Streams:** Tiered SaaS Subscription (70%), Hardware and Installation (25%), Custom Data Consultancy (5%). Our scalable SaaS model ensures high-margin returns.\n\n**2. Key Financial Projections (USD):** We project robust revenue growth from 1.2M in FY 2025 to 15.0M in FY 2028. We project reaching cash-flow positive status in Q2 FY 2026, driven by accelerated B2B contract acquisition.\n\n**3. Exit Strategy (5-7 Years):** We anticipate a strategic acquisition by a major industrial software or facility management conglomerate (e.g., Honeywell, Siemens, Schneider Electric) seeking to integrate best-in-class predictive maintenance capabilities into their existing portfolio.",
+                stat_growth: "Annual Growth (%)", stat_clients: "Target Clients", stat_accuracy: "AI Prediction Accuracy (%)",
+                title_invest: "Investment Opportunity: Use of Funds and Valuation",
+                text_invest: "Eco-Predict offers investors a unique opportunity to capitalize on the convergence of industrial IoT, predictive AI, and global ESG movements. Our scalable, high-margin model minimizes deployment risk while maximizing long-term returns.\n\n**1. Investment Ask and Valuation:** We are seeking a **Seed Round Investment of $5.0 million (USD)** in exchange for a negotiable equity stake, based on a pre-money valuation of $15 million.\n\n**2. Use of Funds (Detailed Allocation):** **40% - Research & Development (R&D):** Finalize deployment of the next-generation sensor hardware and expand the AI model to include structural integrity prediction. **30% - Sales & Marketing (S&M):** Fund the expansion of the US and EU sales teams. **20% - Operations and Scaling:** Build out our cloud infrastructure to support 5,000 active facilities. **10% - Working Capital & Legal.**\n\n**3. Projected ROI:** Based on conservative growth projections, we project an 8-10x return for initial seed investors upon a strategic exit in 5-7 years."
+            },
+            ko: {
+                menu_overview: "개요", menu_tech: "기술", menu_market: "시장", menu_finance: "재무", menu_invest: "투자",
+                title_overview: "AI Eco-Predict: 포괄적인 사업 개요 및 비전",
+                text_overview: "**AI Eco-Predict는 시설물의 환경적 노후화와 잠재적 위험을 시뮬레이션하고 예측하는 인공지능 기반의 '예측 유지보수(PdM) 플랫폼'입니다.**\n\n**제품의 정의 (What is it?):**\n1.  **AI 엔진:** 당사의 핵심인 독자적인 **RNN-LSTM** 딥러닝 모델은 온도, 습도, 진동, VOCs 등 12가지 이상의 환경 및 구조 데이터를 시계열로 분석하여, 시설물이 어떤 속도로, 어떤 방식으로 노후화될지 정밀하게 시뮬레이션합니다.\n2.  **IoT 센서 네트워크:** 건물 내외부 및 설비에 설치된 초정밀 센서 네트워크로부터 실시간 환경 데이터를 수집하고 '환경 노후화 지표(EAI)'로 변환합니다.\n\n**수행하는 일 (What does it do?):**\nAI Eco-Predict는 **'노후화 임계점'**을 식별하여, 곰팡이 발생, 설비 부식 가속화, 콘크리트 미세 균열 확산 등의 문제가 **실제로 발생하기 3~6개월 전**에 정확한 시점과 위치를 예측하고, 이에 대한 **선제적 조치 가이드**를 유지보수 팀에 제공합니다.\n\n**핵심 가치:** 환경 위험 예측 불가능성 제거, 긴급 수리 비용 최대 70% 절감, 자산 수명 최대 40% 연장, **10가지 이상의 다양한 시설 유형**에 대한 100% 예측 유지보수 역량 확보.",
+                overview_summary_title: "제품 핵심 요약: 선제적 예측 유지보수",
+                overview_summary_1: "예측: AI가 곰팡이/부식의 발생 시점 및 위치를 3~6개월 전에 예측합니다.",
+                overview_summary_2: "핵심 기술: RNN-LSTM 딥러닝 모델 + 12가지 이상의 다중 센서 데이터 포인트.",
+                overview_summary_3: "가치: 긴급 수리 비용 최대 70% 절감 및 자산 수명 40% 연장.",
+                title_tech: "핵심 기술: AI 예측 엔진 및 다중 IoT 센서 아키텍처 심층 분석",
+                text_tech_image: "이미지 설명: AI Eco-Predict 솔루션의 종합적인 아키텍처로, 센서, 클라우드, 예측 UI 통합을 강조하는 제품/기술 구성도입니다.",
+                text_tech: "AI Eco-Predict 솔루션은 맞춤형 IoT 하드웨어와 독점적인 머신러닝 알고리즘을 결합한 견고한 다층 기술 스택을 기반으로 합니다.\n\n**1. 데이터 수집 계층 (IoT 센서 네트워크):** 온도, 상대 습도(RH), VOCs, 미세 진동 주파수 등 12가지 이상의 주요 환경 매개변수를 측정하는 배터리 최적화된 IoT 센서를 사용합니다. 이는 고밀도 센서 배포에 최적화된 구조입니다.\n\n**2. 데이터 처리 및 피처 엔지니어링:** 당사의 특허 출원 중인 알고리즘은 센서 입력값을 상호 연관시켜 복합적인 **'환경 노후화 지표(EAI)'**를 생성합니다. 이러한 파생 피처는 예측 모델의 정확도를 극적으로 높이는 핵심 입력값입니다.\n\n**3. AI 예측 엔진 (RNN-LSTM 기반 시계열 예측):** 장단기 메모리(LSTM) 유닛을 갖춘 심층 순환 신경망(RNN-LSTM)을 채택합니다. LSTM은 장기 의존성을 가진 시계열 데이터를 분석하고 예측하는 데 독보적인 성능을 발휘하여 3~6개월 전에 위험을 예측할 수 있습니다.\n\n**4. 사용자 인터페이스 (UI) 및 API 통합:** 예측 대시보드는 위험도를 명확한 신호등 시스템으로 시각화하며, 구체적이고 **실행 가능한 유지보수 권장 사항**을 제시합니다. 견고한 RESTful API를 통해 기존 건물 관리 시스템(BMS) 및 CMMS와의 원활한 통합을 지원합니다.",
+                title_market: "시장 및 성장 전망: 시장 분석, 세분화, 그리고 진입 전략",
+                text_market: "스마트 시설 관리 및 예측 유지보수(PdM) 시장은 폭발적인 성장세를 보이는 분야입니다. 2024년 기준 약 450억 달러 규모로 평가되며, 2030년까지 연평균 성장률(CAGR) 20% 이상으로 성장할 것으로 예상됩니다.\n\n**1. 시장 세분화 및 주요 목표 영역:** B2B 산업 부문 (40% 목표), B2G 공공 인프라 부문 (35% 목표), B2B 상업/주거 부문 (25% 목표)에 집중합니다. 우리는 계획되지 않은 가동 중단이나 건강 위험이 막대한 비용을 초래하는 고부가가치, 고위험 시설을 목표로 합니다.\n\n**2. 시장 진입 및 확장 전략:** **1단계 (12개월):** 한국과 싱가포르에서 5~10개의 핵심 고객을 확보하고 운영 비용 25% 절감 사례 연구를 확보. **2단계 (13~36개월):** 미국, 유럽으로 영업 팀 확장 및 대형 CMMS 공급업체와의 전략적 파트너십에 집중. **3단계 (36개월 이상):** 글로벌 채널 파트너십 구축 및 AI 기반 자동 예방 유지보수 스케줄링 기능을 도입하여 시장을 선도합니다.",
+                title_finance: "재무 전망: 상세 예측 및 비즈니스 모델 분석",
+                text_finance: "당사의 재무 모델은 엔터프라이즈 SaaS(Software-as-a-Service)의 전형적인 고마진, 반복 매출 구조를 기반으로 하며, 하드웨어 배포를 위한 초기 설치 수수료로 보완됩니다.\n\n**1. 수익 구조:** 단계별 SaaS 구독 (70%), 하드웨어 및 설치 (25%), 맞춤형 데이터 컨설팅 (5%). 당사의 확장 가능한 SaaS 모델은 높은 이익률을 보장합니다.\n\n**2. 주요 재무 예측 (단위: 백만 USD):** 2025 회계연도 1.2M에서 2028 회계연도 15.0M으로 견고한 매출 성장을 예측합니다. 공격적인 B2B 계약 확보에 힘입어 2026년 2분기에 현금 흐름 흑자(Cash-Flow Positive)에 도달할 것으로 예상합니다.\n\n**3. 출구 전략 (5~7년):** 최고의 예측 유지보수 기능을 기존 포트폴리오에 통합하려는 주요 산업 소프트웨어 또는 시설 관리 대기업에 의한 전략적 인수합병(M&A)을 예상합니다.",
+                stat_growth: "연평균 성장률(%)", stat_clients: "목표 고객사", stat_accuracy: "AI 예측 정확도(%)",
+                title_invest: "투자 제안: 자금 활용 및 기업 가치 평가",
+                text_invest: "Eco-Predict는 투자자들에게 산업용 IoT, 예측 AI, 그리고 글로벌 ESG 운동의 융합에 투자하여 수익을 창출할 수 있는 독특한 기회를 제공합니다. 당사의 확장성이 높고 고마진 구조의 모델은 배포 위험을 최소화하면서 장기적인 수익을 극대화합니다.\n\n**1. 투자 요청 및 기업 가치 평가:** 당사는 초기 **시드 라운드 투자로 500만 달러(USD)**를 요청하며, 이는 세전 기업 가치(Pre-money Valuation) 1,500만 달러를 기준으로 협상 가능한 지분과 교환될 것입니다.\n\n**2. 자금 활용 세부 배분:** **40% - 연구 개발 (R&D):** 차세대 센서 하드웨어 개발 완료 및 AI 모델의 구조 건전성 예측 확장. **30% - 영업 및 마케팅 (S&M):** 미국 및 유럽 영업팀 확장 자금 확보. **20% - 운영 및 스케일링:** 5,000개 이상의 활성 시설을 지원하는 클라우드 인프라 구축. **10% - 운전 자본 및 법무.**\n\n**3. 예상 ROI:** 보수적인 성장 예측을 기반으로 할 때, 5~7년 내 전략적 출구 시점에서 초기 시드 투자자에게 **8~10배의 수익률**을 제공할 것으로 예상합니다."
+            },
+            zh: {
+                menu_overview:"概述",menu_tech:"技术",menu_market:"市场",menu_finance:"财务",menu_invest:"投资",
+                title_overview:"AI Eco-Predict：业务概述与宏大愿景",
+                text_overview:"**AI Eco-Predict 是一个由人工智能驱动的“预测性维护 (PdM) 平台”，用于模拟和预测设施的环境老化和潜在风险。**\n\n**产品定义 (它是什么?):**\n1.  **AI 引擎：** 我们专有的 **RNN-LSTM** 深度学习模型将温度、湿度、振动、VOCs 等 12 种以上的环境和结构数据作为时间序列数据进行分析，以精确模拟设施将以何种速度、何种方式老化。\n2.  **IoT 传感器网络：** 部署在建筑物内部和设备上的超精密传感器网络实时收集环境数据，并将其转化为“环境老化指数 (EAI)”。\n\n**它做什么 (核心功能)?**\nAI Eco-Predict 识别**“老化阈值”**，并在霉菌爆发、设备腐蚀加速或混凝土微裂纹扩散等问题**实际发生前 3 至 6 个月**准确预测其时间和位置，并向维护团队提供具体的**主动干预指南**。\n\n**核心价值：** 消除环境危害预测的不确定性，将紧急维修成本降低高达 70%，资产寿命延长 40%，并为 **10 种以上不同的设施类型**提供 100% 的预测维护能力。",
+                overview_summary_title: "产品核心摘要：主动预测维护",
+                overview_summary_1: "预测: AI 在 3-6 个月前预测霉菌/腐蚀的发生时间和位置。",
+                overview_summary_2: "核心技术: RNN-LSTM 深度学习 + 12 种以上多传感器数据点。",
+                overview_summary_3: "价值: 紧急维修成本降低高达 70%，资产寿命延长 40%。",
+                title_tech:"核心技术：AI 预测引擎及物联网架构",
+                text_tech_image: "图片说明: AI Eco-Predict 综合解决方案架构，突出传感器、云和预测性 UI 集成。",
+                text_tech: "AI Eco-Predict 解决方案基于定制化的 IoT 硬件和专有机器学习算法。 **1. 数据采集层：** 我们使用非侵入式、低功耗的 IoT 传感器套件，可测量 12 项以上的关键环境参数，包括温度、相对湿度 (RH)、露点、VOCs、PM 颗粒物和微妙的振动频率。 **2. 数据处理与特征工程：** 我们的专利算法通过交叉关联传感器输入，生成复杂的**“环境老化指数 (EAI)”**。这些派生特征是提高模型精度的关键。 **3. AI 预测引擎：** 采用 RNN 结合 LSTM 单元的深度学习架构。它非常适合分析和预测具有长期依赖性的时间序列数据，使我们能够提前 3-6 个月预测风险。 **4. 用户界面与集成：** 预测仪表板提供清晰的风险可视化（红绿灯系统），并提供具体的维护建议。RESTful API 可无缝集成到现有的建筑管理系统 (BMS) 和 CMMS 中。",
+                title_market:"市场与增长前景：深入分析和扩张策略",
+                text_market:"智能设施管理和预测性维护 (PdM) 市场是一个高增长领域，预计到 2030 年市场规模将超过 1500 亿美元，年复合增长率 (CAGR) 超过 20%。 **1. 市场细分：** 我们集中于 B2B 工业部门（40% 目标）、B2G 公共基础设施部门（35% 目标）和 B2B 商业/住宅部门（25% 目标）。 **2. 市场战略：** **第一阶段（12个月）：** 在韩国和新加坡建立 5-10 个关键客户的参考案例。 **第二阶段（13-36个月）：** 扩大销售团队至日本、美国和德国，并与大型 CMMS 供应商建立战略伙伴关系。 **第三阶段：** 追求全球领导地位，实现 ISO/IEC 认证并推出 AI 驱动的自动化维护调度功能。",
+                title_finance:"财务预测：详细报表与业务模型",
+                text_finance:"我们的财务模型基于高利润、经常性收入的 SaaS 结构，并辅以硬件部署的初始设置费。 **1. 收入来源：** 分级 SaaS 订阅 (70%)、硬件和安装 (25%)、定制数据咨询 (5%)。我们的 SaaS 模型确保高利润率。 **2. 关键财务指标 (百万 USD)：** 预计 2025 年总收入 1.2M，2028 年预计达 15.0M。预计 2026 年第二季度实现现金流转正。 **3. 退出策略 (5-7 年)：** 预计将被大型工业软件或设施管理集团战略性收购。",
+                stat_growth: "年增长率(%)", stat_clients: "目标客户", stat_accuracy: "AI 预测准确率(%)",
+                title_invest:"投资机会：资金用途和估值分析",
+                text_invest: "Eco-Predict 为投资者提供了一个独特的机会，可以从工业物联网、预测性人工智能和全球 ESG 趋势的融合中获利。我们的高可扩展性、高利润率模型最大限度地降低了部署风险，同时最大限度地提高了长期回报。 **1. 投资需求与估值：** 我们寻求 **500 万美元的种子轮投资**，预估值为 1500 万美元。 **2. 资金用途（详细分配）：** 40% - 研发（完成下一代硬件开发、AI 模型扩展）；30% - 销售与营销（扩大销售团队）；20% - 运营与扩展（云基础设施）；10% - 营运资金与法律。 **3. 预测 ROI：** 预计初始种子投资者在 5-7 年内战略退出时将获得 8-10 倍的回报。"
+            },
+            jp: {
+                menu_overview:"概要",menu_tech:"技術",menu_market:"市場",menu_finance:"財務",menu_invest:"投資",
+                title_overview:"AI Eco-Predict：包括的な事業概要とビジョン",
+                text_overview:"**AI Eco-Predict は、施設の環境的老朽化と潜在的なリスクをシミュレーションおよび予測する、人工知能ベースの「予測保全 (PdM) プラットフォーム」です。**\n\n**製品の定義 (What is it?):**\n1.  **AI エンジン：** 当社独自の **RNN-LSTM** ディープラーニングモデルは、温度、湿度、振動、VOCs など 12 種類以上の環境および構造データを時系列で分析し、施設がどのような速度で、どのように老朽化するかを精密にシミュレーションします。\n2.  **IoT センサーネットワーク：** 建物内外および設備に設置された超精密センサーネットワークからリアルタイムの環境データを収集し、「環境老朽化指数 (EAI)」に変換します。\n\n**主な機能 (What does it do?):**\nAI Eco-Predict は**「老朽化の閾値」**を特定し、カビの発生、設備の腐食加速、コンクリートの微細なひび割れなどの問題が**実際に発生する 3～6 ヶ月前**に正確なタイミングと場所を予測し、保全チームに**先制的な措置ガイド**を提供します。\n\n**コアバリュー：** 環境ハザード予測の不確実性を排除し、緊急修理コストを最大 70% 削減、資産寿命を最大 40% 延長し、**10 種類以上の多様な施設タイプ**に対して 100% 予測保全能力を確保します。",
+                overview_summary_title: "製品のコアサマリー：先制的な予測保全",
+                overview_summary_1: "予測: AI がカビ/腐食の発生時期と場所を 3-6 ヶ月前に予測。",
+                overview_summary_2: "コア技術: RNN-LSTM ディープラーニング + 12 以上のマルチセンサーデータポイント。",
+                overview_summary_3: "価値: 緊急修理コストを最大 70% 削減、資産寿命を 40% 延長。",
+                title_tech:"コア技術：AI予測エンジンとIoTアーキテクチャの詳細",
+                text_tech_image: "画像の説明: AI Eco-Predict ソリューションの包括的なアーキテクチャ。センサー、クラウド、予測 UI の統合を強調しています。",
+                text_tech: "AI Eco-Predict ソリューションは、カスタムメイドの IoT ハードウェアと独自の機械学習アルゴリズムを組み合わせた強固な技術スタックに基づいています。 **1. データ取得レイヤー：** 温度、相対湿度 (RH)、VOCs、微細な振動周波数など、12 以上の重要な環境パラメーターを測定するセンサーを使用します。 **2. データ処理と特徴量エンジニアリング：** 当社の特許出願中のアルゴリズムは、センサー入力を相互に関連付けることで、複雑な**「環境老化指数 (EAI)」**を生成します。 **3. AI予測エンジン：** 長短期記憶 (LSTM) ユニットを備えた深層リカレントニューラルネットワーク (RNN-LSTM) を採用。長期的な依存性を持つ時系列データの分析に優れており、3〜6ヶ月前のリスク予測を可能にします。 **4. UIとAPI：** 予測ダッシュボードは、信号システムでリスクを視覚化し、具体的なメンテナンス推奨事項を提供します。RESTful API は、既存の BMS や CMMS とのシームレスな統合を可能にします。",
+                title_market:"市場と成長展望：分析、セグメンテーション、参入戦略",
+                text_market:"スマート施設管理および予測保全 (PdM) 市場は、非常に成長率の高い分野です。2024年に 450 億ドルと評価され、2030 年までに 1500 億ドルを超えると予測されており、年平均成長率 (CAGR) は 20% を超えます。 **1. 市場セグメンテーション：** B2B 産業部門（40% 目標）、B2G 公共インフラ部門（35% 目標）、B2B 商業/住宅部門（25% 目標）に焦点を当てています。 **2. 市場戦略：** **フェーズ 1 (12ヶ月)：** 韓国とシンガポールで 5〜10 の重要な参照クライアントを獲得。 **フェーズ 2 (13-36ヶ月)：** 米国、ヨーロッパに営業チームを拡大し、大型 CMMS ベンダーとの戦略的パートナーシップに注力。 **フェーズ 3：** グローバルチャネルパートナーシップを確立し、AI 主導の自動予防保守スケジューリングを導入します。",
+                title_finance:"財務予測：詳細な財務見通しとビジネスモデル",
+                text_finance: "当社の財務モデルは、エンタープライズ SaaS の典型的な高利益率の経常収益構造に基づいており、ハードウェア展開のための初期設定費用によって補完されています。 **1. 収益源：** 階層型 SaaS サブスクリプション (70%)、ハードウェアと設置 (25%)、カスタムデータコンサルタント (5%)。 **2. 主要財務予測 (百万 USD)：** 2025 年の総収益は 1.2M、2028 年には 15.0M に達すると予測されています。 2026 年第 2 四半期にキャッシュフローがプラスになる見込みです。 **3. 出口戦略 (5-7 年)：** 主要な産業ソフトウェアまたは施設管理コングロマリットによる戦略的買収、または ARR 5000 万ドル達成時の IPO を予測しています。",
+                stat_growth: "年間成長率(%)", stat_clients: "ターゲット顧客", stat_accuracy: "AI予測精度(%)",
+                title_invest:"投資提案：資金使途と企業評価",
+                text_invest: "Eco-Predict は、投資家が産業用 IoT、予測 AI、およびグローバル ESG の融合から利益を得るための独自の機会を提供します。 **1. 投資要求と評価：** **シードラウンド投資として 500 万ドル (USD)** を求め、プリマネー評価額 1500 万ドルに基づいて交渉可能な持分と交換されます。 **2. 資金使途（詳細）：** 40% - 研究開発；30% - 営業およびマーケティング；20% - 運用とスケーリング；10% - 運転資金と法務。 **3. 予測 ROI：** 5-7 年後の戦略的出口時に初期シード投資家に対して 8-10 倍のリターンを提供すると予測しています。"
+            }
+        };
 
-        // Counter animation
-        const counters = document.querySelectorAll('.count');
-        const speed = 100;
-        let animated = false;
+        const pages = ['overview', 'technology', 'market', 'finance', 'investment'];
+        // let myChart = null; // <-- 중복 선언되어 오류 발생. 이전 코드에서 이미 선언했으므로 제거합니다.
 
+        // --- Core Functions ---
+
+        // 1. Chart Initialization
+        const initializeChart = () => {
+            const ctx = document.getElementById('revenueChart');
+            if (!ctx) return;
+            
+            if (myChart) myChart.destroy(); // 기존 차트 파괴
+
+            // 현재 활성 언어 확인 (차트 제목 번역용)
+            const currentLang = document.documentElement.lang || 'ko';
+            const chartTitle = (currentLang === 'ko' ? '5개년 예상 매출액 (백만 USD)' : '5-Year Revenue Projection');
+
+
+            myChart = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['2025', '2026', '2027', '2028', '2029'],
+                    datasets: [{
+                        label: 'Projected Revenue (Million USD)',
+                        data: [1.2, 3.5, 7.8, 12.3, 18.7],
+                        backgroundColor: 'var(--primary)',
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // 반응형을 위해 false
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false }, title: { display: true, text: chartTitle } }
+                }
+            });
+        };
+
+        // 2. Counter Animation
         const animateCount = () => {
-            if (animated) return;
-            animated = true;
+            const financeSection = document.getElementById('finance');
+            if (financeSection && !financeSection.classList.contains('active')) return;
 
+            const counters = document.querySelectorAll('.count');
+            const speed = 100;
+            
             counters.forEach(counter => {
+                // 애니메이션이 완료되었는지 확인하고 재실행 방지
+                if (counter.dataset.animated === 'true') return;
+                
+                // 애니메이션 상태 초기화 (다른 페이지에서 돌아올 경우를 대비)
+                counter.dataset.animated = 'false';
+                counter.innerText = '0'; 
+
                 const target = +counter.getAttribute('data-target');
+                let current = 0;
+                
                 const updateCount = () => {
-                    const current = +counter.innerText;
-                    const increment = target / speed;
+                    // 목표 값에 도달했거나 초과했으면 멈춤
                     if (current < target) {
-                        counter.innerText = Math.ceil(current + increment);
+                        const increment = target / speed;
+                        current += increment;
+                        counter.innerText = Math.ceil(current);
                         setTimeout(updateCount, 30);
                     } else {
                         counter.innerText = target;
+                        counter.dataset.animated = 'true'; // 애니메이션 완료 표시
                     }
                 };
                 updateCount();
             });
         };
-        
-        // Use Intersection Observer for efficient scrolling animation trigger
-        const financeSection = document.querySelector('#finance');
-        if (financeSection) {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        animateCount();
-                        observer.unobserve(financeSection); // Stop observing after animation
-                    }
-                });
-            }, { threshold: 0.1 });
-            observer.observe(financeSection);
-        }
 
-        // --- Chart.js Initialization Logic ---
-        const initializeChart = () => {
-            const ctx = document.getElementById('revenueChart');
-            if (ctx) {
-                // 기존 차트 인스턴스가 존재하면 파괴하여 재사용 오류 방지 (오류 해결 핵심)
-                if (myChart) {
-                    myChart.destroy();
-                }
-
-                // 새로운 차트 인스턴스를 생성하고 전역 변수에 할당
-                myChart = new Chart(ctx.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: ['2025', '2026', '2027', '2028', '2029'],
-                        datasets: [{
-                            label: 'Projected Revenue (Million USD)',
-                            data: [1.2, 3.5, 7.8, 12.3, 18.7],
-                            backgroundColor: '#00c49a',
-                            borderRadius: 5,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        scales: {
-                            y: { 
-                                beginAtZero: true, 
-                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
-                            },
-                            x: {
-                                 grid: { display: false }
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false },
-                            title: { display: true, text: '5-Year Revenue Projection' }
-                        }
-                    }
-                });
-            }
-        };
-        // --- End Chart.js Initialization Logic ---
-
-
-        // Multi-language support
-        const translations = {
-            en: {
-                menu_overview: "Overview", menu_tech: "Technology", menu_market: "Market", menu_finance: "Finance", menu_invest: "Investment",
-                title_overview: "AI Eco-Predict: Comprehensive Business Overview and Vision",
-                text_overview: "The **AI Eco-Predict** platform represents a monumental shift from reactive to **proactive facility management (PFM)**, driven by cutting-edge Artificial Intelligence. Our system is engineered to solve the colossal global problem of infrastructure deterioration, estimated to cost the world economy trillions of dollars annually in unexpected failures and corrective maintenance.\n\n**Mission and Vision:** Our mission is to eliminate the unpredictability of environmental hazards within critical infrastructure, buildings, and industrial facilities. We envision a future where maintenance is 100% predictive, eliminating downtime, extending asset lifespan by up to 40%, and significantly lowering the carbon footprint associated with repeated repairs and structural replacement. We aim to be the global standard for Environmental Hazard Prediction (EHP) services.\n\n**Core Value Proposition (CVP):**\n1.  **Precision Prediction:** Leveraging proprietary deep learning models (RNN-LSTM) trained on millions of data points, we predict specific degradation events—like mold outbreaks, metal corrosion, or concrete spalling—with over 99% accuracy, months in advance.\n2.  **Cost Mitigation:** By enabling maintenance teams to intervene exactly when and where needed, we reduce emergency repair costs by up to 70% and lower overall operational expenses (OpEx) by 25-35%.\n3.  **ESG Compliance:** Our technology directly supports corporate and governmental ESG goals by maximizing resource efficiency, minimizing material waste, and ensuring the health and safety of occupants (e.g., by predicting air quality hazards).\n\n**Target Markets (Supporting 10+ Facility Types):** We primarily focus on high-value, high-risk environments. Our AI model is adaptable to **over 10 diverse facility types (e.g., power plants, warehouses, hospitals, etc.)**, including:\n* Data Centers and Server Farms (where continuous operation is paramount).\n* Historical and Heritage Buildings (where preservation is critical).\n* Industrial Manufacturing Plants (where corrosion causes massive losses).\n* Large Commercial and Residential Complexes (focusing on occupant health and mold prevention).\n\n**Strategic Growth:** Our phased expansion plan begins with B2B partnerships in the APAC region, followed by aggressive expansion into North American and European B2G (Business-to-Government) contracts, specifically targeting public housing and defense infrastructure. Our SaaS model is designed for global scalability from day one, requiring minimal physical modification upon deployment.",
-                title_tech: "Core Technology: The AI Prediction Engine and IoT Architecture",
-                text_tech_image: "Image description: The comprehensive AI Eco-Predict solution architecture, highlighting sensor, cloud, and predictive UI integration.", // ADDED KEY
-                text_tech: "The AI Eco-Predict solution is underpinned by a robust, multi-layered technology stack, combining bespoke IoT hardware with proprietary machine learning algorithms.\n\n**1. Data Acquisition Layer (IoT Sensor Network):**\n* **Custom Sensor Suite:** We utilize small, unobtrusive, battery-optimized IoT sensors that measure over 12 critical environmental parameters, including temperature, relative humidity (RH), dew point, volatile organic compounds (VOCs), particulate matter (PM2.5/PM10), CO₂, atmospheric pressure, and even subtle vibrational frequencies.\n* **Network Protocol:** Data transmission relies on secure, low-power protocols (e.g., LoRaWAN, NB-IoT) to ensure reliable data streams even across large, complex facilities like warehouses or industrial parks. The system is designed for high-density sensor deployment.\n\n**2. Data Processing and Feature Engineering:**\n* **Edge Computing Pre-processing:** Local gateways perform initial filtering and aggregation to reduce cloud load and latency. This includes anomaly detection and basic data cleaning.\n* **Proprietary Feature Extraction:** Our patented algorithms generate complex *Environmental Aging Indices (EAIs)* by cross-correlating various sensor inputs (e.g., the synergistic effect of high RH and high VOCs on mold potential). These derived features are the key input for the predictive models.\n\n**3. AI Prediction Engine (RNN-LSTM):**\n* **Model Architecture:** We employ a deep Recurrent Neural Network with Long Short-Term Memory (RNN-LSTM) units. LSTMs are uniquely suited for analyzing and predicting time-series data with long-term dependencies, such as seasonal temperature changes or slow-developing corrosion patterns. This allows us to predict risks 3-6 months in advance.\n* **Training Data:** Our models are trained on a unique, anonymized dataset comprising real-world environmental histories from over 500 diverse facilities globally, coupled with ground-truth maintenance logs, leading to highly generalized and accurate predictions.\n\n**4. User Interface (UI) and API:**\n* The **Predictive Dashboard** provides a clear, traffic-light system visualization of risk (Green, Amber, Red zones). It also offers specific, actionable maintenance recommendations (e.g., 'Increase ventilation in Sector 4B by 10% to lower dew point below 65% RH').\n* A robust **RESTful API** allows seamless integration with existing Building Management Systems (BMS), Computerized Maintenance Management Systems (CMMS), and other enterprise software platforms.",
-                title_market: "Market and Growth: Analysis, Segmentation, and Entry Strategy",
-                text_market: "The Smart Facility Management and Predictive Maintenance (PdM) market is a high-growth sector. Valued at $45 billion in 2024, it is projected to exceed $150 billion by 2030, reflecting a compounded annual growth rate (CAGR) of over **20%**.\n\n**1. Market Segmentation (Focus Areas):**\n* **B2B Industrial (40% Target):** Factories, power plants, chemical storage. *Primary Pain Point: High cost of unplanned downtime.* \n* **B2G Public Infrastructure (35% Target):** Schools, government buildings, transit systems. *Primary Pain Point: Regulatory compliance and asset longevity.* \n* **B2B Commercial/Residential (25% Target):** Office towers, luxury apartments, hospitals. *Primary Pain Point: Tenant safety, comfort, and insurance liability.*\n\n**2. Competitive Landscape (SWOT Analysis):**\n* **Strengths:** Proprietary EAI algorithms, high prediction accuracy, flexible SaaS model, and deep domain expertise in environmental physics.\n* **Weaknesses:** Initial high sensor deployment cost, reliance on stable IoT network infrastructure.\n* **Opportunities:** Expanding global ESG mandates, increasing climate volatility, and the need for remote management post-pandemic.\n* **Threats:** Rapid development of general-purpose AI monitoring tools, and pricing pressure from established facility management software vendors.\n\n**3. Go-to-Market Strategy (Phased Approach):**\n* **Phase 1 (12 Months): Early Adoption & Validation:** Target 5-10 key reference clients in South Korea and Singapore (known for high tech adoption). Secure case studies demonstrating 25% OpEx savings.\n* **Phase 2 (13-36 Months): Regional Expansion & Scaling:** Expand sales teams into Japan, the US, and Germany. Focus on strategic partnerships with large CMMS vendors (e.g., IBM Maximo, SAP).\n* **Phase 3 (36+ Months): Global Leadership:** Establish global channel partnerships, achieve ISO/IEC certification for data security, and introduce AI-driven automated preventative maintenance scheduling.",
-                title_finance: "Financial Forecast: Detailed Projections and Business Model",
-                text_finance: "Our financial model is built upon a high-margin, recurring revenue structure typical of enterprise SaaS (Software-as-a-Service), complemented by initial setup fees for hardware deployment.\n\n**1. Revenue Streams:**\n* **Tiered SaaS Subscription (70%):** Recurring monthly fees based on the number of deployed sensors and the level of AI service (Basic Monitoring, Advanced Prediction, Fully Automated Integration).\n* **Hardware and Installation (25%):** One-time fee for proprietary sensor hardware and initial installation/calibration services. This becomes a smaller percentage over time as SaaS revenue scales.\n* **Custom Data Consultancy (5%):** High-value service for tailoring the AI model to highly unique or complex facility environments (e.g., nuclear plants, deep-sea research labs).\n\n**2. Key Financial Projections (USD):**\n| Metric | FY 2025 | FY 2026 | FY 2027 | FY 2028 |\n| :--- | :--- | :--- | :--- | :--- |\n| **Total Revenue** | 1.2M | 3.5M | 7.8M | 15.0M |\n| **Gross Margin** | 70% | 75% | 78% | 80% |\n| **OpEx (R&D/Sales)** | 1.5M | 2.5M | 4.0M | 6.0M |\n| **EBITDA** | (0.3M) | 0.1M | 3.8M | 9.0M |\n\n**3. Funding Utilization and Burn Rate:** We project reaching cash-flow positive status in Q2 FY 2026, primarily driven by accelerated B2B contract acquisition. Initial investment is critical for R&D finalization and scaling the initial sales/support teams.\n\n**4. Exit Strategy (5-7 Years):** We anticipate a strategic acquisition by a major industrial software or facility management conglomerate (e.g., Honeywell, Siemens, Schneider Electric) seeking to integrate best-in-class predictive maintenance capabilities into their existing portfolio. Alternatively, an IPO is viable upon reaching $50M in Annual Recurring Revenue (ARR).",
-                stat_growth: "Annual Growth (%)", stat_clients: "Target Clients", stat_accuracy: "AI Prediction Accuracy (%)",
-                title_invest: "Investment Opportunity: Use of Funds and Valuation",
-                text_invest: "Eco-Predict offers investors a unique opportunity to capitalize on the convergence of industrial IoT, predictive AI, and global ESG movements. Our scalable, high-margin model minimizes deployment risk while maximizing long-term returns.\n\n**1. Investment Ask and Valuation:** We are seeking a **Seed Round Investment of $5.0 million** (USD) in exchange for a negotiable equity stake, based on a pre-money valuation of $15 million (using the Multiple of Annual Recurring Revenue - ARR method).\n\n**2. Use of Funds (Detailed Allocation):**\n* **40% - Research & Development (R&D):** Finalize deployment of the next-generation sensor hardware (smaller, longer battery life), expand the AI model to include structural integrity prediction (vibration analysis), and pursue key international patents.\n* **30% - Sales & Marketing (S&M):** Fund the expansion of the US and EU sales teams, develop comprehensive lead generation campaigns targeting facility managers, and secure presence at 4 major industry trade shows.\n* **20% - Operations and Scaling:** Build out our cloud infrastructure (AWS/Azure) to support 5,000 active facilities, and secure SOC 2 Type II compliance.\n* **10% - Working Capital & Legal:** Buffer for unexpected costs and essential international legal certifications.\n\n**3. Key Milestones and ROI:**\n* **Milestone 1 (12 Months):** Achieve $1.5M ARR and deploy systems in 50 active facilities. Complete AI Model v2.0.\n* **Milestone 2 (24 Months):** Achieve $5M ARR and secure first B2G contract in North America. Establish distribution partnerships in 3 new countries.\n* **Projected ROI:** Based on conservative growth projections, we project an 8-10x return for initial seed investors upon a strategic exit in 5-7 years. The massive, untapped market for PFM provides a strong foundation for this valuation."
-            },
-            ko: {
-                menu_overview: "개요", menu_tech: "기술", menu_market: "시장", menu_finance: "재무", menu_invest: "투자",
-                title_overview: "AI Eco-Predict: 포괄적인 사업 개요 및 비전",
-                text_overview: "AI Eco-Predict는 단순한 환경 모니터링 솔루션을 넘어, 시설 관리의 패러다임을 **사후 대응(Reactive)**에서 **선제적 예측(Proactive)**으로 혁신하는 통합 플랫폼입니다. 당사의 비전은 전 세계 인프라의 노후화와 환경 위험으로 인해 발생하는 수조 달러 규모의 예기치 않은 손실과 긴급 유지보수 비용을 근본적으로 제거하는 것입니다.\n\n**미션과 장기적 목표:**\n우리의 미션은 중요 시설의 환경적 위험에 대한 예측 불가능성을 완전히 해소하는 것입니다. 유지보수 활동이 100% 예측적으로 이루어지는 미래를 구현함으로써, 설비의 비가동 시간(Downtime)을 없애고, 자산 수명을 최대 40%까지 연장하며, 반복적인 수리 및 구조물 교체와 관련된 탄소 발자국을 대폭 감소시키는 데 기여합니다. 우리는 환경 위험 예측(EHP) 서비스 분야의 글로벌 표준을 확립하는 것을 목표로 합니다.\n\n**핵심 가치 제안 (CVP) - 3대 축:**\n1.  **초정밀 예측:** 수백만 개의 환경 및 노후화 데이터를 학습한 독자적인 딥러닝 모델(RNN-LSTM)을 활용하여, 곰팡이 발생, 금속 부식 가속화, 콘크리트 미세 균열 확산 등 특정 노후화 이벤트를 **수 개월 전에 99% 이상의 정확도**로 예측합니다.\n2.  **운영 비용 최적화:** 유지보수 팀이 필요할 때, 필요한 곳에만 개입하도록 함으로써 긴급 수리 비용을 최대 70%까지 줄이고, 전체 운영 비용(OpEx)을 25~35% 절감합니다.\n3.  **ESG 경영 기여:** 당사의 기술은 자원 효율성을 극대화하고 폐기물을 최소화하며, 실내 공기질 위험 예측을 통한 거주자의 건강과 안전을 보장함으로써 기업 및 정부의 ESG 목표 달성에 직접적으로 기여합니다.\n\n**주요 타겟 시장 및 전략 (10가지 이상의 시설 유형 지원):**\n우리는 운영의 연속성과 안전이 극도로 중요한 고부가가치, 고위험 환경에 집중합니다. 당사의 AI 모델은 **10가지 이상의 다양한 시설 유형(예: 발전소, 창고, 병원 등)**에 맞춤 적용 가능합니다:\n* **데이터 센터 및 서버 팜:** 지속적인 운영이 최우선인 곳에 최적화된 솔루션을 제공합니다.\n* **산업 제조 플랜트:** 부식 및 환경 요인으로 인한 막대한 생산 손실을 방지합니다.\n* **문화재 및 역사적 건물:** 장기적인 보존이 필수적인 구조물에 환경 예측 시스템을 적용합니다.\n* **대형 상업 및 주거 복합 시설:** 거주자 건강, 쾌적성 확보 및 보험 책임 문제를 해소합니다.\n\n**성장 로드맵:** 아시아 태평양 지역의 B2B 파트너십으로 시작하여, 공공 주택 및 방위 인프라를 목표로 하는 북미 및 유럽 지역의 B2G(Business-to-Government) 계약으로 공격적인 확장을 계획하고 있습니다. 당사의 SaaS 모델은 글로벌 확장을 위해 설계되어 있어, 현지 배포 시 물리적 수정이 최소화됩니다.",
-                title_tech: "핵심 기술: AI 예측 엔진 및 다중 IoT 센서 아키텍처 심층 분석",
-                text_tech_image: "이미지 설명: AI Eco-Predict 솔루션의 종합적인 아키텍처로, 센서, 클라우드, 예측 UI 통합을 강조하는 제품/기술 구성도입니다.", // ADDED KEY
-                text_tech: "AI Eco-Predict 솔루션은 맞춤형 IoT 하드웨어와 독점적인 머신러닝 알고리즘을 결합한 견고한 다층 기술 스택을 기반으로 합니다.\n\n**1. 데이터 수집 계층 (IoT 센서 네트워크):**\n* **특수 센서 스위트:** 온도, 상대 습도(RH), 이슬점, 휘발성 유기 화합물(VOCs), 미세먼지(PM2.5/PM10), 이산화탄소(CO₂), 기압 및 미세 진동 주파수 등 **12가지 이상의 주요 환경 매개변수**를 측정하는 배터리 최적화된 IoT 센서를 사용합니다. 이 센서는 비침투적이고 장기간 안정적으로 작동하도록 설계되었습니다.\n* **네트워크 및 통신 프로토콜:** 대규모 산업 단지나 복잡한 시설에서도 안정적인 데이터 스트림을 보장하기 위해 보안성이 높고 저전력인 통신 프로토콜(예: LoRaWAN, NB-IoT)을 활용합니다. 이는 고밀도 센서 배포에 최적화된 구조입니다.\n\n**2. 데이터 처리 및 피처 엔지니어링 (독점 알고리즘):**\n* **에지 컴퓨팅 기반 전처리:** 로컬 게이트웨이에서 초기 필터링 및 집계를 수행하여 클라우드 부하와 데이터 지연 시간을 줄입니다. 여기에는 기본적인 데이터 정제 및 이상 징후 감지가 포함됩니다.\n* **독점 피처 추출:** 당사의 특허 출원 중인 알고리즘은 다양한 센서 입력값(예: 높은 RH와 높은 VOCs가 곰팡이 성장에 미치는 시너지 효과)을 상호 연관시켜 복합적인 **'환경 노후화 지표(EAI)'**를 생성합니다. 이러한 파생 피처는 예측 모델의 정확도를 극적으로 높이는 핵심 입력값입니다.\n\n**3. AI 예측 엔진 (RNN-LSTM 기반 시계열 예측):**\n* **모델 아키텍처:** 장단기 메모리(LSTM) 유닛을 갖춘 심층 순환 신경망(RNN-LSTM)을 채택합니다. LSTM은 계절적 온도 변화나 느리게 진행되는 부식 패턴과 같은 **장기 의존성을 가진 시계열 데이터**를 분석하고 예측하는 데 독보적인 성능을 발휘합니다. 이를 통해 3~6개월 전에 위험을 예측할 수 있습니다.\n* **학습 데이터:** 전 세계 500개 이상의 다양한 시설에서 수집된 실제 환경 변화 이력과 유지보수 로그를 결합한 **익명화된 독점 데이터셋**으로 모델을 학습시켜, 매우 일반화되고 높은 예측 정확도를 달성했습니다.\n\n**4. 사용자 인터페이스 (UI) 및 API 통합:**\n* **예측 대시보드:** 위험도를 명확한 신호등 시스템(녹색, 황색, 적색 구역)으로 시각화하여 제공합니다. 또한 '섹터 4B의 이슬점을 65% RH 이하로 낮추기 위해 환기량을 10% 증가시키십시오'와 같은 구체적이고 **실행 가능한 유지보수 권장 사항**을 제시합니다.\n* 견고한 **RESTful API**를 통해 기존 건물 관리 시스템(BMS), 전산화 유지보수 관리 시스템(CMMS) 및 기타 엔터프라이즈 소프트웨어 플랫폼과의 원활한 통합을 지원합니다.",
-                title_market: "시장 및 성장 전망: 시장 분석, 세분화, 그리고 진입 전략",
-                text_market: "스마트 시설 관리 및 예측 유지보수(PdM) 시장은 폭발적인 성장세를 보이는 분야입니다. 2024년 기준 약 450억 달러 규모로 평가되며, 2030년까지 연평균 성장률(CAGR) 20% 이상으로 성장하여 1,500억 달러를 초과할 것으로 예상됩니다.\n\n**1. 시장 세분화 및 주요 목표 영역:**\n* **B2B 산업 부문 (40% 목표):** 공장, 발전소, 화학 저장 시설 등. *주요 페인 포인트: 계획되지 않은 가동 중단으로 인한 막대한 비용 손실.*\n* **B2G 공공 인프라 부문 (35% 목표):** 학교, 공공 건물, 교통 시스템. *주요 페인 포인트: 규정 준수 및 공공 자산의 장기적인 수명 확보.*\n* **B2B 상업/주거 부문 (25% 목표):** 오피스 타워, 병원, 고급 아파트. *주요 페인 포인트: 입주자 안전, 쾌적성 유지 및 보험 책임 감소.*\n\n**2. 경쟁 환경 분석 (차별화 전략):**\n* **강점:** 독자적인 EAI 예측 알고리즘, 압도적인 예측 정확도, 유연한 SaaS 모델, 환경 물리학에 대한 깊은 도메인 전문성.\n* **약점:** 초기 센서 배포 비용 및 안정적인 IoT 네트워크 인프라 구축의 필요성.\n* **기회:** 전 세계적인 ESG 의무 확대, 기후 변화에 따른 환경 변동성 증가, 그리고 비대면/원격 관리 수요 증가.\n* **위협:** 범용 AI 모니터링 도구의 급속한 개발, 기존 시설 관리 소프트웨어 공급업체와의 가격 경쟁.\n\n**3. 시장 진입 및 확장 전략 (단계별 접근):**\n* **1단계 (12개월): 초기 채택 및 검증:** 기술 채택률이 높은 한국과 싱가포르에서 5~10개의 핵심 레퍼런스 고객을 확보합니다. 운영 비용 25% 절감을 입증하는 사례 연구를 확보합니다.\n* **2단계 (13~36개월): 지역 확장 및 스케일업:** 일본, 미국, 독일로 영업 팀을 확장합니다. IBM Maximo, SAP와 같은 대형 CMMS 공급업체와의 전략적 파트너십에 집중합니다.\n* **3단계 (36개월 이상): 글로벌 리더십 확보:** 글로벌 채널 파트너십을 구축하고, 데이터 보안을 위한 ISO/IEC 인증을 획득합니다. AI 기반 자동 예방 유지보수 스케줄링 기능을 도입하여 시장을 선도합니다.",
-                title_finance: "재무 전망: 상세 예측 및 비즈니스 모델 분석",
-                text_finance: "당사의 재무 모델은 엔터프라이즈 SaaS(Software-as-a-Service)의 전형적인 고마진, 반복 매출 구조를 기반으로 하며, 하드웨어 배포를 위한 초기 설치 수수료로 보완됩니다.\n\n**1. 수익 구조 (Revenue Streams):**\n* **단계별 SaaS 구독 (70%):** 배포된 센서 수와 AI 서비스 수준(기본 모니터링, 고급 예측, 완전 자동 통합)에 따른 월별 반복 수수료입니다.\n* **하드웨어 및 설치 (25%):** 독점 센서 하드웨어 및 초기 설치/보정 서비스에 대한 일회성 수수료입니다. SaaS 매출이 성장함에 따라 이 비중은 점차 감소합니다.\n* **맞춤형 데이터 컨설팅 (5%):** 원자력 발전소, 심해 연구소 등 고유하거나 복잡한 시설 환경에 AI 모델을 맞춤화하는 고부가가치 서비스입니다.\n\n**2. 주요 재무 예측 (단위: 백만 USD):**\n| 지표 | 2025 회계연도 | 2026 회계연도 | 2027 회계연도 | 2028 회계연도 |\n| :--- | :--- | :--- | :--- | :--- |\n| **총 매출 (Total Revenue)** | 1.2M | 3.5M | 7.8M | 15.0M |\n| **매출 총이익률 (Gross Margin)** | 70% | 75% | 78% | 80% |\n| **운영 비용 (OpEx)** | 1.5M | 2.5M | 4.0M | 6.0M |\n| **세전·이자지급전이익 (EBITDA)** | (0.3M) | 0.1M | 3.8M | 9.0M |\n\n**3. 자금 활용 계획 및 소진율:** 공격적인 B2B 계약 확보에 힘입어 2026년 2분기에 현금 흐름 흑자(Cash-Flow Positive)에 도달할 것으로 예상합니다. 초기 투자는 R&D 마무리와 초기 영업/지원팀 확장에 매우 중요합니다.\n\n**4. 출구 전략 (Exit Strategy - 5~7년):** 당사는 최고의 예측 유지보수 기능을 기존 포트폴리오에 통합하려는 주요 산업 소프트웨어 또는 시설 관리 대기업(예: Honeywell, Siemens, Schneider Electric)에 의한 전략적 인수합병(M&A)을 예상합니다. 또는 연간 반복 매출(ARR) 5,000만 달러 달성 시 기업 공개(IPO)를 고려할 것입니다. 당사의 고마진 구조는 기업 가치를 극대화할 것입니다.",
-                stat_growth: "연평균 성장률(%)", stat_clients: "목표 고객사", stat_accuracy: "AI 예측 정확도(%)",
-                title_invest: "투자 제안: 자금 활용 및 기업 가치 평가",
-                text_invest: "Eco-Predict는 투자자들에게 산업용 IoT, 예측 AI, 그리고 글로벌 ESG 운동의 융합에 투자하여 수익을 창출할 수 있는 독특한 기회를 제공합니다. 당사의 확장성이 높고 고마진 구조의 모델은 배포 위험을 최소화하면서 장기적인 수익을 극대화합니다.\n\n**1. 투자 요청 및 기업 가치 평가:** 당사는 초기 **시드 라운드 투자로 500만 달러(USD)**를 요청하며, 이는 연간 반복 매출(ARR) 배수법을 사용하여 산정한 **세전 기업 가치(Pre-money Valuation) 1,500만 달러**를 기준으로 협상 가능한 지분과 교환될 것입니다.\n\n**2. 자금 활용 세부 배분:**\n* **40% - 연구 개발 (R&D):** 차세대 센서 하드웨어(더 작고, 긴 배터리 수명) 개발 완료, 구조 건전성 예측(진동 분석)을 포함하도록 AI 모델 확장, 그리고 핵심 국제 특허 출원에 사용됩니다.\n* **30% - 영업 및 마케팅 (S&M):** 미국 및 유럽 영업팀 확장 자금 확보, 시설 관리자를 대상으로 하는 포괄적인 리드 생성 캠페인 개발, 4개의 주요 산업 무역 박람회 참가 확보에 사용됩니다.\n* **20% - 운영 및 스케일링:** 5,000개 이상의 활성 시설을 지원할 수 있도록 클라우드 인프라(AWS/Azure)를 구축하고, SOC 2 Type II 규정 준수를 확보하는 데 사용됩니다.\n* **10% - 운전 자본 및 법무:** 예상치 못한 비용 및 필수적인 국제 법적 인증을 위한 완충 자금입니다.\n\n**3. 주요 이정표 및 투자 수익률(ROI) 전망:**\n* **이정표 1 (12개월):** ARR 150만 달러 달성 및 50개 활성 시설에 시스템 배포. AI 모델 v2.0 완성.\n* **이정표 2 (24개월):** ARR 500만 달러 달성 및 북미 지역 최초 B2G 계약 확보. 3개의 새로운 국가에 유통 파트너십 구축.\n* **예상 ROI:** 보수적인 성장 예측을 기반으로 할 때, 5~7년 내 전략적 출구 시점에서 초기 시드 투자자에게 **8~10배의 수익률**을 제공할 것으로 예상합니다. 예측 유지보수 시장의 엄청난 잠재력은 이러한 가치 평가의 강력한 기반이 됩니다."
-            },
-            zh: {
-                menu_overview:"概述",menu_tech:"技术",menu_market:"市场",menu_finance:"财务",menu_invest:"投资",
-                title_overview:"AI Eco-Predict：业务概述与宏大愿景",
-                text_overview:"**AI Eco-Predict** 平台代表着设施管理从被动式向**主动式预测维护 (PFM)** 的巨大转变，其核心驱动力是尖端人工智能技术。我们的目标是解决全球基础设施老化和环境风险带来的巨大经济损失，据估计每年高达数万亿美元。我们的愿景是实现 100% 预测性维护，消除停机时间，将资产寿命延长多达 40%，并通过减少重复维修和更换来降低碳足迹。我们致力于成为环境危害预测 (EHP) 服务的全球标准。\n\n**核心价值主张：** 1. **预测精度：** 利用专有的 RNN-LSTM 深度学习模型，提前数月以超过 99% 的准确率预测霉菌爆发、金属腐蚀和混凝土剥落等特定降解事件。 2. **成本控制：** 将紧急维修成本降低高达 70%，并将整体运营支出 (OpEx) 降低 25% 至 35%。 3. **ESG 贡献：** 通过最大化资源效率和确保居住者健康，直接支持客户的 ESG 目标。\n\n**目标市场（支持 10 种以上设施类型）：** 我们主要关注高价值、高风险的环境。我们的 AI 模型可适应 **10 种以上不同的设施类型（例如发电厂、仓库、医院等）**，包括：\n* 数据中心和服务器场（持续运营至关重要）。\n* 历史和遗产建筑（保护至关重要）。\n* 工业制造厂（腐蚀造成巨大损失）。\n* 大型商业和住宅综合体（侧重于居住者健康和霉菌预防）。\n\n**战略增长：** 我们的分阶段扩张计划始于亚太地区的 B2B 合作，随后积极扩张至北美和欧洲的 B2G（企业对政府）合同，特别是针对公共住房和国防基础设施。我们的 SaaS 模型从第一天起就设计为全球可扩展，部署时只需最少的物理修改。",
-                title_tech:"核心技术：AI 预测引擎及物联网架构",
-                text_tech_image: "图片说明: AI Eco-Predict 综合解决方案架构，突出传感器、云和预测性 UI 集成。", // ADDED KEY
-                text_tech: "AI Eco-Predict 解决方案基于定制化的 IoT 硬件和专有机器学习算法。 **1. 数据采集层：** 我们使用非侵入式、低功耗的 IoT 传感器套件，可测量温度、相对湿度 (RH)、挥发性有机化合物 (VOCs)、PM 颗粒物等 12 项以上的关键环境参数。数据通过 LoRaWAN 等安全协议传输。 **2. 数据处理与特征工程：** 我们的专利算法通过交叉关联传感器输入，生成复杂的**“环境老化指数 (EAI)”**。这些派生特征是提高模型精度的关键。 **3. AI 预测引擎：** 采用 RNN 结合 LSTM 单元的深度学习架构。LSTM 非常适合分析和预测具有长期依赖性的时间序列数据，使我们能够提前 3-6 个月预测风险。 **4. 用户界面与集成：** 预测仪表板提供清晰的风险可视化（红绿灯系统），并提供具体的维护建议。RESTful API 可无缝集成到现有的建筑管理系统 (BMS) 和 CMMS 中。",
-                title_market:"市场与增长前景：深入分析和扩张策略",
-                text_market:"智能设施管理和预测性维护 (PdM) 市场是一个高增长领域，预计到 2030 年市场规模将超过 1500 亿美元，年复合增长率 (CAGR) 超过 20%。 **1. 市场细分：** 我们集中于 B2B 工业（40% 目标）、B2G 公共基础设施（35% 目标）和 B2B 商业/住宅（25% 目标）。工业客户关注停机时间成本，公共客户关注法规遵守和资产寿命。 **2. 竞争优势 (SWOT)：** 我们的优势在于 EAI 算法的独特性、预测的高精度以及灵活的 SaaS 模式。外部机会包括全球 ESG 浪潮和气候变化带来的管理需求。 **3. 市场战略：** **第一阶段（12个月）：** 在韩国和新加坡建立 5-10 个关键客户的参考案例，证明 OpEx 降低 25%。 **第二阶段（13-36个月）：** 扩大销售团队至日本、美国和德国，并与大型 CMMS 供应商（如 SAP）建立战略伙伴关系。 **第三阶段：** 追求全球领导地位，实现 ISO/IEC 认证并推出 AI 驱动的自动化维护调度功能。",
-                title_finance:"财务预测：详细报表与业务模型",
-                text_finance:"我们的财务模型基于高利润、经常性收入的 SaaS 结构，并辅以硬件部署的初始设置费。 **1. 收入来源：** **分级 SaaS 订阅 (70%)：** 根据部署的传感器数量和 AI 服务级别收取的月度费用。 **硬件和安装 (25%)：** 专有传感器硬件和初始安装服务的一次性费用。 **定制数据咨询 (5%)：** 针对高度复杂设施（如核电站）提供的增值服务。 **2. 关键财务指标 (百万 USD)：** 2025 年总收入 1.2M，2028 年预计达 15.0M。预计 2026 年第二季度实现现金流转正。 **3. 退出策略 (5-7 年)：** 预计将被大型工业软件或设施管理集团（如西门子、施耐德电气）战略性收购，或在年度经常性收入 (ARR) 达到 5000 万美元时进行 IPO。",
-                stat_growth: "年增长率(%)", stat_clients: "目标客户", stat_accuracy: "AI 预测准确率(%)",
-                title_invest:"投资机会：资金用途和估值分析",
-                text_invest: "Eco-Predict 为投资者提供了一个独特的机会，可以从工业物联网、预测性人工智能和全球 ESG 趋势的融合中获利。我们的高可扩展性、高利润率模型最大限度地降低了部署风险，同时最大限度地提高了长期回报。 **1. 投资需求与估值：** 我们寻求 **500 万美元的种子轮投资**，以换取可协商的股权，预估值为 1500 万美元（使用年度经常性收入倍数法）。 **2. 资金用途（详细分配）：** **40% - 研发：** 完成下一代硬件开发、扩展 AI 模型以包括结构完整性预测并申请国际专利。 **30% - 销售与营销：** 扩大美国和欧盟销售团队，并参加主要行业展会。 **20% - 运营与扩展：** 建立云基础设施以支持 5,000 个活跃设施，并确保 SOC 2 Type II 合规性。 **3. 关键里程碑和投资回报率 (ROI)：** **里程碑 1 (12个月)：** 实现 150 万美元 ARR。 **预计 ROI：** 基于保守增长预测，预计初始种子投资者在 5-7 年内战略退出时将获得 8-10 倍的回报。"
-            },
-            jp: {
-                menu_overview:"概要",menu_tech:"技術",menu_market:"市場",menu_finance:"財務",menu_invest:"投資",
-                title_overview:"AI Eco-Predict：事業概要とビジョン",
-                text_overview:"**AI Eco-Predict** プラットフォームは、最先端の AI によって、施設管理を事後対応型から**予防的予測保全 (PFM)** へと移行させる大きな変革を意味します。当社のビジョンは、世界のインフラの劣化と環境リスクによる予期せぬ故障と修正保守に起因する莫大な世界経済コストを根絶することです。私たちは、保全が100%予測的になり、ダウンタイムを排除し、資産寿命を最大 40% 延長し、環境負荷を低減する未来を目指しています。環境ハザード予測 (EHP) サービスのグローバルスタンダード確立が目標です。\n\n**コアバリュー提案：** 1. **高精度予測：** 独自の RNN-LSTM ディープラーニングモデルを活用し、カビの発生、金属腐食、コンクリートの剥落などの特定の劣化イベントを数ヶ月前に 99% 以上の精度で予測します。 2. **コスト削減：** 必要な時に必要な場所への介入を可能にすることで、緊急修理コストを最大 70% 削減し、全体的な運用費 (OpEx) を 25%〜35% 削減します。 3. **ESG 貢献：** 資源効率を最大化し、廃棄物を最小限に抑えることで、企業および政府の ESG 目標達成に直接貢献します。\n\n**ターゲット市場（10 以上の施設タイプに対応）：** 当社は、高価値、高リスクの環境に焦点を当てています。当社の AI モデルは、**10 種類以上の多様な施設タイプ（例：発電所、倉庫、病院など）**に適用可能であり、以下を含みます：\n* データセンターとサーバーファーム（継続的な運用が最重要）。\n* 歴史的建造物と文化遺産（保存が重要）。\n* 産業製造工場（腐食が甚大な損失を引き起こす）。\n* 大規模商業施設および住宅施設（居住者の健康とカビの予防に焦点を当てる）。\n\n**戦略的成長：** 当社の段階的拡張計画は、APAC地域での B2B パートナーシップから始まり、その後、北米およびヨーロッパの B2G（企業対政府）契約への積極的な拡大を計画しており、特に公共住宅および防衛インフラをターゲットとしています。当社の SaaS モデルは、展開時の物理的な変更を最小限に抑え、初日からグローバルなスケーラビリティを実現するように設計されています。",
-                title_tech:"コア技術：AI予測エンジンとIoTアーキテクチャの詳細",
-                text_tech_image: "画像の説明: AI Eco-Predict ソリューションの包括的なアーキテクチャ。センサー、クラウド、予測 UI の統合を強調しています。", // ADDED KEY
-                text_tech: "AI Eco-Predict ソリューションは、カスタムメイドの IoT ハードウェアと独自の機械学習アルゴリズムを組み合わせた強固な技術スタックに基づいています。 **1. データ取得レイヤー：** 温度、相対湿度 (RH)、VOCs、PM 粒子状物質など、12 以上の重要な環境パラメーターを測定する、目立たない省電力 IoT センサーを使用します。データは LoRaWAN などの安全なプロトコルを介して送信されます。 **2. データ処理と特徴量エンジニアリング：** 当社の特許出願中のアルゴリズムは、異なるセンサー入力を相互に関連付けることで、複雑な**「環境老化指数 (EAI)」**を生成します。この派生特徴量が予測モデルの精度を劇的に向上させます。 **3. AI予測エンジン：** 長短期記憶 (LSTM) ユニットを備えた深層リカレントニューラルネットワーク (RNN-LSTM) を採用しています。LSTM は、季節的な温度変化やゆっくりとした腐食パターンなど、長期的な依存性を持つ時系列データの分析に優れており、3〜6ヶ月前のリスク予測を可能にします。 **4. UIとAPI：** 予測ダッシュボードは、信号システム（緑、黄、赤）でリスクを視覚化し、「セクター 4B の露点を 65% RH 未満に下げるために換気量を 10% 増やす」といった具体的なメンテナンス推奨事項を提供します。RESTful API は、既存のビル管理システム (BMS) や CMMS とのシームレスな統合を可能にします。",
-                title_market:"市場と成長展望：分析、セグメンテーション、参入戦略",
-                text_market:"スマート施設管理および予測保全 (PdM) 市場は、非常に成長率の高い分野です。2024年に 450 億ドルと評価され、2030 年までに 1500 億ドルを超えると予測されており、年平均成長率 (CAGR) は 20% を超えます。 **1. 市場セグメンテーション：** 当社は、B2B 産業部門（40% 目標）、B2G 公共インフラ部門（35% 目標）、B2B 商業/住宅部門（25% 目標）に焦点を当てています。産業顧客は計画外のダウンタイムコストを、公共顧客は規制順守と資産寿命を重視します。 **2. 競争分析 (SWOT)：** EAI アルゴリズムの独自性、高い予測精度、柔軟な SaaS モデルが当社の強みです。外部の機会には、世界的な ESG の義務化と、パンデミック後のリモート管理の必要性が含まれます。 **3. 市場参入戦略：** **フェーズ 1 (12ヶ月)：** 韓国とシンガポールで 5〜10 の重要な参照クライアントを獲得し、運用費 25% 削減を実証するケーススタディを確保します。 **フェーズ 2 (13-36ヶ月)：** 日本、米国、ドイツに営業チームを拡大し、大型 CMMS ベンダー（例：SAP）との戦略的パートナーシップに注力します。 **フェーズ 3：** グローバルチャネルパートナーシップを確立し、ISO/IEC 認証を取得し、AI 主導の自動予防保守スケジューリングを導入します。",
-                title_finance:"財務予測：詳細な財務見通しとビジネスモデル",
-                text_finance:"当社の財務モデルは、エンタープライズ SaaS の典型的な高利益率の経常収益構造に基づいており、ハードウェア展開のための初期設定費用によって補完されています。 **1. 収益源：** **階層型 SaaS サブスクリプション (70%)：** デプロイされたセンサー数と AI サービスレベルに基づく月額料金。 **ハードウェアと設置 (25%)：** 独自のセンサーハードウェアと初期設置サービスの一回限りの料金。 **カスタムデータコンサルタント (5%)：** 原子力発電所などの非常に複雑な施設向けの高価値サービス。 **2. 主要財務予測 (百万 USD)：** 2025 年の総収益は 1.2M、2028 年には 15.0M に達すると予測されています。 2026 年第 2 四半期にキャッシュフローがプラスになる見込みです。 **3. 出口戦略 (5-7 年)：** 主要な産業ソフトウェアまたは施設管理コングロマリット（例：シーメンス）による戦略的買収、または年間経常収益 (ARR) 5000 万ドル達成時の IPO を予測しています。",
-                stat_growth: "年間成長率(%)", stat_clients: "ターゲット顧客", stat_accuracy: "AI予測精度(%)",
-                title_invest:"投資提案：資金使途と企業評価",
-                text_invest: "Eco-Predict は、投資家が産業用 IoT、予測 AI、およびグローバル ESG の融合から利益を得るための独自の機会を提供します。当社のスケーラブルで高利益率のモデルは、展開リスクを最小限に抑え、長期的なリターンを最大化します。 **1. 投資要求と評価：** 当社は、**シードラウンド投資として 500 万ドル (USD)** を求め、年間経常収益 (ARR) の倍数法に基づく **プリマネー評価額 1500 万ドル**に基づいて、交渉可能な持分と交換されます。 **2. 資金使途（詳細）：** **40% - 研究開発 (R&D)：** 次世代センサーハードウェアの開発完了、AI モデルの構造健全性予測への拡張、および主要な国際特許の追求。 **30% - 営業およびマーケティング (S&M)：** 米国および EU の営業チームの拡大、施設管理者向けの包括的なリードジェネレーションキャンペーン、主要な産業見本市への参加。 **20% - 運用とスケーリング：** 5,000 のアクティブ施設をサポートするためのクラウドインフラストラクチャ (AWS/Azure) の構築、SOC 2 Type II コンプライアンスの確保。 **3. 主なマイルストーンと ROI：** **マイルストーン 1 (12ヶ月)：** ARR 150 万ドルを達成し、50 のアクティブ施設にシステムを展開。AI モデル v2.0 を完成。 **予測 ROI：** 保守的な成長予測に基づいて、5-7 年後の戦略的出口時に初期シード投資家に対して 8-10 倍のリターンを提供すると予測しています。この PFM の巨大な未開拓市場がこの評価の強力な基盤です。"
-            }
-        };
-
-        const languageButtons = document.querySelectorAll('.lang-footer button');
-        
-        // Function to apply translations and update active button
+        // 3. Language Update Function (Multi-lingual support)
         const updateLanguage = (lang) => {
-            // Update active state for buttons
-            languageButtons.forEach(b => b.classList.remove('active'));
-            const activeBtn = document.querySelector(`.lang-footer button[data-lang="${lang}"]`);
-            if (activeBtn) activeBtn.classList.add('active');
+            document.querySelectorAll('.lang-footer button').forEach(b => {
+                b.classList.remove('active', 'bg-white', 'text-secondary');
+                if (b.dataset.lang === lang) {
+                    b.classList.add('active', 'bg-white', 'text-secondary');
+                }
+            });
 
-            // Update text content
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
                 if (translations[lang] && translations[lang][key]) {
-                    // Replace **text** with <strong>text</strong> for bolding
+                    // **text**를 <strong>text</strong>로 대체하고 줄바꿈 처리
                     let htmlContent = translations[lang][key]
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\n/g, '<br><br>'); // 줄 바꿈을 <br><br>로 대체하여 HTML에서 단락 나누기
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                     el.innerHTML = htmlContent;
                 }
             });
-            document.documentElement.lang = lang; // Set HTML lang attribute
+            document.documentElement.lang = lang;
+            
+            // 언어가 변경되면 차트 제목도 다시 렌더링하도록 차트 재생성
+            if (myChart) {
+                myChart.options.plugins.title.text = (lang === 'ko' ? '5개년 예상 매출액 (백만 USD)' : '5-Year Revenue Projection');
+                myChart.update();
+            }
+        };
+        
+        // 4. Page Routing Function (Handling dynamic view)
+        const navigateTo = (pageId) => {
+            // Check if pageId is valid
+            if (!pages.includes(pageId)) {
+                pageId = 'overview'; // Default to overview
+            }
+
+            // 1. Hide all pages and activate the target
+            document.querySelectorAll('.page-content').forEach(section => {
+                section.classList.remove('active');
+                // 재무 페이지가 숨겨질 때 애니메이션 상태 초기화
+                if (section.id === 'finance') {
+                    document.querySelectorAll('.count').forEach(c => c.dataset.animated = 'false');
+                }
+            });
+            const targetSection = document.getElementById(pageId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // 2. Update navigation active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${pageId}`) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // 3. Update URL hash
+            if (window.location.hash !== `#${pageId}`) {
+                history.pushState(null, null, `#${pageId}`);
+            }
+
+            // 4. Run finance specific animations if finance page is active
+            if (pageId === 'finance') {
+                initializeChart();
+                animateCount();
+            }
         };
 
-        languageButtons.forEach(btn => {
+
+        // --- Event Listeners and Initial Setup ---
+
+        // 1. Handle Navigation Clicks
+        document.getElementById('main-nav').addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const pageId = e.target.getAttribute('href').substring(1);
+                navigateTo(pageId);
+            }
+        });
+
+        // 2. Handle Hash Change (Back/Forward browser buttons)
+        window.addEventListener('popstate', () => {
+            const hash = window.location.hash.substring(1) || 'overview';
+            navigateTo(hash);
+        });
+
+        // 3. DOM Load and Initial State Setup
+        document.addEventListener('DOMContentLoaded', () => {
+            // 초기 언어 설정 (스플래시 제거로 인해 DOMContentLoaded에서 바로 실행)
+            const preferredLanguage = navigator.language.split('-')[0];
+            let initialLang = 'ko'; 
+
+             if (translations[preferredLanguage]) {
+                 initialLang = preferredLanguage;
+             } else if (preferredLanguage === 'zh') {
+                 initialLang = 'zh';
+             } else if (preferredLanguage === 'jp') {
+                 initialLang = 'jp';
+             } else {
+                 initialLang = 'en'; 
+             }
+            
+            updateLanguage(initialLang);
+
+            // Initial Page Load (based on URL hash or default to overview)
+            const initialHash = window.location.hash.substring(1) || 'overview';
+            navigateTo(initialHash);
+        });
+        
+        // 4. Language Button Clicks
+        document.querySelectorAll('.lang-footer button').forEach(btn => {
             btn.addEventListener('click', () => {
                 const lang = btn.dataset.lang;
                 updateLanguage(lang);
             });
         });
         
-        // Initial language detection (only performed once on load)
-        const initialLanguageSetup = () => {
-             const preferredLanguage = navigator.language.split('-')[0];
-             let initialLang = 'ko'; // 요청이 한국어였으므로 초기 언어를 한국어로 설정
-
-             // Check if user's preferred language (ko, zh, jp) is supported
-             if (preferredLanguage === 'ko' || preferredLanguage === 'zh' || preferredLanguage === 'jp') {
-                 initialLang = preferredLanguage;
-             } else {
-                 initialLang = 'en'; // 그 외 언어는 영어로 설정
-             }
-             
-             // Apply the detected or default language
-             updateLanguage(initialLang);
-        };
-
-        // DOMContentLoaded 이벤트 리스너를 하나로 통합하고, 차트 초기화 로직을 추가
-        document.addEventListener('DOMContentLoaded', () => {
-             initialLanguageSetup();
-             initializeChart(); // 차트 초기화 호출
-        });
     </script>
 </body>
 </html>
