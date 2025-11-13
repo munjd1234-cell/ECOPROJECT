@@ -29,7 +29,7 @@
             font-size: 16px; /* Base font size */
         }
 
-        /* Splash */
+        /* Splash: 흰색 화면 노출 최소화를 위해 애니메이션 시간을 단축 */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -40,7 +40,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            animation: fadeOut 1s ease-in-out 2s forwards;
+            animation: fadeOut 0.1s ease-in-out forwards; /* 2s -> 0.1s 단축 */
             z-index: 9999;
         }
         @keyframes fadeOut {
@@ -206,7 +206,7 @@
                 padding: 12px 10%;
             }
             header img {
-                height: 50px;
+                height: 70px; /* PC 로고 크기 재조정 */
                 margin-bottom: 0;
             }
             nav {
@@ -320,13 +320,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Splash transition (2 sec)
+        // Splash transition: 2000ms -> 100ms로 단축하여 흰색 화면 노출 최소화
         setTimeout(() => {
             const splash = document.querySelector('.splash-screen');
             const main = document.querySelector('.main-content');
             if (splash) splash.style.display = 'none';
             if (main) main.style.display = 'block';
-        }, 2000);
+        }, 100);
 
         // Counter animation
         const counters = document.querySelectorAll('.count');
@@ -377,7 +377,7 @@
                     datasets: [{
                         label: 'Projected Revenue (Million USD)',
                         data: [1.2, 3.5, 7.8, 12.3, 18.7],
-                        backgroundColor: var(--primary, '#00c49a'),
+                        backgroundColor: '#00c49a',
                         borderRadius: 5,
                     }]
                 },
@@ -441,7 +441,7 @@
                 title_market:"市場と成長展望",
                 text_market:"スマート環境管理市場は年率 **15%以上**で急成長しています。世界的な **ESG** と持続可能性の傾向により、AI診断システムは施設管理のインフラとして不可欠になっています。",
                 title_finance:"財務予測",
-                text_finance:"戦略的な **B2B** および **B2G** パートナーシップを通じて、今後3年間で安定した収益成長を予測しています。拡張性の高いSaaSモデルにより、高い利益率を確保します。",
+                text_finance:"戦略的な **B2B** 및 **B2G** 파트너십을 통해,今後3年間で安定した収益成長を予測しています。拡張性の高いSaaSモデルにより、高い利益率を確保します。",
                 stat_growth:"年間成長率(%)",stat_clients:"目標顧客",stat_accuracy:"AI予測精度(%)",
                 title_invest:"投資提案",
                 text_invest:"Eco-Predictは、大きな社会的影響力を持つスケーラブルなデータ駆動型ビジネスモデルです。あなたの投資は、ハードウェア生産、**AI モデルの強化**、および国際認証を加速させます。持続可能で収益性の高い未来を共に築きましょう。"
