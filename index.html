@@ -1,4 +1,10 @@
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Eco-Predict</title>
+  <style>
     * {margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
     body {background:#f4f6f8;color:#222;overflow-x:hidden;}
     
@@ -21,8 +27,8 @@
       display:flex;align-items:center;justify-content:space-between;
       padding:12px 5%;position:sticky;top:0;z-index:5;
     }
-    /* PC: 로고 높이 48px */
-    header img{height:48px; width:auto; max-width:100%;}
+    /* PC: 로고 높이 48px -> 70px로 확대 */
+    header img{height:70px; width:auto; max-width:100%;}
     nav a {
       margin:0 12px;text-decoration:none;color:#444;font-weight:500;transition:0.3s;
     }
@@ -74,7 +80,7 @@
     /* Mobile */
     @media (max-width:768px){
       header{flex-direction:column;}
-      /* Mobile: 로고 높이 36px로 축소 */
+      /* Mobile: 로고 높이 36px 유지 */
       header img{height:36px;}
       nav{margin-top:10px;}
       section{padding:60px 5%;}
@@ -82,3 +88,202 @@
       .lang-footer{flex-wrap:wrap;gap:10px;}
     }
   </style>
+</head>
+<body>
+
+    <div class="splash-screen"></div>
+
+    <div class="main-content">
+    <header>
+      <img src="logo.jpg" alt="Eco-Predict logo" />
+      <nav>
+        <a href="#overview" data-key="menu_overview">Overview</a>
+        <a href="#technology" data-key="menu_tech">Technology</a>
+        <a href="#market" data-key="menu_market">Market</a>
+        <a href="#finance" data-key="menu_finance">Finance</a>
+        <a href="#investment" data-key="menu_invest">Investment</a>
+      </nav>
+    </header>
+
+        <section id="overview">
+      <h1 data-key="title_overview">AI Eco-Predict Overview</h1>
+      <p data-key="text_overview">
+        AI Eco-Predict is an AI-driven system that forecasts environmental aging and hazards in buildings and facilities.
+        By predicting mold, corrosion, and pollution before they occur, it enables proactive maintenance and reduces costs.
+      </p>
+    </section>
+
+        <section id="technology">
+      <h2 data-key="title_tech">Core Technology</h2>
+      <p data-key="text_tech">
+        Our proprietary AI Prediction Engine analyzes environmental data collected by IoT sensors (temperature, humidity, VOCs, CO₂).
+        Using RNN (Recurrent Neural Network) models, we identify risk patterns and predict deterioration before visible damage occurs.
+      </p>
+    </section>
+
+        <section id="market">
+      <h2 data-key="title_market">Market and Growth</h2>
+      <p data-key="text_market">
+        The global smart environment management market is growing at over 15% annually.
+        With ESG and sustainability trends, AI-powered diagnostic systems are rapidly becoming essential in facility management.
+      </p>
+    </section>
+
+        <section id="finance">
+      <h2 data-key="title_finance">Financial Forecast</h2>
+      <p data-key="text_finance">
+        We project steady revenue growth through B2B and B2G partnerships over the next 3 years.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="count" data-target="35">0</div>
+          <p data-key="stat_growth">Annual Growth (%)</p>
+        </div>
+        <div class="stat">
+          <div class="count" data-target="1200">0</div>
+          <p data-key="stat_clients">Target Clients</p>
+        </div>
+        <div class="stat">
+          <div class="count" data-target="100">0</div>
+          <p data-key="stat_accuracy">AI Prediction Accuracy (%)</p>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="revenueChart"></canvas>
+              </div>
+    </section>
+
+        <section id="investment">
+      <h2 data-key="title_invest">Investment Opportunity</h2>
+      <p data-key="text_invest">
+        Eco-Predict offers a scalable, data-driven business model.
+        Your investment accelerates hardware production, AI enhancement, and international certification.
+        Together, we build a sustainable and profitable future.
+      </p>
+    </section>
+  </div>
+
+    <div class="lang-footer">
+    <button data-lang="en">🇬🇧 English</button>
+    <button data-lang="ko">🇰🇷 한국어</button>
+    <button data-lang="zh">🇨🇳 中文</button>
+    <button data-lang="jp">🇯🇵 日本語</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Splash transition (2 sec)
+    setTimeout(() => {
+      document.querySelector('.splash-screen').style.display = 'none';
+      document.querySelector('.main-content').style.display = 'block';
+    }, 2000);
+
+    // Counter animation
+    const counters = document.querySelectorAll('.count');
+    const speed = 100;
+    const animateCount = () => {
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const updateCount = () => {
+          const current = +counter.innerText;
+          const increment = target / speed;
+          // NOTE: target이 100일 경우, Math.ceil(99.x)가 100이 되어 무한루프를 막기 위해 수정했습니다.
+          if (current < target) {
+            counter.innerText = Math.ceil(current + increment);
+            setTimeout(updateCount, 30);
+          } else counter.innerText = target;
+        };
+        updateCount();
+      });
+    };
+    // 스크롤 시 카운터 애니메이션 실행
+    window.addEventListener('scroll', () => {
+      const finance = document.querySelector('#finance');
+      const rect = finance.getBoundingClientRect();
+      // Finance 섹션이 뷰포트에 들어왔을 때 실행
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        // 카운터가 이미 갱신되지 않은 경우에만 실행하도록 개선할 수 있습니다.
+        animateCount();
+      }
+    });
+    // 초기 로딩 시에도 카운터 섹션이 뷰포트에 있을 수 있으므로 한 번 호출
+    // animateCount(); 
+
+    // Chart.js graph
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['2025', '2026', '2027', '2028', '2029'],
+        datasets: [{
+          label: 'Projected Revenue (Million USD)',
+          data: [1.2, 3.5, 7.8, 12.3, 18.7],
+          backgroundColor: '#00b894'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // Multi-language support
+    const translations = {
+      ko: {
+        menu_overview: "개요", menu_tech: "기술", menu_market: "시장", menu_finance: "재무", menu_invest: "투자",
+        title_overview: "AI Eco-Predict 개요",
+        text_overview: "AI Eco-Predict는 AI를 활용하여 건물 및 시설의 환경 노후화와 오염 위험을 예측하는 시스템입니다.",
+        title_tech: "핵심 기술",
+        text_tech: "당사의 AI 예측 엔진은 RNN 기반 모델로 센서 데이터를 분석하여 위험 패턴을 사전에 탐지합니다.",
+        title_market: "시장 및 성장 전망",
+        text_market: "글로벌 스마트 환경 관리 시장은 매년 15% 이상 성장하고 있으며, ESG 트렌드에 따라 빠르게 확대되고 있습니다.",
+        title_finance: "재무 전망",
+        text_finance: "향후 3년간 B2B 및 B2G 중심의 매출 성장을 예상합니다.",
+        stat_growth: "연평균 성장률(%)", stat_clients: "고객사 확보 목표", stat_accuracy: "AI 예측 정확도(%)",
+        title_invest: "투자 제안",
+        text_invest: "Eco-Predict는 데이터 기반 사업모델로, 초기 투자를 통해 시장 점유율 확대와 기술 고도화를 추진합니다."
+      },
+      zh: {
+        menu_overview:"概述",menu_tech:"技术",menu_market:"市场",menu_finance:"财务",menu_invest:"投资",
+        title_overview:"AI Eco-Predict 概述",
+        text_overview:"AI Eco-Predict 是一个利用 AI 预测建筑和设施环境老化的系统。",
+        title_tech:"核心技术",
+        text_tech:"AI 引擎基于 RNN 模型分析传感器数据，提前发现风险模式。",
+        title_market:"市场与增长前景",
+        text_market:"全球智能环境管理市场每年增长超过 15%，ESG 趋势推动需求迅速扩大。",
+        title_finance:"财务预测",
+        text_finance:"预计未来三年通过 B2B 和 B2G 合作稳步增长。",
+        stat_growth:"年均增长率(%)",stat_clients:"目标客户",stat_accuracy:"AI 预测准确率(%)",
+        title_invest:"投资机会",
+        text_invest:"Eco-Predict 提供可扩展的数据驱动商业模式，投资将推动硬件生产与国际化。"
+      },
+      jp: {
+        menu_overview:"概要",menu_tech:"技術",menu_market:"市場",menu_finance:"財務",menu_invest:"投資",
+        title_overview:"AI Eco-Predict 概要",
+        text_overview:"AI Eco-PredictはAIを活用し、建物や施設の環境老化を予測するシステムです。",
+        title_tech:"コア技術",
+        text_tech:"RNNベースのAIエンジンがセンサーデータを分析し、危険パターンを事前検知します。",
+        title_market:"市場と成長展望",
+        text_market:"スマート環境市場は年15%以上成長し、ESGトレンドにより需要が急増しています。",
+        title_finance:"財務予測",
+        text_finance:"今後3年間、B2BおよびB2Gで安定的な成長を見込んでいます。",
+        stat_growth:"年間成長率(%)",stat_clients:"目標顧客",stat_accuracy:"AI予測精度(%)",
+        title_invest:"投資提案",
+        text_invest:"Eco-Predictはデータ駆動型モデルで、初期投資により市場シェア拡大を加速します。"
+      }
+    };
+
+    document.querySelectorAll('.lang-footer button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('[data-key]').forEach(el => {
+          const key = el.getAttribute('data-key');
+          if(translations[lang][key]) el.innerText = translations[lang][key];
+        });
+      });
+    });
+  </script>
+</body>
+</html>
