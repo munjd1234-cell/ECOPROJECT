@@ -1,289 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Eco-Predict</title>
-  <style>
-    * {margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
-    body {background:#f4f6f8;color:#222;overflow-x:hidden;}
-    
-    /* Splash */
-    .splash-screen {
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:#000 url('p1.jpg') center/cover no-repeat;
-      display:flex;justify-content:center;align-items:center;
-      animation:fadeOut 1s ease-in-out 2s forwards;
-      z-index:10;
-    }
-    @keyframes fadeOut {to{opacity:0;visibility:hidden;}}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Eco-Predict</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00c49a; /* Fresh Green */
+            --secondary: #00796b;
+            --background: #f0f4f8;
+            --text-dark: #2c3e50;
+            --text-light: #556c80;
+            --card-bg: #ffffff;
+        }
 
-    /* Main */
-    .main-content {display:none;animation:fadeIn 1s ease-in-out forwards;}
-    @keyframes fadeIn {from{opacity:0;}to{opacity:1;}}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-    header {
-      background:white;box-shadow:0 2px 10px rgba(0,0,0,0.05);
-      display:flex;align-items:center;justify-content:space-between;
-      padding:12px 5%;position:sticky;top:0;z-index:5;
-    }
-    /* PC: 로고 높이 48px -> 70px로 확대 */
-    header img{height:70px; width:auto; max-width:100%;}
-    nav a {
-      margin:0 12px;text-decoration:none;color:#444;font-weight:500;transition:0.3s;
-    }
-    nav a:hover{color:#00b894;}
-    
-    section {
-      padding:80px 10%;min-height:100vh;display:flex;
-      flex-direction:column;justify-content:center;
-    }
-    section:nth-child(even){background:#fff;}
-    h1,h2{color:#00796b;margin-bottom:20px;}
-    p{line-height:1.7;color:#444;}
+        body {
+            background: var(--background);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            font-size: 16px; /* Base font size */
+        }
 
-    /* Stats */
-    .stats {
-      display:flex;flex-wrap:wrap;justify-content:center;margin-top:40px;
-    }
-    .stat {
-      flex:1 1 200px;text-align:center;margin:20px;background:#e8f5e9;
-      padding:30px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.05);
-      transition:transform 0.3s;
-    }
-    .stat:hover{transform:translateY(-5px);}
-    .count{font-size:2.5em;color:#00796b;font-weight:bold;}
+        /* Splash */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000 url('p1.jpg') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeOut 1s ease-in-out 2s forwards;
+            z-index: 9999;
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
 
-    /* Chart */
-    .chart-container {
-      margin-top:40px;
-      background:#fff;
-      border-radius:15px;
-      padding:20px;
-      box-shadow:0 5px 15px rgba(0,0,0,0.05);
-    }
+        /* Main Content */
+        .main-content {
+            display: none;
+            animation: fadeIn 1s ease-in-out forwards;
+            padding-bottom: 50px; /* Space for the fixed language footer */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-    /* Language Footer */
-    .lang-footer {
-      position:fixed;bottom:0;left:0;width:100%;
-      background:#00796b;color:#fff;display:flex;
-      justify-content:center;align-items:center;gap:20px;
-      padding:10px 0;z-index:15;
-    }
-    .lang-footer button {
-      background:none;border:1px solid #fff;
-      color:#fff;padding:6px 12px;border-radius:6px;
-      cursor:pointer;font-size:0.9em;transition:0.3s;
-    }
-    .lang-footer button:hover {background:#fff;color:#00796b;}
+        /* Header (Optimized for Mobile) */
+        header {
+            background: var(--card-bg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        header img {
+            height: 40px; /* Mobile focused logo size */
+            margin-bottom: 5px;
+        }
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            padding-top: 5px;
+        }
+        nav a {
+            margin: 5px 8px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: 0.3s;
+            padding-bottom: 3px;
+        }
+        nav a:hover, nav a.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        /* Section Styling */
+        section {
+            padding: 40px 5%; /* Mobile friendly padding */
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        section:nth-child(even) {
+            background: var(--card-bg);
+        }
 
-    /* Mobile */
-    @media (max-width:768px){
-      header{flex-direction:column;}
-      /* Mobile: 로고 높이 36px 유지 */
-      header img{height:36px;}
-      nav{margin-top:10px;}
-      section{padding:60px 5%;}
-      .count{font-size:1.8em;}
-      .lang-footer{flex-wrap:wrap;gap:10px;}
-    }
-  </style>
+        h1, h2 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-weight: 700;
+            font-size: 1.8rem; /* Mobile H2 size */
+        }
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            color: var(--primary);
+        }
+        p {
+            line-height: 1.6;
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Stats (Modern Card Design) */
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .stat {
+            flex: 0 0 45%; /* Two per row on mobile */
+            text-align: center;
+            margin: 8px 0;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-bottom: 4px solid var(--primary);
+            transition: transform 0.3s;
+        }
+        .stat:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        .count {
+            font-size: 2em;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .stat p {
+            font-size: 0.9rem;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        /* Chart */
+        .chart-container {
+            margin-top: 30px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Language Footer (Sticky bottom) */
+        .lang-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--secondary);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 0;
+            z-index: 100;
+        }
+        .lang-footer button {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.3s;
+        }
+        .lang-footer button:hover, .lang-footer button.active {
+            background: #fff;
+            color: var(--secondary);
+            border-color: #fff;
+        }
+
+        /* Tablet/Desktop adjustments (Minor) */
+        @media (min-width: 768px) {
+            header {
+                flex-direction: row;
+                padding: 12px 10%;
+            }
+            header img {
+                height: 50px;
+                margin-bottom: 0;
+            }
+            nav {
+                justify-content: flex-end;
+                width: auto;
+                padding-top: 0;
+            }
+            nav a {
+                font-size: 1rem;
+                margin: 0 12px;
+            }
+            section {
+                padding: 80px 10%;
+            }
+            h1 {
+                text-align: left;
+                font-size: 2.5rem;
+            }
+            h2 {
+                font-size: 2rem;
+            }
+            .stat {
+                flex: 1 1 250px; /* Three per row on desktop */
+                margin: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="splash-screen"></div>
+    <div class="splash-screen"></div>
 
-    <div class="main-content">
-    <header>
-      <img src="logo.jpg" alt="Eco-Predict logo" />
-      <nav>
-        <a href="#overview" data-key="menu_overview">Overview</a>
-        <a href="#technology" data-key="menu_tech">Technology</a>
-        <a href="#market" data-key="menu_market">Market</a>
-        <a href="#finance" data-key="menu_finance">Finance</a>
-        <a href="#investment" data-key="menu_invest">Investment</a>
-      </nav>
-    </header>
+    <div class="main-content">
+        <header>
+            <img src="logo.jpg" alt="Eco-Predict logo" />
+            <nav>
+                <a href="#overview" data-key="menu_overview">Overview</a>
+                <a href="#technology" data-key="menu_tech">Technology</a>
+                <a href="#market" data-key="menu_market">Market</a>
+                <a href="#finance" data-key="menu_finance">Finance</a>
+                <a href="#investment" data-key="menu_invest">Investment</a>
+            </nav>
+        </header>
 
-        <section id="overview">
-      <h1 data-key="title_overview">AI Eco-Predict Overview</h1>
-      <p data-key="text_overview">
-        AI Eco-Predict is an AI-driven system that forecasts environmental aging and hazards in buildings and facilities.
-        By predicting mold, corrosion, and pollution before they occur, it enables proactive maintenance and reduces costs.
-      </p>
-    </section>
+        <section id="overview">
+            <h1 data-key="title_overview">AI Eco-Predict Overview</h1>
+            <p data-key="text_overview">
+                **AI Eco-Predict** is an AI-driven system that forecasts environmental aging and hazards in buildings and facilities.
+                By predicting mold, corrosion, and pollution before they occur, it enables **proactive maintenance** and significantly reduces long-term operational costs.
+            </p>
+        </section>
 
-        <section id="technology">
-      <h2 data-key="title_tech">Core Technology</h2>
-      <p data-key="text_tech">
-        Our proprietary AI Prediction Engine analyzes environmental data collected by IoT sensors (temperature, humidity, VOCs, CO₂).
-        Using RNN (Recurrent Neural Network) models, we identify risk patterns and predict deterioration before visible damage occurs.
-      </p>
-    </section>
+        <section id="technology">
+            <h2 data-key="title_tech">Core Technology</h2>
+            <p data-key="text_tech">
+                Our proprietary **AI Prediction Engine** analyzes environmental data collected by IoT sensors (temperature, humidity, VOCs, CO₂).
+                Using advanced **RNN (Recurrent Neural Network)** models, we precisely identify risk patterns and predict deterioration days before visible damage occurs, offering unparalleled insight.
+            </p>
+        </section>
 
-        <section id="market">
-      <h2 data-key="title_market">Market and Growth</h2>
-      <p data-key="text_market">
-        The global smart environment management market is growing at over 15% annually.
-        With ESG and sustainability trends, AI-powered diagnostic systems are rapidly becoming essential in facility management.
-      </p>
-    </section>
+        <section id="market">
+            <h2 data-key="title_market">Market and Growth</h2>
+            <p data-key="text_market">
+                The global smart environment management market is expanding rapidly, growing at over **15% annually**.
+                Driven by global **ESG** and sustainability mandates, AI-powered diagnostic systems are quickly becoming an essential part of modern facility management infrastructure.
+            </p>
+        </section>
 
-        <section id="finance">
-      <h2 data-key="title_finance">Financial Forecast</h2>
-      <p data-key="text_finance">
-        We project steady revenue growth through B2B and B2G partnerships over the next 3 years.
-      </p>
+        <section id="finance">
+            <h2 data-key="title_finance">Financial Forecast</h2>
+            <p data-key="text_finance">
+                We project robust and steady revenue growth over the next 3 years through strategic **B2B** and **B2G** partnerships. Our scalable SaaS model ensures high-margin returns.
+            </p>
 
-      <div class="stats">
-        <div class="stat">
-          <div class="count" data-target="35">0</div>
-          <p data-key="stat_growth">Annual Growth (%)</p>
-        </div>
-        <div class="stat">
-          <div class="count" data-target="1200">0</div>
-          <p data-key="stat_clients">Target Clients</p>
-        </div>
-        <div class="stat">
-          <div class="count" data-target="100">0</div>
-          <p data-key="stat_accuracy">AI Prediction Accuracy (%)</p>
-        </div>
-      </div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="count" data-target="35">0</div>
+                    <p data-key="stat_growth">Annual Growth (%)</p>
+                </div>
+                <div class="stat">
+                    <div class="count" data-target="1200">0</div>
+                    <p data-key="stat_clients">Target Clients</p>
+                </div>
+                <div class="stat">
+                    <div class="count" data-target="100">0</div>
+                    <p data-key="stat_accuracy">AI Prediction Accuracy (%)</p>
+                </div>
+            </div>
 
-      <div class="chart-container">
-        <canvas id="revenueChart"></canvas>
-              </div>
-    </section>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </section>
 
-        <section id="investment">
-      <h2 data-key="title_invest">Investment Opportunity</h2>
-      <p data-key="text_invest">
-        Eco-Predict offers a scalable, data-driven business model.
-        Your investment accelerates hardware production, AI enhancement, and international certification.
-        Together, we build a sustainable and profitable future.
-      </p>
-    </section>
-  </div>
+        <section id="investment">
+            <h2 data-key="title_invest">Investment Opportunity</h2>
+            <p data-key="text_invest">
+                Eco-Predict offers a highly scalable, data-driven business model with significant social impact.
+                Your investment will accelerate essential hardware production, **AI model enhancement**, and crucial international certification.
+                Join us in building a sustainable and highly profitable future.
+            </p>
+        </section>
+    </div>
 
-    <div class="lang-footer">
-    <button data-lang="en">🇬🇧 English</button>
-    <button data-lang="ko">🇰🇷 한국어</button>
-    <button data-lang="zh">🇨🇳 中文</button>
-    <button data-lang="jp">🇯🇵 日本語</button>
-  </div>
+    <div class="lang-footer">
+        <button data-lang="en" class="active">🇬🇧 English</button>
+        <button data-lang="ko">🇰🇷 한국어</button>
+        <button data-lang="zh">🇨🇳 中文</button>
+        <button data-lang="jp">🇯🇵 日本語</button>
+    </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    // Splash transition (2 sec)
-    setTimeout(() => {
-      document.querySelector('.splash-screen').style.display = 'none';
-      document.querySelector('.main-content').style.display = 'block';
-    }, 2000);
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Splash transition (2 sec)
+        setTimeout(() => {
+            const splash = document.querySelector('.splash-screen');
+            const main = document.querySelector('.main-content');
+            if (splash) splash.style.display = 'none';
+            if (main) main.style.display = 'block';
+        }, 2000);
 
-    // Counter animation
-    const counters = document.querySelectorAll('.count');
-    const speed = 100;
-    const animateCount = () => {
-      counters.forEach(counter => {
-        const target = +counter.getAttribute('data-target');
-        const updateCount = () => {
-          const current = +counter.innerText;
-          const increment = target / speed;
-          // NOTE: target이 100일 경우, Math.ceil(99.x)가 100이 되어 무한루프를 막기 위해 수정했습니다.
-          if (current < target) {
-            counter.innerText = Math.ceil(current + increment);
-            setTimeout(updateCount, 30);
-          } else counter.innerText = target;
-        };
-        updateCount();
-      });
-    };
-    // 스크롤 시 카운터 애니메이션 실행
-    window.addEventListener('scroll', () => {
-      const finance = document.querySelector('#finance');
-      const rect = finance.getBoundingClientRect();
-      // Finance 섹션이 뷰포트에 들어왔을 때 실행
-      if (rect.top < window.innerHeight && rect.bottom >= 0) {
-        // 카운터가 이미 갱신되지 않은 경우에만 실행하도록 개선할 수 있습니다.
-        animateCount();
-      }
-    });
-    // 초기 로딩 시에도 카운터 섹션이 뷰포트에 있을 수 있으므로 한 번 호출
-    // animateCount(); 
+        // Counter animation
+        const counters = document.querySelectorAll('.count');
+        const speed = 100;
+        let animated = false;
 
-    // Chart.js graph
-    const ctx = document.getElementById('revenueChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['2025', '2026', '2027', '2028', '2029'],
-        datasets: [{
-          label: 'Projected Revenue (Million USD)',
-          data: [1.2, 3.5, 7.8, 12.3, 18.7],
-          backgroundColor: '#00b894'
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true } }
-      }
-    });
+        const animateCount = () => {
+            if (animated) return;
+            animated = true;
 
-    // Multi-language support
-    const translations = {
-      ko: {
-        menu_overview: "개요", menu_tech: "기술", menu_market: "시장", menu_finance: "재무", menu_invest: "투자",
-        title_overview: "AI Eco-Predict 개요",
-        text_overview: "AI Eco-Predict는 AI를 활용하여 건물 및 시설의 환경 노후화와 오염 위험을 예측하는 시스템입니다.",
-        title_tech: "핵심 기술",
-        text_tech: "당사의 AI 예측 엔진은 RNN 기반 모델로 센서 데이터를 분석하여 위험 패턴을 사전에 탐지합니다.",
-        title_market: "시장 및 성장 전망",
-        text_market: "글로벌 스마트 환경 관리 시장은 매년 15% 이상 성장하고 있으며, ESG 트렌드에 따라 빠르게 확대되고 있습니다.",
-        title_finance: "재무 전망",
-        text_finance: "향후 3년간 B2B 및 B2G 중심의 매출 성장을 예상합니다.",
-        stat_growth: "연평균 성장률(%)", stat_clients: "고객사 확보 목표", stat_accuracy: "AI 예측 정확도(%)",
-        title_invest: "투자 제안",
-        text_invest: "Eco-Predict는 데이터 기반 사업모델로, 초기 투자를 통해 시장 점유율 확대와 기술 고도화를 추진합니다."
-      },
-      zh: {
-        menu_overview:"概述",menu_tech:"技术",menu_market:"市场",menu_finance:"财务",menu_invest:"投资",
-        title_overview:"AI Eco-Predict 概述",
-        text_overview:"AI Eco-Predict 是一个利用 AI 预测建筑和设施环境老化的系统。",
-        title_tech:"核心技术",
-        text_tech:"AI 引擎基于 RNN 模型分析传感器数据，提前发现风险模式。",
-        title_market:"市场与增长前景",
-        text_market:"全球智能环境管理市场每年增长超过 15%，ESG 趋势推动需求迅速扩大。",
-        title_finance:"财务预测",
-        text_finance:"预计未来三年通过 B2B 和 B2G 合作稳步增长。",
-        stat_growth:"年均增长率(%)",stat_clients:"目标客户",stat_accuracy:"AI 预测准确率(%)",
-        title_invest:"投资机会",
-        text_invest:"Eco-Predict 提供可扩展的数据驱动商业模式，投资将推动硬件生产与国际化。"
-      },
-      jp: {
-        menu_overview:"概要",menu_tech:"技術",menu_market:"市場",menu_finance:"財務",menu_invest:"投資",
-        title_overview:"AI Eco-Predict 概要",
-        text_overview:"AI Eco-PredictはAIを活用し、建物や施設の環境老化を予測するシステムです。",
-        title_tech:"コア技術",
-        text_tech:"RNNベースのAIエンジンがセンサーデータを分析し、危険パターンを事前検知します。",
-        title_market:"市場と成長展望",
-        text_market:"スマート環境市場は年15%以上成長し、ESGトレンドにより需要が急増しています。",
-        title_finance:"財務予測",
-        text_finance:"今後3年間、B2BおよびB2Gで安定的な成長を見込んでいます。",
-        stat_growth:"年間成長率(%)",stat_clients:"目標顧客",stat_accuracy:"AI予測精度(%)",
-        title_invest:"投資提案",
-        text_invest:"Eco-Predictはデータ駆動型モデルで、初期投資により市場シェア拡大を加速します。"
-      }
-    };
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const updateCount = () => {
+                    const current = +counter.innerText;
+                    const increment = target / speed;
+                    if (current < target) {
+                        counter.innerText = Math.ceil(current + increment);
+                        setTimeout(updateCount, 30);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        };
+        
+        // Use Intersection Observer for efficient scrolling animation trigger
+        const financeSection = document.querySelector('#finance');
+        if (financeSection) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCount();
+                        observer.unobserve(financeSection); // Stop observing after animation
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(financeSection);
+        }
 
-    document.querySelectorAll('.lang-footer button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const lang = btn.dataset.lang;
-        document.querySelectorAll('[data-key]').forEach(el => {
-          const key = el.getAttribute('data-key');
-          if(translations[lang][key]) el.innerText = translations[lang][key];
-        });
-      });
-    });
-  </script>
+        // Chart.js graph
+        const ctx = document.getElementById('revenueChart');
+        if (ctx) {
+            new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['2025', '2026', '2027', '2028', '2029'],
+                    datasets: [{
+                        label: 'Projected Revenue (Million USD)',
+                        data: [1.2, 3.5, 7.8, 12.3, 18.7],
+                        backgroundColor: var(--primary, '#00c49a'),
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                        },
+                        x: {
+                             grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: '5-Year Revenue Projection' }
+                    }
+                }
+            });
+        }
+
+
+        // Multi-language support
+        const translations = {
+            ko: {
+                menu_overview: "개요", menu_tech: "기술", menu_market: "시장", menu_finance: "재무", menu_invest: "투자",
+                title_overview: "AI Eco-Predict 개요",
+                text_overview: "AI Eco-Predict는 AI를 활용하여 건물 및 시설의 환경 노후화와 오염 위험을 예측하는 시스템입니다. 곰팡이, 부식, 오염을 사전에 예측하여 **선제적 유지보수**를 가능하게 하고 장기적인 운영 비용을 획기적으로 절감합니다.",
+                title_tech: "핵심 기술",
+                text_tech: "당사의 고유 **AI 예측 엔진**은 IoT 센서(온도, 습도, VOCs, CO₂) 데이터를 분석합니다. 고급 **RNN(순환 신경망)** 모델을 사용하여 위험 패턴을 정확히 파악하고 가시적인 손상 발생일보다 앞서 노후화를 예측하여 독보적인 통찰력을 제공합니다.",
+                title_market: "시장 및 성장 전망",
+                text_market: "글로벌 스마트 환경 관리 시장은 매년 **15% 이상** 급격히 성장하고 있습니다. 전 세계적인 **ESG** 및 지속 가능성 요구에 힘입어, AI 기반 진단 시스템은 현대 시설 관리 인프라의 필수 요소로 빠르게 자리 잡고 있습니다.",
+                title_finance: "재무 전망",
+                text_finance: "전략적인 **B2B** 및 **B2G** 파트너십을 통해 향후 3년간 견고하고 안정적인 매출 성장을 예상합니다. 당사의 확장 가능한 SaaS 모델은 높은 마진 수익을 보장합니다.",
+                stat_growth: "연평균 성장률(%)", stat_clients: "목표 고객사", stat_accuracy: "AI 예측 정확도(%)",
+                title_invest: "투자 제안",
+                text_invest: "Eco-Predict는 상당한 사회적 영향을 가진 확장성 높은 데이터 기반 비즈니스 모델입니다. 귀하의 투자는 필수 하드웨어 생산, **AI 모델 고도화**, 그리고 중요한 국제 인증을 가속화할 것입니다. 우리와 함께 지속 가능하고 수익성 높은 미래를 건설하십시오."
+            },
+            zh: {
+                menu_overview:"概述",menu_tech:"技术",menu_market:"市场",menu_finance:"财务",menu_invest:"投资",
+                title_overview:"AI Eco-Predict 概述",
+                text_overview:"AI Eco-Predict 是一个利用 AI 预测建筑和设施环境老化风险的系统。通过预测霉菌、腐蚀和污染，它能实现**主动维护**，并显著降低长期运营成本。",
+                title_tech:"核心技术",
+                text_tech:"我们的专有 **AI 预测引擎**分析 IoT 传感器数据。使用先进的 **RNN 模型**，我们精准识别风险模式，在可见损坏发生前预测老化。",
+                title_market:"市场与增长前景",
+                text_market:"全球智能环境管理市场以每年超过 **15%** 的速度快速增长。受全球 **ESG** 趋势推动，AI 诊断系统正迅速成为设施管理的核心。",
+                title_finance:"财务预测",
+                text_finance:"预计未来三年通过战略性的 **B2B** 和 **B2G** 合作实现强劲的收入增长。我们的可扩展 SaaS 模型确保高利润回报。",
+                stat_growth:"年均增长率(%)",stat_clients:"目标客户",stat_accuracy:"AI 预测准确率(%)",
+                title_invest:"投资机会",
+                text_invest:"Eco-Predict 提供了一个具有重大社会影响的可扩展数据驱动业务模型。您的投资将加速硬件生产、**AI 增强**和国际认证。与我们共创可持续且高盈利的未来。"
+            },
+            jp: {
+                menu_overview:"概要",menu_tech:"技術",menu_market:"市場",menu_finance:"財務",menu_invest:"投資",
+                title_overview:"AI Eco-Predict 概要",
+                text_overview:"AI Eco-PredictはAIを活用し、建物や施設の環境老化リスクを予測するシステムです。カビ、腐食、汚染を事前に予測することで、**予防的なメンテナンス**を可能にし、長期的な運用コストを大幅に削減します。",
+                title_tech:"コア技術",
+                text_tech:"当社の独自の **AI 予測エンジン**はIoTセンサーデータを分析します。高度な **RNN モデル**を使用し、リスクパターンを正確に特定し、目に見える損傷が発生する前に劣化を予測します。",
+                title_market:"市場と成長展望",
+                text_market:"スマート環境管理市場は年率 **15%以上**で急成長しています。世界的な **ESG** と持続可能性の傾向により、AI診断システムは施設管理のインフラとして不可欠になっています。",
+                title_finance:"財務予測",
+                text_finance:"戦略的な **B2B** および **B2G** パートナーシップを通じて、今後3年間で安定した収益成長を予測しています。拡張性の高いSaaSモデルにより、高い利益率を確保します。",
+                stat_growth:"年間成長率(%)",stat_clients:"目標顧客",stat_accuracy:"AI予測精度(%)",
+                title_invest:"投資提案",
+                text_invest:"Eco-Predictは、大きな社会的影響力を持つスケーラブルなデータ駆動型ビジネスモデルです。あなたの投資は、ハードウェア生産、**AI モデルの強化**、および国際認証を加速させます。持続可能で収益性の高い未来を共に築きましょう。"
+            }
+        };
+
+        const languageButtons = document.querySelectorAll('.lang-footer button');
+        languageButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lang = btn.dataset.lang;
+
+                // Update active state for buttons
+                languageButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Update text content
+                document.querySelectorAll('[data-key]').forEach(el => {
+                    const key = el.getAttribute('data-key');
+                    if (translations[lang] && translations[lang][key]) {
+                        el.innerHTML = translations[lang][key];
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
