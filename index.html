@@ -1,532 +1,287 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Eco-Predict AI 환경 진단 시스템 사업 투자 계획서</title>
-  <!-- Tailwind CSS CDN for modern and responsive styling -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>AI Eco-Predict</title>
   <style>
-    /* 1. 기본 스타일 복구 및 정리 */
-    :root {
-      --color-primary: #00796b; /* Teal */
-      --color-secondary: #00b894; /* Lighter Teal */
-      --color-background: #f4f6f8;
-      --color-text: #2c3e50;
-    }
-    body {
-      font-family: 'Inter', 'Noto Sans KR', sans-serif;
-      background-color: var(--color-background);
-      color: var(--color-text);
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-    }
-
-    /* 2. 스플래시 화면 (기능 유지) */
-    #splash-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--color-primary);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      transition: opacity 1s ease-out;
-    }
-    .spinner {
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      border-top: 4px solid #fff;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin-top: 20px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    * {margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
+    body {background:#f4f6f8;color:#222;overflow-x:hidden;}
     
-    /* 3. 로고 반응형 크기 (요청대로 유지) */
-    .logo {
-      height: 48px; /* Mobile size */
-      width: auto;
+    /* Splash */
+    .splash-screen {
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:#000 url('p1.jpg') center/cover no-repeat;
+      display:flex;justify-content:center;align-items:center;
+      animation:fadeOut 1s ease-in-out 2s forwards;
+      z-index:10;
     }
-    @media (min-width: 1024px) {
-      .logo {
-        height: 72px; /* PC size */
-      }
-    }
+    @keyframes fadeOut {to{opacity:0;visibility:hidden;}}
 
-    /* 4. 컨텐츠 스타일링 (단순화) */
-    .content-section {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 3rem 1rem;
+    /* Main */
+    .main-content {display:none;animation:fadeIn 1s ease-in-out forwards;}
+    @keyframes fadeIn {from{opacity:0;}to{opacity:1;}}
+
+    header {
+      background:white;box-shadow:0 2px 10px rgba(0,0,0,0.05);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 5%;position:sticky;top:0;z-index:5;
     }
-    .section-title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--color-primary);
-      border-bottom: 3px solid var(--color-secondary);
-      padding-bottom: 0.5rem;
-      margin-bottom: 2rem;
+    header img{
+      max-height: 48px; /* 최대 높이 지정 */
+      max-width: 100%; /* 부모 요소의 너비에 맞게 조정 */
+      height: auto; /* 종횡비 유지 */
     }
-    .card {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      margin-bottom: 2rem;
+    nav a {
+      margin:0 12px;text-decoration:none;color:#444;font-weight:500;transition:0.3s;
     }
+    nav a:hover{color:#00b894;}
     
-    /* 5. 텍스트 컨테이너 줄바꿈 처리 */
-    .text-content {
-      white-space: pre-wrap;
-      font-size: 1rem;
-      color: #374151; /* Darker text */
-      margin-bottom: 1rem;
+    section {
+      padding:80px 10%;min-height:100vh;display:flex;
+      flex-direction:column;justify-content:center;
+    }
+    section:nth-child(even){background:#fff;}
+    h1,h2{color:#00796b;margin-bottom:20px;}
+    p{line-height:1.7;color:#444;}
+
+    /* Stats */
+    .stats {
+      display:flex;flex-wrap:wrap;justify-content:center;margin-top:40px;
+    }
+    .stat {
+      flex:1 1 200px;text-align:center;margin:20px;background:#e8f5e9;
+      padding:30px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.05);
+      transition:transform 0.3s;
+    }
+    .stat:hover{transform:translateY(-5px);}
+    .count{font-size:2.5em;color:#00796b;font-weight:bold;}
+
+    /* Chart */
+    .chart-container {
+      margin-top:40px;
+      background:#fff;
+      border-radius:15px;
+      padding:20px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.05);
     }
 
-    /* 6. 통계 섹션 */
-    .stat-item {
-        background: var(--color-primary);
-        color: white;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        text-align: center;
+    /* Language Footer */
+    .lang-footer {
+      position:fixed;bottom:0;left:0;width:100%;
+      background:#00796b;color:#fff;display:flex;
+      justify-content:center;align-items:center;gap:20px;
+      padding:10px 0;z-index:15;
     }
-    .stat-number {
-        font-size: 2.25rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+    .lang-footer button {
+      background:none;border:1px solid #fff;
+      color:#fff;padding:6px 12px;border-radius:6px;
+      cursor:pointer;font-size:0.9em;transition:0.3s;
     }
+    .lang-footer button:hover {background:#fff;color:#00796b;}
 
-    /* 7. 테이블 스타일 (경쟁 우위 비교) */
-    .styled-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 1rem;
+    /* Mobile */
+    @media (max-width:768px){
+      header{flex-direction:column;}
+      nav{margin-top:10px;}
+      section{padding:60px 5%;}
+      .count{font-size:1.8em;}
+      .lang-footer{flex-wrap:wrap;gap:10px;}
     }
-    .styled-table th, .styled-table td {
-        border: 1px solid #e5e7eb;
-        padding: 12px;
-        text-align: left;
-    }
-    .styled-table thead tr {
-        background-color: #e0f2f1; /* Light Teal Background */
-        color: #004d40;
-        font-weight: 600;
-    }
-    .styled-table tbody tr:nth-child(even) {
-        background-color: #f9fafb;
-    }
-
   </style>
 </head>
-<body class="antialiased">
+<body>
 
-  <!-- Splash Screen -->
-  <div id="splash-screen">
-    <h2 class="text-5xl font-extrabold text-white mb-4">Eco-Predict</h2>
-    <p class="text-xl text-white opacity-80" data-lang-key="splash_subtitle">AI 기반 환경 진단 시스템</p>
-    <div class="spinner"></div>
+  <div class="splash-screen"></div>
+
+  <div class="main-content">
+    <header>
+      <img src="logo.jpg" alt="Eco-Predict logo" />
+      <nav>
+        <a href="#overview" data-key="menu_overview">Overview</a>
+        <a href="#technology" data-key="menu_tech">Technology</a>
+        <a href="#market" data-key="menu_market">Market</a>
+        <a href="#finance" data-key="menu_finance">Finance</a>
+        <a href="#investment" data-key="menu_invest">Investment</a>
+      </nav>
+    </header>
+
+    <section id="overview">
+      <h1 data-key="title_overview">AI Eco-Predict Overview</h1>
+      <p data-key="text_overview">
+        AI Eco-Predict is an AI-driven system that forecasts environmental aging and hazards in buildings and facilities.
+        By predicting mold, corrosion, and pollution before they occur, it enables proactive maintenance and reduces costs.
+        It is also a key solution for the environmental management requirements of the global ESG (Environmental, Social, and Governance) trend.
+      </p>
+    </section>
+
+    <section id="technology">
+      <h2 data-key="title_tech">Core Technology</h2>
+      <p data-key="text_tech">
+        Our proprietary AI Prediction Engine analyzes environmental data collected by IoT sensors (temperature, humidity, VOCs, CO₂).
+        Using RNN (Recurrent Neural Network) models, we identify risk patterns and predict deterioration before visible damage occurs.
+        The platform operates in real-time by integrating with the client's existing building management system (BMS).
+      </p>
+    </section>
+
+    <section id="market">
+      <h2 data-key="title_market">Market and Growth</h2>
+      <p data-key="text_market">
+        The global smart environment management market is growing at over 15% annually.
+        With ESG and sustainability trends, AI-powered diagnostic systems are rapidly becoming essential in facility management.
+        The core target is public institutions and large corporations with significant facility assets.
+      </p>
+    </section>
+
+    <section id="finance">
+      <h2 data-key="title_finance">Financial Forecast</h2>
+      <p data-key="text_finance">
+        We project steady revenue growth through B2B and B2G partnerships over the next 3 years.
+        The company operates on a subscription (SAAS) and installation fee model, securing steady revenue.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="count" data-target="45">0</div>
+          <p data-key="stat_growth">Annual Growth (%)</p>
+        </div>
+        <div class="stat">
+          <div class="count" data-target="30000">0</div>
+          <p data-key="stat_clients">Target Clients</p>
+        </div>
+        <div class="stat">
+          <div class="count" data-target="90">0</div>
+          <p data-key="stat_accuracy">AI Prediction Accuracy (%)</p>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </section>
+
+    <section id="investment">
+      <h2 data-key="title_invest">Investment Opportunity</h2>
+      <p data-key="text_invest">
+        Eco-Predict offers a scalable, data-driven business model.
+        Your investment accelerates hardware production, AI enhancement, and international certification.
+        Together, we build a sustainable and profitable future.
+        We offer substantial dividends and a flexible exit strategy for our early-stage investors.
+      </p>
+    </section>
   </div>
 
-  <!-- Header & Navigation -->
-  <header id="main-header" class="bg-white flex items-center justify-between p-4 lg:p-6" style="display:none;">
-    <div class="flex items-center">
-      <img src="https://placehold.co/200x72/00796b/ffffff?text=Eco-Predict" alt="Eco-Predict Logo" class="logo mr-4"/>
-      <h1 class="text-2xl lg:text-3xl font-bold text-gray-800" data-lang-key="header_title">Eco-Predict Investment Plan</h1>
-    </div>
-    <div class="flex items-center space-x-4">
-      <!-- Language Selector -->
-      <select id="language-selector" class="p-2 border border-gray-300 rounded-md text-sm bg-white cursor-pointer" onchange="setLanguage(this.value)">
-        <option value="ko">🇰🇷 한국어</option>
-        <option value="en">🇺🇸 English</option>
-        <option value="zh">🇨🇳 中文</option>
-        <option value="jp">🇯🇵 日本語</option>
-      </select>
-      <nav class="hidden lg:flex space-x-6 font-medium">
-        <a href="#overview" class="text-gray-600 hover:text-green-600 transition duration-300" data-lang-key="menu_overview">사업 개요</a>
-        <a href="#technology" class="text-gray-600 hover:text-green-600 transition duration-300" data-lang-key="menu_tech">핵심 기술</a>
-        <a href="#market" class="text-gray-600 hover:text-green-600 transition duration-300" data-lang-key="menu_market">시장 전략</a>
-        <a href="#finance" class="text-gray-600 hover:text-green-600 transition duration-300" data-lang-key="menu_finance">재무 및 투자</a>
-      </nav>
-    </div>
-  </header>
+  <div class="lang-footer">
+    <button data-lang="en">🇬🇧 English</button>
+    <button data-lang="ko">🇰🇷 한국어</button>
+    <button data-lang="zh">🇨🇳 中文</button>
+    <button data-lang="jp">🇯🇵 日本語</button>
+  </div>
 
-  <main id="main-content" style="display:none;">
-    <div class="content-section">
-
-    <!-- 1. 사업 개요 및 비전 (OVERVIEW) -->
-    <section id="overview" class="mb-12">
-      <h2 class="section-title" data-lang-key="title_overview">1. 사업 개요 및 문제 해결 (Problem & Solution)</h2>
-      <div class="card">
-        <h3 class="text-xl font-semibold mb-3 text-gray-700" data-lang-key="subtitle_problem">1.1. 문제 정의 (Problem Definition)</h3>
-        <p class="text-content" data-lang-key="text_problem"></p>
-        <h3 class="text-xl font-semibold mt-6 mb-3 text-gray-700" data-lang-key="subtitle_solution">1.2. 솔루션 및 비전 (AI Eco-Predict)</h3>
-        <p class="text-content" data-lang-key="text_solution"></p>
-      </div>
-    </section>
-
-    <!-- 2. 핵심 기술 (TECHNOLOGY) -->
-    <section id="technology" class="mb-12">
-      <h2 class="section-title" data-lang-key="title_tech">2. 핵심 기술: AI 예측 엔진과 무선 아키텍처</h2>
-      <div class="card">
-        <h3 class="text-xl font-semibold mb-3 text-gray-700" data-lang-key="subtitle_ai_alg">2.1. AI 예측 및 분석 알고리즘 (Predict Engine)</h3>
-        <p class="text-content" data-lang-key="text_ai_alg"></p>
-        <h3 class="text-xl font-semibold mt-6 mb-3 text-gray-700" data-lang-key="subtitle_iot_arch">2.2. 무한대 확장 가능 IoT 아키텍처</h3>
-        <p class="text-content" data-lang-key="text_iot_arch"></p>
-      </div>
-    </section>
-
-    <!-- 3. 시장 분석 및 비즈니스 모델 (MARKET & STRATEGY) -->
-    <section id="market" class="mb-12">
-      <h2 class="section-title" data-lang-key="title_market">3. 시장 분석 및 사업화 전략</h2>
-      <div class="card">
-        <h3 class="text-xl font-semibold mb-3 text-gray-700" data-lang-key="subtitle_market_target">3.1. 목표 시장 및 시장 규모 분석</h3>
-        <p class="text-content" data-lang-key="text_market_target"></p>
-        <h3 class="text-xl font-semibold mt-6 mb-3 text-gray-700" data-lang-key="subtitle_competitive">3.2. 경쟁 우위 및 차별화 전략</h3>
-        <!-- Competitive table content will be injected directly as HTML -->
-        <div id="competitive-table-container" data-lang-key="text_competitive"></div>
-      </div>
-    </section>
-
-    <!-- 4. 재무 및 투자 제안 (FINANCE & INVESTMENT) -->
-    <section id="finance" class="mb-12">
-      <h2 class="section-title" data-lang-key="title_finance">4. 재무 전망 및 투자 유치 계획</h2>
-      <div class="card">
-        <h3 class="text-xl font-semibold mb-3 text-gray-700" data-lang-key="subtitle_financial_model">4.1. 재무 전망 및 수익 모델 (3개년 예측)</h3>
-        <p class="text-content" data-lang-key="text_financial_intro"></p>
-
-        <!-- Stats Section -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="stat-item">
-                <div class="stat-number" data-lang-key="stat_growth_val">45%</div>
-                <p class="font-light text-sm" data-lang-key="stat_growth">연평균 성장률 (CAGR)</p>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-lang-key="stat_module_val">30,000+</div>
-                <p class="font-light text-sm" data-lang-key="stat_module">누적 설치 모듈 목표 (3년차)</p>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-lang-key="stat_accuracy_val">90%</div>
-                <p class="font-light text-sm" data-lang-key="stat_accuracy">AI 예측 정확도 목표</p>
-            </div>
-        </div>
-
-        <h4 class="text-lg font-semibold mb-2 text-gray-700" data-lang-key="subtitle_revenue_sources">주요 수익원 구성 (3년차 기준)</h4>
-        <p class="text-content" data-lang-key="text_revenue_sources"></p>
-      </div>
-
-      <div class="card mt-8">
-        <h3 class="text-xl font-semibold mb-3 text-gray-700" data-lang-key="subtitle_investment">4.2. 투자 제안 및 자금 활용 계획</h3>
-        <p class="text-content" data-lang-key="text_investment"></p>
-      </div>
-    </section>
-
-    </div>
-  </main>
-
-  <footer id="main-footer" class="bg-gray-800 text-white p-6 text-center" style="display:none;">
-    <p data-lang-key="footer_text">&copy; 2025 Eco-Predict. All rights reserved.</p>
-  </footer>
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // --- Multi-Language Data (Markdown table formatting removed and replaced with HTML) ---
-    const langData = {
-      ko: {
-        header_title: "Eco-Predict Investment Plan",
-        splash_subtitle: "AI 기반 환경 진단 시스템",
-        menu_overview: "사업 개요",
-        menu_tech: "핵심 기술",
-        menu_market: "시장 전략",
-        menu_finance: "재무 및 투자",
-        title_overview: "1. 사업 개요 및 문제 해결 (Problem & Solution)",
-        subtitle_problem: "1.1. 문제 정의 (Problem Definition)",
-        text_problem: "기존 센싱 기술의 한계와 노후화 문제의 심각성\n\n현재 환경 모니터링 시스템은 '현재 시점'의 온도, 습도, 가스 농도 등 정량적 결과만을 제공합니다. 이는 문제가 발생한 후에야 대처하게 만드는 사후약방문식 관리 시스템입니다. 특히, 주거 및 산업 시설의 환경 노후화는 다음과 같은 문제를 야기합니다.\n\n1) 예측 불가능성: 실내 환경의 미세한 변화(벽체 내부 온도차, 습도 편차, 미세 VOC 농도)를 육안으로 예측하는 것은 불가능합니다.\n2) 막대한 손실: 곰팡이, 결로, PCB 노후화는 건물의 안전성 위협 및 재산 가치 하락으로 이어집니다. 대형 창고의 습도 관리 실패는 수백억 원 상당의 재고 손실을 유발할 수 있습니다.\n3) 비효율적인 대응: 주기적인 방문 점검은 비용이 많이 들고, 공백 기간에 문제가 발생할 위험이 높습니다.\n\n핵심 문제: 미세 환경 데이터는 있으나, '언제, 왜, 어디서' 노후화가 발생할지 아는 지능형 시스템이 부재합니다.",
-        subtitle_solution: "1.2. 솔루션 및 비전 (AI Eco-Predict)",
-        text_solution: "AI 기반의 선제적 환경 진단 솔루션 제공\n\n'에코-프레딕트'는 기존 센서 시스템의 한계를 AI 기술로 극복하고, '선제적 유지보수(Proactive Maintenance)' 시장을 개척합니다.\n\n1) 무한대 확장 가능한 데이터 수집 인프라:\n   - 저전력 ESP32 기반의 무선 모듈(Eco-모듈)을 사용하여 수백, 수천 개까지 손쉽게 확장 가능한 아키텍처를 구축합니다.\n   - App에서 각 모듈별로 1초에서 30분까지 데이터 전송 주기를 원격 제어하여, 저전력 효율과 실시간성을 동시에 확보합니다.\n\n2) AI 예측 진단 엔진 (Predict Engine):\n   - 시계열 예측(RNN 모델)을 통해 '7일 이내 곰팡이 위험 85% 돌파'와 같은 구체적인 예측 시점을 제공합니다.\n   - AI가 일시적인 노이즈(요리, 환기)와 지속적인 오염원(가구 VOC, 벽체 습기)을 구별하여 오경보를 최소화합니다.\n\n3) 통합 대시보드:\n   - 사용자 App은 클라우드에 연결된 모든 모듈의 상태를 한눈에 파악하고, AI가 분석한 '위험 구역'을 하이라이트하여 관리의 효율성을 극대화합니다.",
-        title_tech: "2. 핵심 기술: AI 예측 엔진과 무선 아키텍처",
-        subtitle_ai_alg: "2.1. AI 예측 및 분석 알고리즘 (Predict Engine)",
-        text_ai_alg: "기술 개요: 데이터 기반 노후화 지능 예측\n\nEco-Predict의 핵심은 데이터를 해석하고 미래를 예측하는 AI 엔진에 있습니다.\n\n1) 시계열 데이터 수집 및 정제:\n   - Eco-모듈에서 수집되는 온도, 습도, VOC, eCO2 데이터를 클라우드 데이터베이스에 고유 ID별로 시계열로 저장합니다.\n   - 센서의 노이즈나 일시적 오작동 데이터를 제거하여 학습 데이터의 품질을 높입니다.\n\n2) 곰팡이/결로 예측 모델 (RNN/LSTM):\n   - Long Short-Term Memory (LSTM) 모델을 채택하여, 과거 14일 치의 온/습도 패턴을 분석하고 다음 7일 이내에 벽체 표면 온도가 노점 온도 근처에 도달할 확률(결로 및 곰팡이 발생 위험)을 90% 이상의 정확도로 예측합니다.\n\n3) 오염원 패턴 분류 (Random Forest):\n   - Random Forest 모델을 사용하여 VOC 상승의 원인이 (A)음식물 부패, (B)가구 VOC, (C)인체 대사 중 무엇인지 구별합니다. 이를 통해 오경보를 줄이고 진단 정확도를 향상시킵니다.",
-        subtitle_iot_arch: "2.2. 무한대 확장 가능 IoT 아키텍처",
-        text_iot_arch: "클라우드 기반의 유연한 'Micro-Service' 구조\n\n1) 모듈의 최소화 및 분산 처리:\n   - 각 Eco-모듈은 센서 데이터 측정 외에는 중앙 처리 역할을 수행하지 않습니다. MQTT 기반의 경량 프로토콜을 활용한 분산 처리 구조로, 수천 개의 모듈이 동시에 접속해도 서버에 부하를 주지 않습니다.\n\n2) 원격 통신 주기 제어 시스템:\n   - App에서 설정한 통신 주기 값(1초~30분)에 따라 ESP32가 Deep Sleep 모드를 유연하게 활용합니다. 깨어날 때마다 클라우드에서 다음 주기를 읽어와 극도의 저전력 효율과 실시간 제어 유연성을 동시에 확보합니다.\n\n3) AP 모드 자동 등록 기술:\n   - 저장된 Wi-Fi 정보가 없을 경우 자동으로 AP 모드로 전환되어, 사용자가 App을 통해 Wi-Fi 정보를 입력하면 모듈의 고유 ID가 클라우드에 자동 등록되는 제로 설정(Zero-Configuration) 시스템입니다.",
-        title_market: "3. 시장 분석 및 사업화 전략",
-        subtitle_market_target: "3.1. 목표 시장 및 시장 규모 분석",
-        text_market_target: "시장 정의: 선제적 유지보수(Proactive Maintenance) IoT 시장\n\nEco-Predict는 시설 노후화 및 하자 보수 비용 절감이라는 명확한 ROI를 제공하는 B2B 및 B2G 시장을 주력으로 합니다.\n\n1) 주력 시장 (B2B/B2G): 시설 및 건설 관리 시장\n   - 아파트 건설사/관리 회사: 하자 발생률 감소 및 하자 보수 비용 절감을 위한 시스템 도입.\n   - 대형 창고/물류 센터: 온도/습도에 민감한 상품의 보관 환경 모니터링을 통한 재고 손실 방지.\n   - 박물관/미술관: 소장품의 노후화 방지를 위한 극미세 환경 모니터링.\n\n2) 확장 시장 (B2C): 프리미엄 Smart Home 시장\n   - 일반 가정의 곰팡이, 악취, 실내 공기질 통합 관리 솔루션으로 판매.\n\n시장 규모: 글로벌 Smart Facility Management 시장은 2024년 기준 약 600억 USD 규모이며, AI 기반 예측 분석 부문은 연평균 25% 이상의 고성장률을 보이고 있습니다.",
-        subtitle_competitive: "3.2. 경쟁 우위 및 차별화 전략",
-        // HTML Table structure included directly in the content to remove markdown syntax
-        text_competitive: `
-          <h4 class="text-lg font-semibold mb-2">경쟁사 대비 압도적인 유연성과 AI 예측 능력</h4>
-          <table class="styled-table">
-            <thead>
-              <tr><th>요소</th><th>Eco-Predict (당사)</th><th>경쟁사 (IoT 센서 기반)</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>확장성</td><td>무한대 확장 가능. AP 자동 등록.</td><td>특정 Hub에 최대 개수 제한. 복잡한 설정 필요.</td></tr>
-              <tr><td>통신 제어</td><td>App에서 1초~30분 원격 제어 가능.</td><td>고정된 통신 주기로 실시간 제어 불가.</td></tr>
-              <tr><td>핵심 AI 기능</td><td>노후화 발생 시점 예측, 오염원 분류 및 노이즈 필터링.</td><td>단순 알람 기능. 미래 예측 불가.</td></tr>
-              <tr><td>수익 구조</td><td>하드웨어 판매 + AI 구독료 (Recurring)</td><td>주로 하드웨어 판매에 의존.</td></tr>
-            </tbody>
-          </table>
-        `,
-        title_finance: "4. 재무 전망 및 투자 유치 계획",
-        subtitle_financial_model: "4.1. 재무 전망 및 수익 모델 (3개년 예측)",
-        text_financial_intro: "당사의 수익 모델은 하드웨어 판매보다 지속 가능한 AI 구독 서비스에 중점을 둡니다. 초기 B2B 계약 확보 후, 장기적으로 AI 예측 분석 및 데이터 관리 구독료를 주력으로 합니다.",
-        stat_growth: "연평균 성장률 (CAGR)",
-        stat_growth_val: "45%",
-        stat_module: "누적 설치 모듈 목표 (3년차)",
-        stat_module_val: "30,000+",
-        stat_accuracy: "AI 예측 정확도 목표",
-        stat_accuracy_val: "90%",
-        subtitle_revenue_sources: "주요 수익원 구성 (3년차 기준)",
-        text_revenue_sources: "1) AI 예측 구독료 (60%): 시설 관리 회사를 대상으로 모듈당 월 $5~$10달러의 구독료 부과.\n2) 하드웨어 판매 (30%): Eco-모듈 초기 납품 수익.\n3) 설치/유지보수 서비스 (10%): 초기 설치 컨설팅 및 시스템 API 통합 서비스 제공.\n\n매출 목표: 대형 건설/물류 기업과의 장기 계약 확보를 통해 3년차 10N억 원 규모 목표.",
-        subtitle_investment: "4.2. 투자 제안 및 자금 활용 계획",
-        text_investment: "투자 제안: 총 $500,000$ USD (지분 15% 기준)\n\n자금 활용 계획 (Funding Allocation):\n\n1) 기술 고도화 및 AI 학습 (40%): AI 예측 모델 정교화 및 클라우드 인프라 확충.\n2) 하드웨어 생산 및 R&D (30%): ESP32 기반 센서 PCB 초기 금형 제작 및 소규모 양산 투자.\n3) 마케팅 및 영업 (30%): B2B 대상 실증 사례(Case Study) 구축 및 영업 인력 충원.\n\n투자 매력: Eco-Predict는 검증된 IoT 하드웨어와 데이터 기반 AI 예측 기술을 결합하여, 폭발적으로 성장하는 AI 기반 시설 관리 시장의 선점 기회를 제공합니다. 초기 투자금은 고수익의 구독형 모델로 빠르게 전환하는 촉매제가 될 것입니다.",
-        footer_text: "© 2025 Eco-Predict. All rights reserved."
+    // Splash transition (2 sec)
+    setTimeout(() => {
+      document.querySelector('.splash-screen').style.display = 'none';
+      document.querySelector('.main-content').style.display = 'block';
+    }, 2000);
+
+    // Counter animation
+    const counters = document.querySelectorAll('.count');
+    const speed = 100;
+    const animateCount = () => {
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const updateCount = () => {
+          const current = +counter.innerText;
+          const increment = target / speed;
+          if (current < target) {
+            counter.innerText = Math.ceil(current + increment);
+            setTimeout(updateCount, 30);
+          } else counter.innerText = target;
+        };
+        updateCount();
+      });
+    };
+    window.addEventListener('scroll', () => {
+      const finance = document.querySelector('#finance');
+      const rect = finance.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) animateCount();
+    });
+
+    // Chart.js graph
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['2025', '2026', '2027', '2028', '2029'],
+        datasets: [{
+          label: 'Projected Revenue (Million USD)',
+          data: [1.2, 3.5, 7.8, 12.3, 18.7],
+          backgroundColor: '#00b894'
+        }]
       },
-      en: {
-        header_title: "Eco-Predict Investment Plan",
-        splash_subtitle: "AI-based Environmental Diagnostics System",
-        menu_overview: "Overview",
-        menu_tech: "Technology",
-        menu_market: "Market Strategy",
-        menu_finance: "Finance & Investment",
-        title_overview: "1. Business Overview and Problem Solving (Problem & Solution)",
-        subtitle_problem: "1.1. Problem Definition",
-        text_problem: "Limitations of Existing Sensing Technology and Severity of Aging Issues\n\nCurrent environmental monitoring systems only provide quantitative results such as current temperature, humidity, and gas concentration. This is a reactive management system, addressing problems only after they occur. Specifically, environmental aging in residential and industrial facilities causes the following issues:\n\n1) Unpredictability: It is impossible to visually predict subtle environmental changes (internal wall temperature differences, humidity deviation, micro-VOC concentration).\n2) Huge Losses: Mold, condensation, and PCB aging lead to threats to building safety and a decrease in property value. Failure to manage humidity in large warehouses can result in inventory losses worth tens of billions of KRW.\n3) Inefficient Response: Periodic on-site inspections are costly and carry a high risk of issues arising during the gap period.\n\nCore Problem: Micro-environmental data exists, but an intelligent system is lacking to determine 'when, why, and where' aging will occur.",
-        subtitle_solution: "1.2. Solution and Vision (AI Eco-Predict)",
-        text_solution: "Providing an AI-based Proactive Environmental Diagnosis Solution\n\n'Eco-Predict' overcomes the limitations of existing sensor systems with AI technology, pioneering the 'Proactive Maintenance' market.\n\n1) Infinitely Scalable Data Collection Infrastructure:\n   - Utilizing low-power ESP32-based wireless modules (Eco-modules) to build an architecture that can easily scale to hundreds or thousands of units.\n   - Remote control of the data transmission cycle from 1 second to 30 minutes via the App, ensuring both low-power efficiency and real-time responsiveness.\n\n2) AI Prediction and Diagnosis Engine (Predict Engine):\n   - Providing specific prediction times, such as '85% mold risk within 7 days,' through time-series prediction (RNN model).\n   - AI distinguishes between temporary noise (cooking, ventilation) and persistent pollution sources (furniture VOC, wall moisture) to minimize false alarms.\n\n3) Integrated Dashboard:\n   - The user App allows for a glance at the status of all cloud-connected modules and maximizes management efficiency by highlighting 'risk zones' analyzed by the AI.",
-        title_tech: "2. Core Technology: AI Prediction Engine and Wireless Architecture",
-        subtitle_ai_alg: "2.1. AI Prediction and Analysis Algorithm (Predict Engine)",
-        text_ai_alg: "Technology Overview: Data-Driven Intelligent Aging Prediction\n\nThe core of Eco-Predict lies in its AI engine that interprets data and predicts the future.\n\n1) Time-Series Data Collection and Refining:\n   - Temperature, humidity, VOC, and eCO2 data collected by Eco-modules are stored in a cloud database as time-series data, categorized by unique ID.\n   - Improving the quality of training data by removing sensor noise or data from temporary malfunctions.\n\n2) Mold/Condensation Prediction Model (RNN/LSTM):\n   - Adopting the Long Short-Term Memory (LSTM) model to analyze the past 14 days of temperature/humidity patterns and predict the probability (with over 90% accuracy) of the wall surface temperature reaching near the dew point within the next 7 days (risk of condensation and mold growth).\n\n3) Pollution Source Pattern Classification (Random Forest):\n   - Using the Random Forest model to distinguish whether a rise in VOC is caused by (A) food spoilage, (B) furniture VOC, or (C) human metabolism. This reduces false alarms and improves diagnostic accuracy.",
-        subtitle_iot_arch: "2.2. Infinitely Scalable IoT Architecture",
-        text_iot_arch: "Flexible 'Micro-Service' Structure based on the Cloud\n\n1) Module Minimization and Distributed Processing:\n   - Each Eco-module does not perform central processing other than sensor data measurement. Utilizing a distributed processing structure based on the lightweight MQTT protocol, the server is not overloaded even if thousands of modules connect simultaneously.\n\n2) Remote Communication Cycle Control System:\n   - The ESP32 flexibly utilizes Deep Sleep mode based on the communication cycle value (1 sec ~ 30 min) set in the App. It reads the next cycle from the cloud upon waking up, ensuring both extreme low-power efficiency and real-time control flexibility.\n\n3) AP Mode Auto-Registration Technology:\n   - Automatically switches to AP mode if no saved Wi-Fi information is available. When the user enters the Wi-Fi information via the App, the module's unique ID is automatically registered in the cloud, resulting in a Zero-Configuration system.",
-        title_market: "3. Market Analysis and Commercialization Strategy",
-        subtitle_market_target: "3.1. Target Market and Market Size Analysis",
-        text_market_target: "Market Definition: Proactive Maintenance IoT Market\n\nEco-Predict focuses on the B2B and B2G markets, which offer a clear ROI by reducing facility aging and repair costs.\n\n1) Primary Market (B2B/B2G): Facility and Construction Management Market\n   - Apartment Builders/Management Companies: System adoption to reduce defect rates and save on defect repair costs.\n   - Large Warehouses/Logistics Centers: Preventing inventory loss through environmental monitoring of temperature/humidity-sensitive goods.\n   - Museums/Art Galleries: Ultra-fine environmental monitoring to prevent the aging of collections.\n\n2) Expansion Market (B2C): Premium Smart Home Market\n   - Sold as an integrated management solution for mold, odors, and indoor air quality in general households.\n\nMarket Size: The global Smart Facility Management market is approximately $60 billion USD as of 2024, with the AI-based predictive analytics segment showing a high annual growth rate of over 25%.",
-        subtitle_competitive: "3.2. Competitive Advantage and Differentiation Strategy",
-        // HTML Table structure included directly in the content to remove markdown syntax
-        text_competitive: `
-          <h4 class="text-lg font-semibold mb-2">Overwhelming Flexibility and AI Prediction Capability Compared to Competitors</h4>
-          <table class="styled-table">
-            <thead>
-              <tr><th>Element</th><th>Eco-Predict (Our Company)</th><th>Competitor (IoT Sensor-Based)</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Scalability</td><td>Infinitely scalable. AP auto-registration.</td><td>Max number limit on specific Hubs. Complex setup required.</td></tr>
-              <tr><td>Communication Control</td><td>Remote control from 1 sec to 30 min via App.</td><td>Fixed communication cycle, no real-time control possible.</td></tr>
-              <tr><td>Core AI Function</td><td>Prediction of aging occurrence time, pollution source classification, and noise filtering.</td><td>Simple alarm function. No future prediction.</td></tr>
-              <tr><td>Revenue Structure</td><td>Hardware Sales + AI Subscription Fee (Recurring)</td><td>Primarily dependent on hardware sales.</td></tr>
-            </tbody>
-          </table>
-        `,
-        title_finance: "4. Financial Outlook and Investment Proposal",
-        subtitle_financial_model: "4.1. Financial Outlook and Revenue Model (3-Year Forecast)",
-        text_financial_intro: "Our revenue model focuses on sustainable AI subscription services rather than hardware sales. After securing initial B2B contracts, we will focus on AI predictive analysis and data management subscription fees in the long term.",
-        stat_growth: "Annual Growth Rate (CAGR)",
-        stat_growth_val: "45%",
-        stat_module: "Cumulative Installed Modules Target (Year 3)",
-        stat_module_val: "30,000+",
-        stat_accuracy: "AI Prediction Accuracy Target",
-        stat_accuracy_val: "90%",
-        subtitle_revenue_sources: "Key Revenue Stream Composition (Based on Year 3)",
-        text_revenue_sources: "1) AI Prediction Subscription Fee (60%): Monthly subscription fee of $5~$10 USD per module for facility management companies.\n2) Hardware Sales (30%): Initial supply revenue from Eco-modules.\n3) Installation/Maintenance Services (10%): Providing initial installation consulting and system API integration services.\n\nRevenue Target: Targeting a scale of 10N billion KRW in Year 3 by securing long-term contracts with large construction/logistics companies.",
-        subtitle_investment: "4.2. Investment Proposal and Fund Utilization Plan",
-        text_investment: "Investment Proposal: Total $500,000$ USD (Based on 15% Equity)\n\nFunding Allocation Plan:\n\n1) Technology Advancement and AI Training (40%): Refinement of the AI prediction model and expansion of cloud infrastructure.\n2) Hardware Production and R&D (30%): Initial mold production for ESP32-based sensor PCB and investment in small-scale mass production.\n3) Marketing and Sales (30%): Building B2B case studies and recruiting sales personnel.\n\nInvestment Appeal: Eco-Predict combines proven IoT hardware with data-driven AI prediction technology, offering the opportunity to preempt the rapidly growing AI-based facility management market. The initial investment will be a catalyst for a rapid transition to a high-yield subscription model.",
-        footer_text: "© 2025 Eco-Predict. All rights reserved."
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // Multi-language support
+    const translations = {
+      ko: {
+        menu_overview: "사업 개요", menu_tech: "핵심 기술", menu_market: "시장 전략", menu_finance: "재무 전망", menu_invest: "투자 유치",
+        title_overview: "1. 사업 개요 및 문제 해결 (Problem & Solution)",
+        text_overview: "현재 환경 모니터링 시스템은 '현재 시점'의 정량적 결과만을 제공하여, 문제가 발생한 후에야 대처하는 사후 관리 시스템입니다. 실내 환경의 미세한 변화를 예측하는 것은 불가능하며, 곰팡이, 결로 등은 막대한 손실과 비효율적인 대응을 야기합니다.<br><br>핵심 문제: 미세 환경 데이터는 있으나, '언제, 왜, 어디서' 노후화가 발생할지 아는 지능형 시스템이 부재합니다.<br><br>'에코-프레딕트'는 AI 기반의 선제적 환경 진단 솔루션을 제공하여 이 문제를 해결합니다. 저전력 ESP32 기반의 무선 모듈(Eco-모듈)을 통해 무한대 확장 가능한 데이터 수집 인프라를 구축하고, 시계열 예측(RNN 모델)을 통해 '7일 이내 곰팡이 위험 85% 돌파'와 같은 구체적인 예측 시점을 제공합니다.",
+        title_tech: "2. 핵심 기술: AI 예측 엔진과 무선 아키텍처",
+        text_tech: "Eco-Predict의 핵심은 데이터를 해석하고 미래를 예측하는 AI 엔진에 있습니다. 당사는 Long Short-Term Memory (LSTM) 모델을 채택하여 과거 14일 치의 온/습도 패턴을 분석하고 다음 7일 이내에 노점 온도 근처에 도달할 확률을 90% 이상의 정확도로 예측합니다. 또한 Random Forest 모델로 VOC 상승 원인(음식물 부패, 가구 VOC, 인체 대사)을 구별하여 오경보를 최소화합니다.<br><br>IoT 아키텍처는 MQTT 기반 경량 프로토콜을 활용한 분산 처리 구조로 수천 개의 모듈 접속에 부하가 없으며, App에서 통신 주기를 1초~30분으로 원격 제어하여 저전력 효율과 실시간 유연성을 모두 확보합니다.",
+        title_market: "3. 시장 분석 및 사업화 전략",
+        text_market: "Eco-Predict는 시설 노후화 및 하자 보수 비용 절감이라는 명확한 ROI를 제공하는 B2B 및 B2G 선제적 유지보수(Proactive Maintenance) IoT 시장을 주력으로 합니다. 주력 시장은 아파트 건설사/관리 회사, 대형 창고/물류 센터, 박물관/미술관 등이며, 확장 시장으로 프리미엄 Smart Home 시장이 있습니다.<br><br>경쟁사 대비 무한대 확장 가능한 유연한 아키텍처, App에서 1초 단위까지 가능한 원격 통신 제어, 노후화 발생 시점 예측 및 오염원 분류 등의 압도적인 AI 예측 능력을 통해 차별화합니다.",
+        title_finance: "4. 재무 전망 및 투자 유치 계획",
+        text_finance: "당사의 수익 모델은 하드웨어 판매보다 지속 가능한 AI 구독 서비스에 중점을 둡니다. 초기 B2B 계약 확보 후, 장기적으로 AI 예측 분석 및 데이터 관리 구독료를 주력으로 합니다. 주요 수익원은 AI 예측 구독료 (60%), 하드웨어 판매 (30%), 설치/유지보수 서비스 (10%)로 구성되며, 3년차 10N억 원 규모의 매출을 목표합니다.",
+        stat_growth: "연평균 성장률(%)", stat_clients: "누적 설치 모듈 목표", stat_accuracy: "AI 예측 정확도(%)",
+        title_invest: "4.2. 투자 제안 및 자금 활용 계획",
+        text_invest: "투자 제안: 총 $500,000$ USD (지분 15% 기준)<br><br>Eco-Predict는 검증된 IoT 하드웨어와 데이터 기반 AI 예측 기술을 결합하여, 폭발적으로 성장하는 AI 기반 시설 관리 시장의 선점 기회를 제공합니다. 투자금은 기술 고도화 및 AI 학습 (40%), 하드웨어 생산 및 R&D (30%), 마케팅 및 영업 (30%)에 활용되어 고수익의 구독형 모델로 빠르게 전환하는 촉매제가 될 것입니다.<br><br>© 2025 Eco-Predict. All rights reserved."
       },
       zh: {
-        header_title: "Eco-Predict 投资计划",
-        splash_subtitle: "基于AI的环境诊断系统",
-        menu_overview: "业务概览",
-        menu_tech: "核心技术",
-        menu_market: "市场战略",
-        menu_finance: "财务与投资",
-        title_overview: "1. 业务概览与问题解决 (Problem & Solution)",
-        subtitle_problem: "1.1. 问题定义 (Problem Definition)",
-        text_problem: "现有传感技术的局限与老化问题的严重性\n\n目前的环境监测系统仅提供瞬时性的定量结果，如温度、湿度、气体浓度等。这是一种在问题发生后才采取措施的被动管理系统。特别是，住宅和工业设施的环境老化会引发以下问题：\n\n1) 不可预测性：肉眼无法预测室内环境的细微变化（墙体内部温差、湿度偏差、微量VOC浓度）。\n2) 巨大损失：霉菌、结露和PCB老化威胁建筑安全并导致财产价值下降。大型仓库湿度管理失败可能导致数百亿韩元的库存损失。\n3) 效率低下：定期上门检查成本高昂，且在检查空档期内发生问题的风险很高。\n\n核心问题：拥有微环境数据，但缺乏智能系统来预测老化将“何时、为何、何地”发生。",
-        subtitle_solution: "1.2. 解决方案与愿景 (AI Eco-Predict)",
-        text_solution: "提供基于AI的先行环境诊断解决方案\n\n'Eco-Predict' 通过AI技术克服了现有传感器系统的局限，开创了'主动维护 (Proactive Maintenance)' 市场。\n\n1) 无限扩展的数据采集基础设施：\n   - 使用基于低功耗ESP32的无线模块（Eco-模块），构建可轻松扩展到数百、数千个的架构。\n   - 通过App远程控制各模块1秒到30分钟的数据传输周期，同时确保低功耗效率和实时性。\n\n2) AI预测诊断引擎 (Predict Engine)：\n   - 通过时间序列预测（RNN模型），提供具体的预测时间点，例如 '7天内霉菌风险突破85%'。\n   - AI区分临时干扰（烹饪、通风）和持续污染源（家具VOC、墙体湿气），最大限度地减少误报。\n\n3) 整合式仪表板：\n   - 用户App可以一目了然地掌握所有连接到云的模块状态，并通过突出显示AI分析的“风险区域”来最大限度地提高管理效率。",
-        title_tech: "2. 核心技术：AI预测引擎与无线架构",
-        subtitle_ai_alg: "2.1. AI 预测与分析算法 (Predict Engine)",
-        text_ai_alg: "技术概览：数据驱动的智能老化预测\n\nEco-Predict的核心在于解释数据和预测未来的AI引擎。\n\n1) 时间序列数据采集与精炼：\n   - Eco-模块采集的温度、湿度、VOC、eCO2数据按唯一ID以时间序列存储在云数据库中。\n   - 移除传感器噪声或临时故障数据，提高训练数据的质量。\n\n2) 霉菌/结露预测模型 (RNN/LSTM)：\n   - 采用长短期记忆网络 (LSTM) 模型，分析过去14天的温/湿度模式，以90%以上的准确率预测未来7天内墙体表面温度接近露点温度的概率（结露和霉菌发生的风险）。\n\n3) 污染源模式分类 (Random Forest)：\n   - 使用随机森林 (Random Forest) 模型区分VOC升高的原因是否为 (A)食物腐败、(B)家具VOC、(C)人体新陈代谢。这有助于减少误报并提高诊断准确性。",
-        subtitle_iot_arch: "2.2. 无限扩展的IoT架构",
-        text_iot_arch: "基于云的灵活'微服务'结构\n\n1) 模块的最小化与分布式处理：\n   - 每个Eco-模块除了测量传感器数据外，不承担中央处理任务。采用基于MQTT的轻量级协议的分布式处理结构，即使数千个模块同时连接，也不会给服务器带来负担。\n\n2) 远程通信周期控制系统：\n   - ESP32根据App中设置的通信周期值（1秒~30分钟）灵活使用深度睡眠模式。每次唤醒时，它都会从云端读取下一个周期，同时确保极低的功耗效率和实时控制的灵活性。\n\n3) AP模式自动注册技术：\n   - 如果没有存储Wi-Fi信息，则自动切换到AP模式，用户通过App输入Wi-Fi信息后，模块的唯一ID将自动注册到云端，实现零配置系统。",
-        title_market: "3. 市场分析与商业化战略",
-        subtitle_market_target: "3.1. 目标市场与市场规模分析",
-        text_market_target: "市场定义：主动维护 (Proactive Maintenance) IoT市场\n\nEco-Predict专注于B2B和B2G市场，通过减少设施老化和维修成本提供明确的投资回报率（ROI）。\n\n1) 主要市场 (B2B/B2G)：设施和建筑管理市场\n   - 公寓建筑商/管理公司：引入系统以降低缺陷发生率和节省缺陷修复成本。\n   - 大型仓库/物流中心：通过对温/湿度敏感商品的存储环境进行监测，防止库存损失。\n   - 博物馆/美术馆：对藏品的超细微环境进行监测，防止其老化。\n\n2) 扩展市场 (B2C)：高端智能家居市场\n   - 作为普通家庭霉菌、异味和室内空气质量的综合管理解决方案进行销售。\n\n市场规模：截至2024年，全球智能设施管理市场规模约为600亿美元，其中基于AI的预测分析部分年复合增长率超过25%。",
-        subtitle_competitive: "3.2. 竞争优势与差异化战略",
-        // HTML Table structure included directly in the content to remove markdown syntax
-        text_competitive: `
-          <h4 class="text-lg font-semibold mb-2">与竞争对手相比，具有压倒性的灵活性和AI预测能力</h4>
-          <table class="styled-table">
-            <thead>
-              <tr><th>元素</th><th>Eco-Predict (本公司)</th><th>竞争对手 (基于IoT传感器)</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>可扩展性</td><td>无限扩展。AP自动注册。</td><td>特定Hub最大数量限制。需要复杂的设置。</td></tr>
-              <tr><td>通信控制</td><td>可通过App远程控制1秒~30分钟。</td><td>固定通信周期，无法实时控制。</td></tr>
-              <tr><td>核心AI功能</td><td>预测老化发生时间、污染源分类和噪声过滤。</td><td>简单报警功能。无法进行未来预测。</td></tr>
-              <tr><td>收入结构</td><td>硬件销售 + AI订阅费 (Recurring)</td><td>主要依赖硬件销售。</td></tr>
-            </tbody>
-          </table>
-        `,
-        title_finance: "4. 财务展望与投资提案",
-        subtitle_financial_model: "4.1. 财务展望与收入模型 (3年预测)",
-        text_financial_intro: "我们的收入模型侧重于可持续的AI订阅服务而非硬件销售。在获得初步B2B合同后，长期将AI预测分析和数据管理订阅费作为主力。",
-        stat_growth: "年复合增长率 (CAGR)",
-        stat_growth_val: "45%",
-        stat_module: "累计安装模块目标 (第3年)",
-        stat_module_val: "30,000+",
-        stat_accuracy: "AI预测准确率目标",
-        stat_accuracy_val: "90%",
-        subtitle_revenue_sources: "主要收入来源构成 (基于第3年)",
-        text_revenue_sources: "1) AI预测订阅费 (60%)：向设施管理公司收取每模块每月$5~$10美元的订阅费。\n2) 硬件销售 (30%)：Eco-模块的初始交付收入。\n3) 安装/维护服务 (10%)：提供初始安装咨询和系统API集成服务。\n\n营收目标：通过与大型建筑/物流企业签订长期合同，目标是第3年达到10N亿韩元的规模。",
-        subtitle_investment: "4.2. 投资提案与资金利用计划",
-        text_investment: "投资提案：总计 $500,000$ USD (基于15%股权)\n\n资金利用计划 (Funding Allocation)：\n\n1) 技术升级与AI训练 (40%)：AI预测模型细化和云基础设施扩展。\n2) 硬件生产与研发 (30%)：ESP32基传感器PCB初始模具制作和小型量产投资。\n3) 市场营销与销售 (30%)：建立面向B2B的实际案例 (Case Study) 和招聘销售人员。\n\n投资吸引力：Eco-Predict将经过验证的IoT硬件与数据驱动的AI预测技术相结合，提供了抢占快速增长的AI设施管理市场的机会。初始投资将成为快速转向高收益订阅模式的催化剂。",
-        footer_text: "© 2025 Eco-Predict. 版权所有。"
+        menu_overview:"概述",menu_tech:"技术",menu_market:"市场",menu_finance:"财务",menu_invest:"投资",
+        title_overview:"AI Eco-Predict 概述",
+        text_overview:"AI Eco-Predict 是一个利用 AI 预测建筑和设施环境老化的系统。",
+        title_tech:"核心技术",
+        text_tech:"AI 引擎基于 RNN 模型分析传感器数据，提前发现风险模式。",
+        title_market:"市场与增长前景",
+        text_market:"全球智能环境管理市场每年增长超过 15%，ESG 趋势推动需求迅速扩大。",
+        title_finance:"财务预测",
+        text_finance:"预计未来三年通过 B2B 和 B2G 合作稳步增长。",
+        stat_growth:"年均增长率(%)",stat_clients:"目标客户",stat_accuracy:"AI 预测准确率(%)",
+        title_invest:"投资机会",
+        text_invest:"Eco-Predict 提供可扩展的数据驱动商业模式，投资将推动硬件生产与国际化。"
       },
       jp: {
-        header_title: "Eco-Predict 投資計画",
-        splash_subtitle: "AIベースの環境診断システム",
-        menu_overview: "事業概要",
-        menu_tech: "コア技術",
-        menu_market: "市場戦略",
-        menu_finance: "財務・投資",
-        title_overview: "1. 事業概要と問題解決 (Problem & Solution)",
-        subtitle_problem: "1.1. 問題定義 (Problem Definition)",
-        text_problem: "既存のセンシング技術の限界と老朽化問題の深刻さ\n\n現在の環境モニタリングシステムは、「現時点」の温度、湿度、ガス濃度などの定量的結果のみを提供します。これは、問題が発生した後に対処する対症療法的な管理システムです。特に、住居および産業施設の環境老朽化は、以下の問題を引き起こします。\n\n1) 予測不可能性: 室内環境の微細な変化（壁体内部の温度差、湿度のばらつき、微量VOC濃度）を目視で予測することは不可能です。\n2) 莫大な損失: カビ、結露、PCBの老朽化は、建物の安全性への脅威と財産価値の低下につながります。大型倉庫の湿度管理の失敗は、数百億ウォン相当の在庫損失を引き起こす可能性があります。\n3) 非効率的な対応: 定期的な訪問点検は費用がかかり、空白期間に問題が発生するリスクが高いです。\n\n核心問題: 微細な環境データは存在するが、「いつ、なぜ、どこで」老朽化が発生するかを知るインテリジェントなシステムが不足しています。",
-        subtitle_solution: "1.2. ソリューションとビジョン (AI Eco-Predict)",
-        text_solution: "AIベースの先制的環境診断ソリューションを提供\n\n「エコ・プレディクト」は、既存のセンサーシステムの限界をAI技術で克服し、「先制的メンテナンス (Proactive Maintenance)」市場を開拓します。\n\n1) 無限に拡張可能なデータ収集インフラ:\n   - 低電力ESP32ベースのワイヤレスモジュール（Eco-モジュール）を使用し、数百、数千個まで容易に拡張可能なアーキテクチャを構築します。\n   - Appから各モジュールごとに1秒から30分までデータ送信周期を遠隔制御し、低電力効率とリアルタイム性を両立させます。\n\n2) AI予測診断エンジン (Predict Engine):\n   - 時系列予測（RNNモデル）を通じて、「7日以内にカビリスク85%突破」のような具体的な予測時点を提供します。\n   - AIが一時的なノイズ（料理、換気）と持続的な汚染源（家具VOC、壁の湿気）を区別し、誤警報を最小限に抑えます。\n\n3) 統合ダッシュボード:\n   - ユーザーAppは、クラウドに接続されたすべてのモジュールの状態を一目で把握し、AIが分析した「危険区域」をハイライト表示して管理の効率性を最大化します。",
-        title_tech: "2. コア技術: AI予測エンジンとワイヤレスアーキテクチャ",
-        subtitle_ai_alg: "2.1. AI 予測および分析アルゴリズム (Predict Engine)",
-        text_ai_alg: "技術概要: データ駆動型インテリジェント老朽化予測\n\nEco-Predictの核心は、データを解釈し未来を予測するAIエンジンにあります。\n\n1) 時系列データ収集と精製:\n   - Eco-モジュールから収集される温度、湿度、VOC、eCO2データを、クラウドデータベースに固有ID別で時系列で保存します。\n   - センサーのノイズや一時的な誤作動データを除去し、学習データの品質を高めます。\n\n2) カビ/結露予測モデル (RNN/LSTM):\n   - Long Short-Term Memory (LSTM) モデルを採用し、過去14日間の温湿度パターンを分析し、今後7日以内に壁体表面温度が露点温度付近に達する確率（結露およびカビ発生リスク）を90%以上の精度で予測します。\n\n3) 汚染源パターン分類 (Random Forest):\n   - Random Forestモデルを使用して、VOC上昇の原因が (A)食品腐敗、(B)家具VOC、(C)人体代謝のいずれであるかを区別します。これにより、誤警報を減らし、診断精度を向上させます。",
-        subtitle_iot_arch: "2.2. 無限に拡張可能なIoTアーキテクチャ",
-        text_iot_arch: "クラウドベースの柔軟な「マイクロサービス」構造\n\n1) モジュールの最小化と分散処理:\n   - 各Eco-モジュールは、センサーデータ測定以外には中央処理の役割を遂行しません。MQTTベースの軽量プロトコルを活用した分散処理構造により、数千個のモジュールが同時に接続してもサーバーに負荷をかけません。\n\n2) 遠隔通信周期制御システム:\n   - Appで設定した通信周期値（1秒〜30分）に応じて、ESP32がディープスリープモードを柔軟に活用します。目覚めるたびにクラウドから次の周期を読み込み、究極の低電力効率とリアルタイム制御の柔軟性を両立させます。\n\n3) APモード自動登録技術:\n   - 保存されたWi-Fi情報がない場合、自動的にAPモードに切り替わり、ユーザーがAppを通じてWi-Fi情報を入力すると、モジュールの固有IDがクラウドに自動登録されるゼロ設定（Zero-Configuration）システムです。",
-        title_market: "3. 市場分析と事業化戦略",
-        subtitle_market_target: "3.1. ターゲット市場と市場規模分析",
-        text_market_target: "市場定義: 先制的メンテナンス (Proactive Maintenance) IoT市場\n\nEco-Predictは、施設老朽化および瑕疵補修費用の削減という明確なROIを提供するB2BおよびB2G市場を主力とします。\n\n1) 主力市場 (B2B/B2G): 施設および建設管理市場\n   - アパート建設会社/管理会社: 瑕疵発生率の減少および瑕疵補修費用の削減のためのシステム導入。\n   - 大型倉庫/物流センター: 温度/湿度に敏感な商品の保管環境モニタリングを通じた在庫損失防止。\n   - 博物館/美術館: 所蔵品の老朽化防止のための極微細環境モニタリング。\n\n2) 拡張市場 (B2C): プレミアムSmart Home市場\n   - 一般家庭のカビ、悪臭、室内空気質統合管理ソリューションとして販売。\n\n市場規模: グローバルSmart Facility Management市場は2024年基準で約600億USD規模であり、AIベースの予測分析部門は年平均25%以上の高成長率を示しています。",
-        subtitle_competitive: "3.2. 競争優位性および差別化戦略",
-        // HTML Table structure included directly in the content to remove markdown syntax
-        text_competitive: `
-          <h4 class="text-lg font-semibold mb-2">競合他社と比較した圧倒的な柔軟性とAI予測能力</h4>
-          <table class="styled-table">
-            <thead>
-              <tr><th>要素</th><th>Eco-Predict (当社)</th><th>競合他社 (IoTセンサーベース)</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>拡張性</td><td>無限拡張可能。AP自動登録。</td><td>特定Hubに最大数制限あり。複雑な設定が必要。</td></tr>
-              <tr><td>通信制御</td><td>Appから1秒〜30分遠隔制御可能。</td><td>固定された通信周期でリアルタイム制御不可。</td></tr>
-              <tr><td>核心AI機能</td><td>老朽化発生時点予測、汚染源分類およびノイズフィルタリング。</td><td>単純なアラーム機能。未来予測不可。</td></tr>
-              <tr><td>収益構造</td><td>ハードウェア販売 + AIサブスクリプション料 (Recurring)</td><td>主にハードウェア販売に依存。</td></tr>
-            </tbody>
-          </table>
-        `,
-        title_finance: "4. 財務見通しと投資誘致計画",
-        subtitle_financial_model: "4.1. 財務見通しと収益モデル (3か年予測)",
-        text_financial_intro: "当社の収益モデルは、ハードウェア販売よりも持続可能なAIサブスクリプションサービスに重点を置いています。初期のB2B契約確保後、長期的にはAI予測分析およびデータ管理のサブスクリプション料を主力とします。",
-        stat_growth: "年平均成長率 (CAGR)",
-        stat_growth_val: "45%",
-        stat_module: "累積設置モジュール目標 (3年目)",
-        stat_module_val: "30,000+",
-        stat_accuracy: "AI予測精度目標",
-        stat_accuracy_val: "90%",
-        subtitle_revenue_sources: "主な収益源構成 (3年目基準)",
-        text_revenue_sources: "1) AI予測サブスクリプション料 (60%): 施設管理会社を対象に、モジュールあたり月$5〜$10ドルのサブスクリプション料を課金。\n2) ハードウェア販売 (30%): Eco-モジュールの初期納入収益。\n3) 設置/メンテナンスサービス (10%): 初期設置コンサルティングおよびシステムAPI統合サービスの提供。\n\n売上目標: 大手建設/物流企業との長期契約確保を通じて、3年目に10N億ウォン規模を目標とします。",
-        subtitle_investment: "4.2. 投資提案と資金活用計画",
-        text_investment: "投資提案: 総額 $500,000$ USD (持分15%基準)\n\n資金活用計画 (Funding Allocation):\n\n1) 技術高度化とAI学習 (40%): AI予測モデルの洗練化とクラウドインフラの拡充。\n2) ハードウェア生産とR&D (30%): ESP32ベースセンサーPCBの初期金型製作および小規模量産投資。\n3) マーケティングと営業 (30%): B2B対象の実証事例 (Case Study) 構築と営業人員の補充。\n\n投資魅力: Eco-Predictは、検証されたIoTハードウェアとデータ駆動型AI予測技術を組み合わせ、爆発的に成長するAIベースの施設管理市場を先取りする機会を提供します。初期投資金は、高収益のサブスクリプションモデルへと迅速に移行するための触媒となるでしょう。",
-        footer_text: "© 2025 Eco-Predict. 全ての権利を保有します。"
+        menu_overview:"概要",menu_tech:"技術",menu_market:"市場",menu_finance:"財務",menu_invest:"投資",
+        title_overview:"AI Eco-Predict 概要",
+        text_overview:"AI Eco-PredictはAIを活用し、建物や施設の環境老化を予測するシステムです。",
+        title_tech:"コア技術",
+        text_tech:"RNNベースのAIエンジンがセンサーデータを分析し、危険パターンを事前検知します。",
+        title_market:"市場と成長展望",
+        text_market:"スマート環境市場は年15%以上成長し、ESGトレンドにより需要が急増しています。",
+        title_finance:"財務予測",
+        text_finance:"今後3年間、B2BおよびB2Gで安定的な成長を見込んでいます。",
+        stat_growth:"年間成長率(%)",stat_clients:"目標顧客",stat_accuracy:"AI予測精度(%)",
+        title_invest:"投資提案",
+        text_invest:"Eco-Predictはデータ駆動型モデルで、初期投資により市場シェア拡大を加速します。"
       }
     };
 
-    // --- Language Control Functions ---
-    let currentLang = 'ko'; // Default language
-
-    function setLanguage(lang) {
-      currentLang = lang;
-      const data = langData[lang];
-      if (!data) return;
-
-      // Update document title
-      document.title = data.header_title;
-
-      // Update all elements with data-lang-key attribute
-      document.querySelectorAll('[data-lang-key]').forEach(el => {
-        const key = el.getAttribute('data-lang-key');
-        if (data[key] !== undefined) {
-          // Check if it's a content element that needs innerHTML (like the competitive table)
-          if (key.startsWith('text_competitive')) {
-            el.innerHTML = data[key];
-          } else {
-            // Use textContent for plain text to prevent injection risk, and use pre-wrap styling for line breaks
-            el.textContent = data[key];
-          }
-        }
-      });
-
-      // Save preference (optional, but good practice)
-      localStorage.setItem('preferredLang', lang);
-      document.documentElement.lang = lang;
-    }
-
-    // --- Splash Screen and Initial Load ---
-    window.onload = function() {
-      // 1. Check for stored language preference
-      const storedLang = localStorage.getItem('preferredLang') || 'ko';
-      document.getElementById('language-selector').value = storedLang;
-      setLanguage(storedLang);
-
-      // 2. Hide splash screen and show main content after a delay
-      const splashScreen = document.getElementById('splash-screen');
-      const mainHeader = document.getElementById('main-header');
-      const mainContent = document.getElementById('main-content');
-      const mainFooter = document.getElementById('main-footer');
-
-      setTimeout(() => {
-        splashScreen.style.opacity = '0';
-        setTimeout(() => {
-          splashScreen.style.display = 'none';
-          mainHeader.style.display = 'flex'; // Show header
-          mainContent.style.display = 'block'; // Show main
-          mainFooter.style.display = 'block'; // Show footer
-        }, 1000); // Wait for opacity transition to finish (1s)
-      }, 1500); // Splash visible for 1.5 seconds
-
-      // 3. Simple scroll spy for menu highlighting (optional but improves UX)
-      const sections = document.querySelectorAll('section');
-      const navLinks = document.querySelectorAll('header nav a');
-
-      window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(section => {
-          const sectionTop = section.offsetTop;
-          const sectionHeight = section.clientHeight;
-          // Check if the current scroll position is past the section start
-          if (pageYOffset >= sectionTop - 150) {
-            current = section.getAttribute('id');
-          }
-        });
-
-        navLinks.forEach(a => {
-          a.classList.remove('text-green-600', 'font-bold');
-          a.classList.add('text-gray-600', 'font-medium');
-          if (a.getAttribute('href').includes(current)) {
-            a.classList.add('text-green-600', 'font-bold');
-            a.classList.remove('text-gray-600', 'font-medium');
-          }
+    document.querySelectorAll('.lang-footer button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('[data-key]').forEach(el => {
+          const key = el.getAttribute('data-key');
+          if(translations[lang][key]) el.innerText = translations[lang][key];
         });
       });
-    };
+    });
   </script>
-
 </body>
 </html>
