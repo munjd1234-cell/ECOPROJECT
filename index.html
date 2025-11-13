@@ -1,287 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Eco-Predict</title>
-  <style>
-    * {margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
-    body {background:#f4f6f8;color:#222;overflow-x:hidden;}
-    
-    /* Splash */
-    .splash-screen {
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:#000 url('p1.jpg') center/cover no-repeat;
-      display:flex;justify-content:center;align-items:center;
-      animation:fadeOut 1s ease-in-out 2s forwards;
-      z-index:10;
-    }
-    @keyframes fadeOut {to{opacity:0;visibility:hidden;}}
+<style>
+    * {margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
+    body {background:#f4f6f8;color:#222;overflow-x:hidden;}
+    
+    /* Splash */
+    .splash-screen {
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:#000 url('p1.jpg') center/cover no-repeat;
+      display:flex;justify-content:center;align-items:center;
+      animation:fadeOut 1s ease-in-out 2s forwards;
+      z-index:10;
+    }
+    @keyframes fadeOut {to{opacity:0;visibility:hidden;}}
 
-    /* Main */
-    .main-content {display:none;animation:fadeIn 1s ease-in-out forwards;}
-    @keyframes fadeIn {from{opacity:0;}to{opacity:1;}}
+    /* Main */
+    .main-content {display:none;animation:fadeIn 1s ease-in-out forwards;}
+    @keyframes fadeIn {from{opacity:0;}to{opacity:1;}}
 
-    header {
-      background:white;box-shadow:0 2px 10px rgba(0,0,0,0.05);
-      display:flex;align-items:center;justify-content:space-between;
-      padding:12px 5%;position:sticky;top:0;z-index:5;
-    }
-    header img{
-      max-height: 48px; /* 최대 높이 지정 */
-      max-width: 100%; /* 부모 요소의 너비에 맞게 조정 */
-      height: auto; /* 종횡비 유지 */
-    }
-    nav a {
-      margin:0 12px;text-decoration:none;color:#444;font-weight:500;transition:0.3s;
-    }
-    nav a:hover{color:#00b894;}
-    
-    section {
-      padding:80px 10%;min-height:100vh;display:flex;
-      flex-direction:column;justify-content:center;
-    }
-    section:nth-child(even){background:#fff;}
-    h1,h2{color:#00796b;margin-bottom:20px;}
-    p{line-height:1.7;color:#444;}
+    header {
+      background:white;box-shadow:0 2px 10px rgba(0,0,0,0.05);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 5%;position:sticky;top:0;z-index:5;
+    }
+    /* PC: 로고 높이 48px */
+    header img{height:48px; width:auto; max-width:100%;}
+    nav a {
+      margin:0 12px;text-decoration:none;color:#444;font-weight:500;transition:0.3s;
+    }
+    nav a:hover{color:#00b894;}
+    
+    section {
+      padding:80px 10%;min-height:100vh;display:flex;
+      flex-direction:column;justify-content:center;
+    }
+    section:nth-child(even){background:#fff;}
+    h1,h2{color:#00796b;margin-bottom:20px;}
+    p{line-height:1.7;color:#444;}
 
-    /* Stats */
-    .stats {
-      display:flex;flex-wrap:wrap;justify-content:center;margin-top:40px;
-    }
-    .stat {
-      flex:1 1 200px;text-align:center;margin:20px;background:#e8f5e9;
-      padding:30px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.05);
-      transition:transform 0.3s;
-    }
-    .stat:hover{transform:translateY(-5px);}
-    .count{font-size:2.5em;color:#00796b;font-weight:bold;}
+    /* Stats */
+    .stats {
+      display:flex;flex-wrap:wrap;justify-content:center;margin-top:40px;
+    }
+    .stat {
+      flex:1 1 200px;text-align:center;margin:20px;background:#e8f5e9;
+      padding:30px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.05);
+      transition:transform 0.3s;
+    }
+    .stat:hover{transform:translateY(-5px);}
+    .count{font-size:2.5em;color:#00796b;font-weight:bold;}
 
-    /* Chart */
-    .chart-container {
-      margin-top:40px;
-      background:#fff;
-      border-radius:15px;
-      padding:20px;
-      box-shadow:0 5px 15px rgba(0,0,0,0.05);
-    }
+    /* Chart */
+    .chart-container {
+      margin-top:40px;
+      background:#fff;
+      border-radius:15px;
+      padding:20px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.05);
+    }
 
-    /* Language Footer */
-    .lang-footer {
-      position:fixed;bottom:0;left:0;width:100%;
-      background:#00796b;color:#fff;display:flex;
-      justify-content:center;align-items:center;gap:20px;
-      padding:10px 0;z-index:15;
-    }
-    .lang-footer button {
-      background:none;border:1px solid #fff;
-      color:#fff;padding:6px 12px;border-radius:6px;
-      cursor:pointer;font-size:0.9em;transition:0.3s;
-    }
-    .lang-footer button:hover {background:#fff;color:#00796b;}
+    /* Language Footer */
+    .lang-footer {
+      position:fixed;bottom:0;left:0;width:100%;
+      background:#00796b;color:#fff;display:flex;
+      justify-content:center;align-items:center;gap:20px;
+      padding:10px 0;z-index:15;
+    }
+    .lang-footer button {
+      background:none;border:1px solid #fff;
+      color:#fff;padding:6px 12px;border-radius:6px;
+      cursor:pointer;font-size:0.9em;transition:0.3s;
+    }
+    .lang-footer button:hover {background:#fff;color:#00796b;}
 
-    /* Mobile */
-    @media (max-width:768px){
-      header{flex-direction:column;}
-      nav{margin-top:10px;}
-      section{padding:60px 5%;}
-      .count{font-size:1.8em;}
-      .lang-footer{flex-wrap:wrap;gap:10px;}
-    }
-  </style>
-</head>
-<body>
-
-  <div class="splash-screen"></div>
-
-  <div class="main-content">
-    <header>
-      <img src="logo.jpg" alt="Eco-Predict logo" />
-      <nav>
-        <a href="#overview" data-key="menu_overview">Overview</a>
-        <a href="#technology" data-key="menu_tech">Technology</a>
-        <a href="#market" data-key="menu_market">Market</a>
-        <a href="#finance" data-key="menu_finance">Finance</a>
-        <a href="#investment" data-key="menu_invest">Investment</a>
-      </nav>
-    </header>
-
-    <section id="overview">
-      <h1 data-key="title_overview">AI Eco-Predict Overview</h1>
-      <p data-key="text_overview">
-        AI Eco-Predict is an AI-driven system that forecasts environmental aging and hazards in buildings and facilities.
-        By predicting mold, corrosion, and pollution before they occur, it enables proactive maintenance and reduces costs.
-        It is also a key solution for the environmental management requirements of the global ESG (Environmental, Social, and Governance) trend.
-      </p>
-    </section>
-
-    <section id="technology">
-      <h2 data-key="title_tech">Core Technology</h2>
-      <p data-key="text_tech">
-        Our proprietary AI Prediction Engine analyzes environmental data collected by IoT sensors (temperature, humidity, VOCs, CO₂).
-        Using RNN (Recurrent Neural Network) models, we identify risk patterns and predict deterioration before visible damage occurs.
-        The platform operates in real-time by integrating with the client's existing building management system (BMS).
-      </p>
-    </section>
-
-    <section id="market">
-      <h2 data-key="title_market">Market and Growth</h2>
-      <p data-key="text_market">
-        The global smart environment management market is growing at over 15% annually.
-        With ESG and sustainability trends, AI-powered diagnostic systems are rapidly becoming essential in facility management.
-        The core target is public institutions and large corporations with significant facility assets.
-      </p>
-    </section>
-
-    <section id="finance">
-      <h2 data-key="title_finance">Financial Forecast</h2>
-      <p data-key="text_finance">
-        We project steady revenue growth through B2B and B2G partnerships over the next 3 years.
-        The company operates on a subscription (SAAS) and installation fee model, securing steady revenue.
-      </p>
-
-      <div class="stats">
-        <div class="stat">
-          <div class="count" data-target="45">0</div>
-          <p data-key="stat_growth">Annual Growth (%)</p>
-        </div>
-        <div class="stat">
-          <div class="count" data-target="30000">0</div>
-          <p data-key="stat_clients">Target Clients</p>
-        </div>
-        <div class="stat">
-          <div class="count" data-target="90">0</div>
-          <p data-key="stat_accuracy">AI Prediction Accuracy (%)</p>
-        </div>
-      </div>
-
-      <div class="chart-container">
-        <canvas id="revenueChart"></canvas>
-      </div>
-    </section>
-
-    <section id="investment">
-      <h2 data-key="title_invest">Investment Opportunity</h2>
-      <p data-key="text_invest">
-        Eco-Predict offers a scalable, data-driven business model.
-        Your investment accelerates hardware production, AI enhancement, and international certification.
-        Together, we build a sustainable and profitable future.
-        We offer substantial dividends and a flexible exit strategy for our early-stage investors.
-      </p>
-    </section>
-  </div>
-
-  <div class="lang-footer">
-    <button data-lang="en">🇬🇧 English</button>
-    <button data-lang="ko">🇰🇷 한국어</button>
-    <button data-lang="zh">🇨🇳 中文</button>
-    <button data-lang="jp">🇯🇵 日本語</button>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    // Splash transition (2 sec)
-    setTimeout(() => {
-      document.querySelector('.splash-screen').style.display = 'none';
-      document.querySelector('.main-content').style.display = 'block';
-    }, 2000);
-
-    // Counter animation
-    const counters = document.querySelectorAll('.count');
-    const speed = 100;
-    const animateCount = () => {
-      counters.forEach(counter => {
-        const target = +counter.getAttribute('data-target');
-        const updateCount = () => {
-          const current = +counter.innerText;
-          const increment = target / speed;
-          if (current < target) {
-            counter.innerText = Math.ceil(current + increment);
-            setTimeout(updateCount, 30);
-          } else counter.innerText = target;
-        };
-        updateCount();
-      });
-    };
-    window.addEventListener('scroll', () => {
-      const finance = document.querySelector('#finance');
-      const rect = finance.getBoundingClientRect();
-      if (rect.top < window.innerHeight && rect.bottom >= 0) animateCount();
-    });
-
-    // Chart.js graph
-    const ctx = document.getElementById('revenueChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['2025', '2026', '2027', '2028', '2029'],
-        datasets: [{
-          label: 'Projected Revenue (Million USD)',
-          data: [1.2, 3.5, 7.8, 12.3, 18.7],
-          backgroundColor: '#00b894'
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true } }
-      }
-    });
-
-    // Multi-language support
-    const translations = {
-      ko: {
-        menu_overview: "사업 개요", menu_tech: "핵심 기술", menu_market: "시장 전략", menu_finance: "재무 전망", menu_invest: "투자 유치",
-        title_overview: "1. 사업 개요 및 문제 해결 (Problem & Solution)",
-        text_overview: "현재 환경 모니터링 시스템은 '현재 시점'의 정량적 결과만을 제공하여, 문제가 발생한 후에야 대처하는 사후 관리 시스템입니다. 실내 환경의 미세한 변화를 예측하는 것은 불가능하며, 곰팡이, 결로 등은 막대한 손실과 비효율적인 대응을 야기합니다.<br><br>핵심 문제: 미세 환경 데이터는 있으나, '언제, 왜, 어디서' 노후화가 발생할지 아는 지능형 시스템이 부재합니다.<br><br>'에코-프레딕트'는 AI 기반의 선제적 환경 진단 솔루션을 제공하여 이 문제를 해결합니다. 저전력 ESP32 기반의 무선 모듈(Eco-모듈)을 통해 무한대 확장 가능한 데이터 수집 인프라를 구축하고, 시계열 예측(RNN 모델)을 통해 '7일 이내 곰팡이 위험 85% 돌파'와 같은 구체적인 예측 시점을 제공합니다.",
-        title_tech: "2. 핵심 기술: AI 예측 엔진과 무선 아키텍처",
-        text_tech: "Eco-Predict의 핵심은 데이터를 해석하고 미래를 예측하는 AI 엔진에 있습니다. 당사는 Long Short-Term Memory (LSTM) 모델을 채택하여 과거 14일 치의 온/습도 패턴을 분석하고 다음 7일 이내에 노점 온도 근처에 도달할 확률을 90% 이상의 정확도로 예측합니다. 또한 Random Forest 모델로 VOC 상승 원인(음식물 부패, 가구 VOC, 인체 대사)을 구별하여 오경보를 최소화합니다.<br><br>IoT 아키텍처는 MQTT 기반 경량 프로토콜을 활용한 분산 처리 구조로 수천 개의 모듈 접속에 부하가 없으며, App에서 통신 주기를 1초~30분으로 원격 제어하여 저전력 효율과 실시간 유연성을 모두 확보합니다.",
-        title_market: "3. 시장 분석 및 사업화 전략",
-        text_market: "Eco-Predict는 시설 노후화 및 하자 보수 비용 절감이라는 명확한 ROI를 제공하는 B2B 및 B2G 선제적 유지보수(Proactive Maintenance) IoT 시장을 주력으로 합니다. 주력 시장은 아파트 건설사/관리 회사, 대형 창고/물류 센터, 박물관/미술관 등이며, 확장 시장으로 프리미엄 Smart Home 시장이 있습니다.<br><br>경쟁사 대비 무한대 확장 가능한 유연한 아키텍처, App에서 1초 단위까지 가능한 원격 통신 제어, 노후화 발생 시점 예측 및 오염원 분류 등의 압도적인 AI 예측 능력을 통해 차별화합니다.",
-        title_finance: "4. 재무 전망 및 투자 유치 계획",
-        text_finance: "당사의 수익 모델은 하드웨어 판매보다 지속 가능한 AI 구독 서비스에 중점을 둡니다. 초기 B2B 계약 확보 후, 장기적으로 AI 예측 분석 및 데이터 관리 구독료를 주력으로 합니다. 주요 수익원은 AI 예측 구독료 (60%), 하드웨어 판매 (30%), 설치/유지보수 서비스 (10%)로 구성되며, 3년차 10N억 원 규모의 매출을 목표합니다.",
-        stat_growth: "연평균 성장률(%)", stat_clients: "누적 설치 모듈 목표", stat_accuracy: "AI 예측 정확도(%)",
-        title_invest: "4.2. 투자 제안 및 자금 활용 계획",
-        text_invest: "투자 제안: 총 $500,000$ USD (지분 15% 기준)<br><br>Eco-Predict는 검증된 IoT 하드웨어와 데이터 기반 AI 예측 기술을 결합하여, 폭발적으로 성장하는 AI 기반 시설 관리 시장의 선점 기회를 제공합니다. 투자금은 기술 고도화 및 AI 학습 (40%), 하드웨어 생산 및 R&D (30%), 마케팅 및 영업 (30%)에 활용되어 고수익의 구독형 모델로 빠르게 전환하는 촉매제가 될 것입니다.<br><br>© 2025 Eco-Predict. All rights reserved."
-      },
-      zh: {
-        menu_overview:"概述",menu_tech:"技术",menu_market:"市场",menu_finance:"财务",menu_invest:"投资",
-        title_overview:"AI Eco-Predict 概述",
-        text_overview:"AI Eco-Predict 是一个利用 AI 预测建筑和设施环境老化的系统。",
-        title_tech:"核心技术",
-        text_tech:"AI 引擎基于 RNN 模型分析传感器数据，提前发现风险模式。",
-        title_market:"市场与增长前景",
-        text_market:"全球智能环境管理市场每年增长超过 15%，ESG 趋势推动需求迅速扩大。",
-        title_finance:"财务预测",
-        text_finance:"预计未来三年通过 B2B 和 B2G 合作稳步增长。",
-        stat_growth:"年均增长率(%)",stat_clients:"目标客户",stat_accuracy:"AI 预测准确率(%)",
-        title_invest:"投资机会",
-        text_invest:"Eco-Predict 提供可扩展的数据驱动商业模式，投资将推动硬件生产与国际化。"
-      },
-      jp: {
-        menu_overview:"概要",menu_tech:"技術",menu_market:"市場",menu_finance:"財務",menu_invest:"投資",
-        title_overview:"AI Eco-Predict 概要",
-        text_overview:"AI Eco-PredictはAIを活用し、建物や施設の環境老化を予測するシステムです。",
-        title_tech:"コア技術",
-        text_tech:"RNNベースのAIエンジンがセンサーデータを分析し、危険パターンを事前検知します。",
-        title_market:"市場と成長展望",
-        text_market:"スマート環境市場は年15%以上成長し、ESGトレンドにより需要が急増しています。",
-        title_finance:"財務予測",
-        text_finance:"今後3年間、B2BおよびB2Gで安定的な成長を見込んでいます。",
-        stat_growth:"年間成長率(%)",stat_clients:"目標顧客",stat_accuracy:"AI予測精度(%)",
-        title_invest:"投資提案",
-        text_invest:"Eco-Predictはデータ駆動型モデルで、初期投資により市場シェア拡大を加速します。"
-      }
-    };
-
-    document.querySelectorAll('.lang-footer button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const lang = btn.dataset.lang;
-        document.querySelectorAll('[data-key]').forEach(el => {
-          const key = el.getAttribute('data-key');
-          if(translations[lang][key]) el.innerText = translations[lang][key];
-        });
-      });
-    });
-  </script>
-</body>
-</html>
+    /* Mobile */
+    @media (max-width:768px){
+      header{flex-direction:column;}
+      /* Mobile: 로고 높이 36px로 축소 */
+      header img{height:36px;}
+      nav{margin-top:10px;}
+      section{padding:60px 5%;}
+      .count{font-size:1.8em;}
+      .lang-footer{flex-wrap:wrap;gap:10px;}
+    }
+  </style>
