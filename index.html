@@ -6,11 +6,9 @@
     <title>Ai Eco-Predict – 지능형 통합 센서 기반 안전·환경 예측 시스템</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- jsPDF and html2canvas CDN for PDF Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- jsPDF and html2canvas CDN for PDF Export (REMOVED) -->
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/css/all.min.css">
 
     <style>
         /* Inter 폰트 (Tailwind 기본) 사용 */
@@ -22,27 +20,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
         
-        /* 섹션별 프린트 최적화 (PDF 생성 시) */
-        @media print {
-            header, footer, #pdf-button-container {
-                display: none !important;
-            }
-            main section {
-                page-break-after: always; /* 각 섹션 후 페이지 나누기 */
-                padding-top: 2rem !important;
-                padding-bottom: 2rem !important;
-            }
-            /* 마지막 섹션은 페이지 나누기 안 함 */
-            main section:last-child {
-                page-break-after: avoid;
-            }
-            body {
-                font-size: 10pt;
-            }
-            h1, h2, h3 {
-                color: #000 !important;
-            }
-        }
+        /* PDF print optimization styles (REMOVED) */
 
         /* 활성 메뉴 스타일 */
         .nav-link.active {
@@ -65,46 +43,12 @@
             background: #64748b; /* slate-500 */
         }
 
-        /* 로딩 스피너 */
-        .loader {
-            border: 5px solid #f3f3f3; /* Light grey */
-            border-top: 5px solid #0d9488; /* Teal */
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            color: white;
-            font-size: 1.2rem;
-        }
+        /* Loading spinner styles (REMOVED) */
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- PDF 생성 중 로딩 오버레이 -->
-    <div id="loading-overlay" class="hidden">
-        <div class="loader mb-4"></div>
-        <p>PDF를 생성 중입니다. 잠시만 기다려주세요...</p>
-        <p id="pdf-progress"></p>
-    </div>
+    <!-- PDF Loading Overlay (REMOVED) -->
 
     <!-- 상단 고정 헤더 -->
     <header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-md transition-all duration-300">
@@ -864,13 +808,7 @@
     <!-- 푸터 -->
     <footer class="bg-gray-800 text-white mt-16">
         <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-            <!-- PDF 저장 버튼 -->
-            <div id="pdf-button-container" class="text-center mb-8">
-                <p class="text-gray-300 mb-4">아래 버튼을 클릭하면 현재 페이지의 각 섹션을 개별 페이지로 구성하여 PDF로 저장합니다.</p>
-                <button id="save-pdf-button" class="bg-teal-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-teal-700 transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75">
-                    <i class="fa-solid fa-file-pdf mr-2"></i> PDF로 저장하기
-                </button>
-            </div>
+            <!-- PDF 저장 버튼 (REMOVED) -->
             
             <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
                 <p>&copy; 2025 (주)디에이치씨솔루션. All rights reserved.</p>
@@ -934,77 +872,7 @@
                 observer.observe(section);
             });
 
-            // --- PDF 저장 기능 ---
-            const savePdfButton = document.getElementById('save-pdf-button');
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const pdfProgress = document.getElementById('pdf-progress');
-
-            savePdfButton.addEventListener('click', async () => {
-                // jspdf 모듈 로드 확인
-                if (typeof window.jspdf === 'undefined' || typeof window.html2canvas === 'undefined') {
-                    console.error('jsPDF or html2canvas library not loaded.');
-                    // 사용자에게 알림 (예: 커스텀 모달)
-                    document.body.insertAdjacentHTML('beforeend', '<div style="position:fixed; top:10px; left:50%; transform:translateX(-50%); background:red; color:white; padding:10px; border-radius:5px; z-index:10001;">PDF 라이브러리 로드 실패</div>');
-                    return;
-                }
-
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF('p', 'mm', 'a4');
-                const sectionsToPrint = document.querySelectorAll('main section');
-                const totalSections = sectionsToPrint.length;
-                
-                loadingOverlay.classList.remove('hidden');
-                pdfProgress.textContent = `(0 / ${totalSections} 섹션 처리 중)`;
-
-                for (let i = 0; i < totalSections; i++) {
-                    const section = sectionsToPrint[i];
-                    pdfProgress.textContent = `(${i + 1} / ${totalSections} 섹션 처리 중: ${section.id})`;
-                    
-                    try {
-                        const canvas = await html2canvas(section, {
-                            scale: 2, // 고해상도 캡처
-                            useCORS: true,
-                            logging: false
-                        });
-                        
-                        const imgData = canvas.toDataURL('image/png');
-                        
-                        const imgProps = doc.getImageProperties(imgData);
-                        const pdfWidth = doc.internal.pageSize.getWidth();
-                        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                        const pageHeight = doc.internal.pageSize.getHeight();
-
-                        let heightLeft = pdfHeight;
-                        let position = 0;
-
-                        // 첫 페이지 추가 (i > 0 조건으로 첫 번째 섹션은 새 페이지 추가 안함)
-                        if (i > 0) {
-                            doc.addPage();
-                        }
-
-                        // 이미지가 페이지 높이보다 클 경우 분할하여 추가
-                        while (heightLeft > 0) {
-                            doc.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
-                            heightLeft -= pageHeight;
-                            
-                            if (heightLeft > 0) {
-                                doc.addPage();
-                                position = -heightLeft; // 다음 페이지에서 이미지의 나머지 부분 그리기
-                            }
-                        }
-                    } catch (error) {
-                        console.error(`Error processing section ${section.id}:`, error);
-                        // 오류 발생 시 다음 섹션으로 넘어감
-                        doc.addPage();
-                        doc.text(`Error processing section: ${section.id}`, 10, 10);
-                    }
-                }
-
-                // PDF 저장
-                doc.save('Ai-Eco-Predict_Report.pdf');
-                loadingOverlay.classList.add('hidden');
-                pdfProgress.textContent = '';
-            });
+            // --- PDF 저장 기능 (REMOVED) ---
         });
     </script>
 
