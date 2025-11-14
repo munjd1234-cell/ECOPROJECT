@@ -1,597 +1,1012 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Eco-Predict Business Plan</title>
-    <!-- Tailwind CSS CDN 로드 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ai Eco-Predict – 지능형 통합 센서 기반 안전·환경 예측 시스템</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF and html2canvas CDN for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-        :root {
-            --primary: #00c49a; /* Fresh Green */
-            --secondary: #00796b;
-            --background: #f0f4f8;
-            --text-dark: #2c3e50;
-            --text-light: #556c80;
-            --card-bg: #ffffff;
-        }
-
-        /* 폰트 설정 및 기본 스타일 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
+        /* Inter 폰트 (Tailwind 기본) 사용 */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        
         body {
-            background-color: var(--background);
-            color: var(--text-dark);
-            min-height: 100vh;
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* 섹션별 프린트 최적화 (PDF 생성 시) */
+        @media print {
+            header, footer, #pdf-button-container {
+                display: none !important;
+            }
+            main section {
+                page-break-after: always; /* 각 섹션 후 페이지 나누기 */
+                padding-top: 2rem !important;
+                padding-bottom: 2rem !important;
+            }
+            /* 마지막 섹션은 페이지 나누기 안 함 */
+            main section:last-child {
+                page-break-after: avoid;
+            }
+            body {
+                font-size: 10pt;
+            }
+            h1, h2, h3 {
+                color: #000 !important;
+            }
         }
 
-        /* 주요 콘텐츠 숨기기/보이기 */
-        .page-content {
-            display: none;
-            padding-bottom: 5rem;
-            animation: fadeIn 0.5s ease-in-out;
+        /* 활성 메뉴 스타일 */
+        .nav-link.active {
+            color: #0d9488; /* 틸 색상 */
+            font-weight: 700;
+        }
+        
+        /* 스크롤바 스타일링 (고급스러운 느낌) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; /* slate-100 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8; /* slate-400 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; /* slate-500 */
         }
 
-        .page-content.active {
-            display: block;
+        /* 로딩 스피너 */
+        .loader {
+            border: 5px solid #f3f3f3; /* Light grey */
+            border-top: 5px solid #0d9488; /* Teal */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* 네비게이션 스타일 */
-        .navbar a {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-
-        .navbar a:hover {
-            background-color: rgba(0, 196, 154, 0.1);
-        }
-
-        .navbar a.active {
-            color: var(--card-bg);
-            background-color: var(--primary);
-            box-shadow: 0 4px 6px -1px rgba(0, 196, 154, 0.3), 0 2px 4px -2px rgba(0, 196, 154, 0.3);
-        }
-
-        /* 카드 스타일 */
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 언어 버튼 스타일 */
-        .lang-footer button {
-            transition: all 0.2s;
-            border-radius: 0.5rem;
-            padding: 0.25rem 0.5rem;
-        }
-        .lang-footer button.active {
-            background-color: var(--secondary);
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
             color: white;
-            font-weight: 600;
+            font-size: 1.2rem;
         }
     </style>
 </head>
-<body class="selection:bg-primary selection:text-white">
+<body class="bg-gray-50 text-gray-800">
 
-    <!-- Header & Navigation -->
-    <header class="sticky top-0 bg-white/95 backdrop-blur-sm shadow-md z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center space-x-3 mb-4 md:mb-0">
-                <!-- 로고 이미지 (logo.jpg 활용) -->
-                <img src="logo.jpg" alt="Eco-Predict Logo" class="h-8 object-cover rounded-md" onerror="this.onerror=null; this.src='https://placehold.co/120x32/00c49a/ffffff?text=LOGO';">
-                <h1 class="text-xl font-bold text-primary" data-key="header_title">AI Eco-Predict Business Plan</h1>
+    <!-- PDF 생성 중 로딩 오버레이 -->
+    <div id="loading-overlay" class="hidden">
+        <div class="loader mb-4"></div>
+        <p>PDF를 생성 중입니다. 잠시만 기다려주세요...</p>
+        <p id="pdf-progress"></p>
+    </div>
+
+    <!-- 상단 고정 헤더 -->
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-md transition-all duration-300">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-20 items-center justify-between">
+                <!-- 로고 -->
+                <div class="flex-shrink-0">
+                    <a href="#" class="flex items-center">
+                        <img class="h-12 w-auto" src="logo.jpg" alt="Ai Eco-Predict 로고">
+                    </a>
+                </div>
+                
+                <!-- 데스크탑 메뉴 -->
+                <nav class="hidden md:block">
+                    <ul classS="ml-10 flex items-baseline space-x-1 lg:space-x-2">
+                        <li><a href="#background" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">사업 배경</a></li>
+                        <li><a href="#purpose" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">사업 목적</a></li>
+                        <li><a href="#solution" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">솔루션 제안</a></li>
+                        <li><a href="#operation" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">기기 운영</a></li>
+                        <li><a href="#problems" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">현장 문제점</a></li>
+                        <li><a href="#advantage" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">경쟁 우위</a></li>
+                        <li><a href="#roadmap" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">로드맵</a></li>
+                        <li><a href="#market" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">시장 기회</a></li>
+                        <li><a href="#pricing" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">가격 정책</a></li>
+                        <li><a href="#team" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">조직 구성</a></li>
+                        <li><a href="#milestone" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">자금 계획</a></li>
+                        <li><a href="#exit" class="nav-link text-gray-600 hover:text-teal-600 px-2 py-2 rounded-md text-sm font-medium transition-colors">엑시트 전략</a></li>
+                    </ul>
+                </nav>
+                
+                <!-- 모바일 메뉴 버튼 -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center rounded-md bg-gray-100 p-2 text-gray-600 hover:bg-gray-200 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">메인 메뉴 열기</span>
+                        <svg id="menu-icon-open" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        </svg>
+                        <svg id="menu-icon-close" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <nav class="navbar flex flex-wrap justify-center space-x-1 sm:space-x-4 text-sm">
-                <a href="#overview" data-page="overview" data-key="nav_overview">개요 및 비전</a>
-                <a href="#product" data-page="product" data-key="nav_product">제품 및 기술</a>
-                <a href="#finance" data-page="finance" data-key="nav_finance">재무 및 투자</a>
-            </nav>
+        </div>
+
+        <!-- 모바일 메뉴 (숨겨짐) -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <ul class="space-y-1 px-2 pt-2 pb-3 sm:px-3 max-h-[70vh] overflow-y-auto">
+                <li><a href="#background" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">사업 배경</a></li>
+                <li><a href="#purpose" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">사업 목적</a></li>
+                <li><a href="#solution" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">솔루션 제안</a></li>
+                <li><a href="#operation" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">기기 운영</a></li>
+                <li><a href="#problems" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">현장 문제점</a></li>
+                <li><a href="#advantage" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">경쟁 우위</a></li>
+                <li><a href="#roadmap" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">로드맵</a></li>
+                <li><a href="#market" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">시장 기회</a></li>
+                <li><a href="#pricing" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">가격 정책</a></li>
+                <li><a href="#team" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">조직 구성</a></li>
+                <li><a href="#milestone" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">자금 계획</a></li>
+                <li><a href="#exit" class="nav-link mobile-link block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-teal-600">엑시트 전략</a></li>
+            </ul>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <!-- 메인 컨텐츠 -->
+    <main class="pt-20"> <!-- 헤더 높이(20 * 4 = 80px)만큼 패딩 -->
 
-        <!-- 1. Overview Page -->
-        <section id="overview" class="page-content active">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 text-text-dark" data-key="title_vision">파괴적 예측: 지속가능한 미래를 위한 AI</h2>
-                <p class="text-xl text-text-light" data-key="subtitle_problem">눈에 보이지 않는 손상을 미리 감지하여 자산과 환경을 보호합니다.</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="card p-6">
-                    <h3 class="text-2xl font-bold text-primary mb-3" data-key="title_problem">문제 정의</h3>
-                    <p class="text-text-light" data-key="text_problem">건물 및 인프라의 노후화는 매년 수십억 달러의 수리 비용을 발생시키며, 이 중 상당 부분은 **미세한 환경 스트레스**로 인해 발생합니다. 기존 센서는 이미 손상이 발생한 후에만 감지합니다.</p>
-                </div>
-                <div class="card p-6">
-                    <h3 class="text-2xl font-bold text-primary mb-3" data-key="title_solution">우리의 솔루션</h3>
-                    <p class="text-text-light" data-key="text_solution">Eco-Predict는 **AI 기반 예측 진단 모듈**로, 온도, 습도, 유해 가스(VOCs)와 같은 IoT 센서 데이터를 분석하여 **자산 손상을 예측**하고 유지보수 일정을 최적화합니다.</p>
-                </div>
-            </div>
-
-            <div class="mt-12">
-                <div class="card p-8">
-                    <h3 class="text-3xl font-bold text-primary mb-6 text-center" data-key="title_market">시장과 성장 전망</h3>
-                    <div class="grid sm:grid-cols-3 gap-6 text-center">
-                        <div class="p-4 bg-gray-50 rounded-lg">
-                            <p class="text-4xl font-extrabold text-primary" data-key="stat_growth_val">15%+</p>
-                            <p class="text-text-light mt-1" data-key="stat_growth">연간 성장률(%)</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg">
-                            <p class="text-4xl font-extrabold text-primary" data-key="stat_clients_val">B2B & B2G</p>
-                            <p class="text-text-light mt-1" data-key="stat_clients">주요 목표 고객</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg">
-                            <p class="text-4xl font-extrabold text-primary" data-key="stat_accuracy_val">95%</p>
-                            <p class="text-text-light mt-1" data-key="stat_accuracy">AI 예측 정확도(%)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- J1 ~ J12 이미지 그리드 (개요 하단에 작게 배치) -->
-            <div class="mt-16 pt-8 border-t border-gray-200">
-                <h3 class="text-xl font-bold text-text-dark mb-4 text-center">모듈 배치 예시 (12개 위치)</h3>
-                <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-1">
-                    <!-- Images J1.jpg through J12.jpg -->
-                    <!-- 각 이미지는 정사각형이며 작게 표시됩니다. 모바일에서는 3x4 (4열), 태블릿에서는 6열, 데스크톱에서는 12열로 배치됩니다. -->
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j1.jpg" alt="Module Location 1" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J1';" title="거실">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j2.jpg" alt="Module Location 2" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J2';" title="침실">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j3.jpg" alt="Module Location 3" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J3';" title="주방">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j4.jpg" alt="Module Location 4" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J4';" title="화장실">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j5.jpg" alt="Module Location 5" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J5';" title="현관">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j6.jpg" alt="Module Location 6" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J6';" title="베란다">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j7.jpg" alt="Module Location 7" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J7';" title="드레스룸">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j8.jpg" alt="Module Location 8" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J8';" title="세탁실">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j9.jpg" alt="Module Location 9" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J9';" title="다용도실">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j10.jpg" alt="Module Location 10" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J10';" title="천정">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j11.jpg" alt="Module Location 11" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J11';" title="복도">
-                    </div>
-                    <div class="aspect-square overflow-hidden rounded-md shadow-sm">
-                        <img src="j12.jpg" alt="Module Location 12" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e0f7fa/00c49a?text=J12';" title="냉장고">
-                    </div>
-                </div>
+        <!-- Hero 섹션 (Project A) -->
+        <section id="hero" class="relative bg-gradient-to-r from-teal-700 to-cyan-600 text-white py-32 md:py-48">
+            <div class="absolute inset-0 opacity-20" style="background-image: url('p11.jpg'); background-size: cover; background-position: center;"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-teal-700/80 to-cyan-600/80"></div>
+            <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">Ai Eco-Predict</h1>
+                <p class="mt-4 text-xl md:text-2xl font-light">지능형 통합 센서 기반 안전·환경 예측 시스템</p>
+                <p class="mt-2 text-lg md:text-xl font-light">AI Environmental Aging Prediction System</p>
             </div>
         </section>
 
-        <!-- 2. Product Page -->
-        <section id="product" class="page-content">
-            <h2 class="text-4xl font-extrabold mb-8 text-center text-text-dark" data-key="title_product">제품 및 핵심 기술</h2>
-
-            <div class="grid lg:grid-cols-3 gap-8">
-                <!-- Card 1: The Module -->
-                <div class="card">
-                    <div class="text-center mb-4">
-                        <!-- p11.jpg은 제품 페이지에 사용되었습니다. -->
-                        <img src="p11.jpg" alt="Eco-Predict Module" class="rounded-lg h-48 w-full object-cover mb-4" onerror="this.onerror=null; this.src='https://placehold.co/400x200/00c49a/ffffff?text=P11+Module';">
-                        <h3 class="text-xl font-bold text-primary" data-key="title_module">하드웨어 모듈</h3>
+        <!-- 섹션 컨테이너 -->
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            
+            <!-- B. 사업의 배경 -->
+            <section id="background" class="py-16 md:py-24 border-b border-gray-200">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">B. 사업의 배경</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="prose prose-lg text-gray-700 max-w-none">
+                        <p>㈜디에이치씨솔루션은 특수 가전 분야 시스템 청소 전문 업체로, 시스템 에어컨, 냉장고, 제빙기 등 다양한 설비의 유지보수와 청소에 대해 10여 년간의 기술적 경험과 노하우를 축적해왔습니다. 이를 통해 당사는 장기 구독 서비스를 이용하는 고객에게 사전 예방적 환경 점검과 안전 조치를 제공하며 즉각적인 대응을 목표로 운영해왔습니다.</p>
+                        <p>그러나 기존 방식은 기술적 한계와 시스템 구조, 안전, 환경 등 다양한 제약으로 인해 일부 위험 요소가 사전에 감지되지 못하고, 발견 후 청소 또는 조치로 대응할 수밖에 없는 한계가 존재했습니다.</p>
+                        <p>이러한 경험은 사전 예방 중심의 통합 관리 필요성을 분명히 보여주었으며, 기존의 단일 설비 중심 관리 방식으로는 건물, 기계, 산업, 생활 공간 등 다양한 환경에서 발생하는 복합적 위험을 충분히 대응할 수 없음을 확인하게 되었습니다.</p>
+                        <p>이에 당사는 기존 청소 및 유지보수 경험을 기반으로, 건물·기계·주거·산업 현장에서 발생 가능한 구조적 위험, 환경오염, 설비 이상 징후를 사전에 감지하고 예방할 수 있는 통합 솔루션 개발을 추진하게 되었습니다. 이로써 단편적 대응을 넘어 실시간 모니터링과 AI 기반 예측을 통해 사고를 예방하고, 안전과 환경 관리를 효율적·통합적으로 수행할 수 있는 기반을 마련하고자 합니다.</p>
                     </div>
-                    <p class="text-text-light" data-key="text_module">작고, 설치가 용이하며, 배터리로 구동되는 미니멀한 센서 모듈입니다. 온도, 습도, 압력 및 VOCs를 포함한 4가지 환경 요소를 실시간으로 측정합니다.</p>
-                </div>
-                <!-- Card 2: The AI Engine -->
-                <div class="card">
-                    <div class="text-center mb-4">
-                        <svg class="w-12 h-12 mx-auto text-primary mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l2-2 2 2v13m-2-4h.01m-6-4h.01m-6-4h.01m-2-4h.01M3 6h18m-9 0v18"></path></svg>
-                        <h3 class="text-xl font-bold text-primary" data-key="title_ai">AI 예측 엔진</h3>
-                    </div>
-                    <p class="text-text-light" data-key="text_ai">AI 예측 엔진은 IoT 센서 데이터를 분석합니다. 고도화된 **RNN 모델**을 사용하여 위험 패턴을 정확하게 식별하고, 눈에 보이는 손상이 발생하기 전에 열화를 예측합니다.</p>
-                </div>
-                <!-- Card 3: The Platform -->
-                <div class="card">
-                    <div class="text-center mb-4">
-                        <svg class="w-12 h-12 mx-auto text-primary mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 4l-4 4 4 4"></path></svg>
-                        <h3 class="text-xl font-bold text-primary" data-key="title_platform">클라우드 플랫폼</h3>
-                    </div>
-                    <p class="text-text-light" data-key="text_platform">실시간 대시보드 및 알림 시스템을 제공합니다. 시설 관리자는 모바일 앱 또는 웹 인터페이스를 통해 모든 자산의 상태를 한 눈에 파악하고 선제적으로 대응할 수 있습니다.</p>
-                </div>
-            </div>
-
-            <div class="mt-12">
-                <h3 class="text-2xl font-bold text-text-dark mb-4 text-center" data-key="title_data">데이터 가치 제안</h3>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="card p-4">
-                        <p class="font-semibold text-lg text-secondary mb-2">예측 유지보수</p>
-                        <p class="text-text-light">정확한 예측을 통해 불필요한 점검을 줄이고 유지보수 비용을 최대 30% 절감합니다.</p>
-                    </div>
-                    <div class="card p-4">
-                        <p class="font-semibold text-lg text-secondary mb-2">보험 위험 절감</p>
-                        <p class="text-text-light">누수, 화재 위험 등을 선제적으로 감지하여 보험사와의 파트너십을 통해 위험 등급을 낮춥니다.</p>
+                    <div class="rounded-lg overflow-hidden shadow-xl">
+                        <img src="Image_fx (8).jpg" alt="Ai Eco-Predict 진동 센서 모듈" class="w-full h-auto object-cover">
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- 3. Finance Page -->
-        <section id="finance" class="page-content">
-            <h2 class="text-4xl font-extrabold mb-8 text-center text-text-dark" data-key="title_finance_main">재무 예측 및 투자 제안</h2>
-
-            <div class="grid lg:grid-cols-2 gap-8">
-                <!-- Financial Overview -->
-                <div class="card p-6">
-                    <h3 class="text-2xl font-bold text-primary mb-3" data-key="title_financial_overview">재무 개요</h3>
-                    <p class="text-text-light mb-4" data-key="text_financial_overview">전략적인 B2B 및 B2G 파트너십과 확장 가능한 SaaS 모델을 통해 향후 3년 동안 안정적인 수익 성장을 예측합니다. 높은 마진율과 데이터 기반 비즈니스를 통해 지속적인 가치를 창출합니다.</p>
-                    <canvas id="revenueChart" width="400" height="200"></canvas>
-                </div>
-
-                <!-- Investment Proposal -->
-                <div class="card p-6">
-                    <h3 class="text-2xl font-bold text-primary mb-3" data-key="title_invest">투자 제안</h3>
-                    <p class="text-text-light" data-key="text_invest">Eco-Predict는 큰 사회적 영향력을 가진 확장 가능한 데이터 중심 비즈니스 모델입니다. 귀하의 투자는 하드웨어 생산, **AI 모델 강화**, 그리고 국제 인증을 가속화할 것입니다. 지속 가능하고 수익성 있는 미래를 함께 만들어 갑시다.</p>
-
-                    <div class="mt-6 space-y-3">
-                        <div class="flex items-center">
-                            <span class="text-xl font-bold text-secondary mr-3">✓</span>
-                            <p data-key="point_hardware">하드웨어 생산 규모 확대</p>
+            <!-- C. 사업의 목적 -->
+            <section id="purpose" class="py-16 md:py-24 border-b border-gray-200">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">C. 사업의 목적</h2>
+                <p class="text-lg text-gray-600 mb-12 text-center max-w-3xl mx-auto">"분리된 안전·환경·설비 관리 체계를 통합하여 AI 기반으로 위험을 사전에 감지하고 예방하며, 다양한 산업·생활 환경에 적용 가능한 지능형 모니터링 플랫폼을 제공하는 것"</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 목적 1 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 rounded-full bg-teal-100 text-teal-600 mr-4">
+                                <i class="fa-solid fa-shield-heart fa-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">사전 예방적 관리</h3>
                         </div>
-                        <div class="flex items-center">
-                            <span class="text-xl font-bold text-secondary mr-3">✓</span>
-                            <p data-key="point_ai">AI 예측 모델 고도화</p>
+                        <p class="text-gray-600">AI 기반 실시간 예측으로 다양한 위험(균열, 진동, 누수, 곰팡이, 가스 누출 등)을 사전에 감지하고 사고를 예방합니다.</p>
+                    </div>
+                    <!-- 목적 2 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 rounded-full bg-teal-100 text-teal-600 mr-4">
+                                <i class="fa-solid fa-database fa-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">통합 데이터 기반 관리</h3>
                         </div>
-                        <div class="flex items-center">
-                            <span class="text-xl font-bold text-secondary mr-3">✓</span>
-                            <p data-key="point_market">글로벌 시장 진출 가속화</p>
+                        <p class="text-gray-600">구조안전, 환경오염, 설비 이상 징후를 하나의 플랫폼으로 중앙 관제하며, AI가 위험 스코어링을 수행합니다.</p>
+                    </div>
+                    <!-- 목적 3 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 rounded-full bg-teal-100 text-teal-600 mr-4">
+                                <i class="fa-solid fa-puzzle-piece fa-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">확장/맞춤형 모니터링</h3>
+                        </div>
+                        <p class="text-gray-600">Wi-Fi/BLE 기반 무선 모듈 구조로 설치가 용이하며, 필요에 따라 센서를 자유롭게 추가하여 맞춤형 시스템 구성이 가능합니다.</p>
+                    </div>
+                    <!-- 목적 4 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 rounded-full bg-teal-100 text-teal-600 mr-4">
+                                <i class="fa-solid fa-industry fa-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">다양한 산업 적용</h3>
+                        </div>
+                        <p class="text-gray-600">주거, 상업, 산업, 의료, 교육, 지자체 기반 시설 등 모든 현장에서 통합 모니터링이 가능한 범용 솔루션을 제공합니다.</p>
+                    </div>
+                    <!-- 목적 5 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 rounded-full bg-teal-100 text-teal-600 mr-4">
+                                <i class="fa-solid fa-chart-line fa-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">기술 혁신 및 표준 선도</h3>
+                        </div>
+                        <p class="text-gray-600">AI 예측, 무한 확장 모듈, 중앙 관제를 결합하여 건물·설비 안전관리 산업 전반에 새로운 표준을 제시합니다.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- E. Solution – Ai Eco-Predict 제안 -->
+            <section id="solution" class="py-16 md:py-24 border-b border-gray-200 bg-teal-50/50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">E. Solution – Ai Eco-Predict 제안</h2>
+                <p class="text-lg text-gray-600 mb-12 max-w-4xl">㈜디에이치씨솔루션이 제안하는 Ai Eco-Predict는 건물, 산업 설비, 생활 공간 등 다양한 환경에서 발생할 수 있는 구조적 위험, 환경 오염, 설비 이상을 사전 예방적 관점에서 통합 감지하고 관리할 수 있는 지능형 솔루션입니다.</p>
+
+                <div class="mb-12">
+                    <img src="Image_fx (1).jpg" alt="Ai Eco-Predict 제품 구성" class="w-full max-w-4xl mx-auto rounded-lg shadow-xl">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                    <div>
+                        <h3 class="text-2xl font-bold text-teal-700 mb-6">1. 핵심 해결 요소</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-teal-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700"><strong class="text-gray-800">확장형 모듈 구조:</strong> IoT 기반 센서 모듈(진동, 음향, 습도, 미세먼지, 가스, pH, Strain 등)을 자유롭게 추가 가능</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-teal-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700"><strong class="text-gray-800">AI 기반 실시간 분석 및 예측:</strong> 수집된 데이터를 통합 분석하여 위험 스코어 제공 및 사고 가능성 사전 경고</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-teal-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700"><strong class="text-gray-800">통합 관리:</strong> 중앙 관제 시스템과 고객 앱을 통해 전체 현장을 하나의 플랫폼에서 관리</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-2xl font-bold text-teal-700 mb-6">2. 기존 대비 우수성</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-star text-yellow-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700"><strong class="text-gray-800">무한 확장 모듈 방식:</strong> 현장 맞춤형 구성 가능</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-star text-yellow-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700"><strong class="text-gray-800">통합 감지:</strong> 구조, 환경, 설비 결함을 한 시스템에서 동시 모니터링</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-star text-yellow-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700"><strong class="text-gray-800">AI 기반 사전 경고:</strong> 시계열 데이터 분석을 통해 사고 발생 전 경고</span>
+                            </li>
+                             <li class="flex items-start">
+                                <i class="fa-solid fa-star text-yellow-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700"><strong class="text-gray-800">효율성 및 호환성:</strong> 기존 설비와 호환되며 유지보수 비용 절감</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start mt-12">
+                    <div>
+                        <h3 class="text-2xl font-bold text-teal-700 mb-6">3. 기술적 실현 방법</h3>
+                        <ul class="space-y-4 text-gray-700">
+                            <li><i class="fa-solid fa-microchip mr-2 text-gray-500"></i> <strong class="text-gray-800">본체 + 모듈:</strong> 다양한 센서를 IoT로 연결</li>
+                            <li><i class="fa-solid fa-brain mr-2 text-gray-500"></i> <strong class="text-gray-800">AI Engine 통합 분석:</strong> 데이터 융합 및 위험 스코어 산출</li>
+                            <li><i class="fa-solid fa-wifi mr-2 text-gray-500"></i> <strong class="text-gray-800">무선 통신 기반 설치:</strong> Wi-Fi/BLE 기반으로 설치 간편</li>
+                            <li><i class="fa-solid fa-display mr-2 text-gray-500"></i> <strong class="text-gray-800">중앙 관제 실시간 모니터링:</strong> 중앙 감지 장치에서 실시간 관제</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-teal-700 mb-6">4. 기술적 기반</h3>
+                        <ul class="space-y-4 text-gray-700">
+                            <li><i class="fa-solid fa-chart-area mr-2 text-gray-500"></i> 시계열 분석 기반 CNN-RNN 하이브리드 예측 모델</li>
+                            <li><i class="fa-solid fa-wave-square mr-2 text-gray-500"></i> Strain 및 Acoustic Emission 기반 구조 안전 분석</li>
+                            <li><i class="fa-solid fa-layer-group mr-2 text-gray-500"></i> 다중 센서 융합(Fusion) 엔진</li>
+                            <li><i class="fa-solid fa-network-wired mr-2 text-gray-500"></i> IoT 무선 네트워크 관리 프로토콜</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-12">
+                     <img src="p11.jpg" alt="Ai Eco-Predict 시스템 아키텍처" class="w-full max-w-3xl mx-auto rounded-lg shadow-xl">
+                </div>
+            </section>
+
+            <!-- M. Ai Eco-Predict – 기기의 운영 -->
+            <section id="operation" class="py-16 md:py-24 border-b border-gray-200">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">M. Ai Eco-Predict – 기기의 운영</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+                    <!-- 고객용 본체 -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
+                        <img src="Image_fx (7).jpg" alt="고객용 본체" class="w-full h-64 object-contain mb-6 rounded-md bg-gray-100 p-4">
+                        <h3 class="text-2xl font-bold text-teal-700 mb-4">1. 고객용 본체 (Customer Unit)</h3>
+                        <p class="text-gray-600 mb-4">설치 장소의 환경과 설비 상태를 실시간 모니터링하고, 센서 모듈 데이터를 수집·분석하여 현장 관리자에게 즉각적인 위험 진단과 조치 제안을 제공합니다.</p>
+                        <ul class="space-y-2 text-gray-700 list-disc list-inside">
+                            <li>모듈 상태 실시간 표시 (그래프, 수치)</li>
+                            <li>AI 기반 위험 알림 및 조치 제안</li>
+                            <li>현장 맞춤형 모듈 관리 (민감도 조절 등)</li>
+                            <li>데이터 저장 및 로그 관리 (트렌드 분석)</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 중앙 감시 시스템 -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
+                         <div class="flex justify-center items-center w-full h-64 object-contain mb-6 rounded-md bg-gray-100 p-4">
+                            <i class="fa-solid fa-cloud-arrow-up text-9xl text-teal-500"></i>
+                         </div>
+                        <h3 class="text-2xl font-bold text-teal-700 mb-4">2. 중앙 감시 시스템 (Central Monitoring)</h3>
+                        <p class="text-gray-600 mb-4">본사 중앙 감시 시스템은 다수 고객의 현장 본체를 통합 감시하며, 전체 설치 현장의 상태를 한눈에 모니터링하고 분석합니다.</p>
+                        <ul class="space-y-2 text-gray-700 list-disc list-inside">
+                            <li>고객사 본체 데이터 통합 (통합 대시보드)</li>
+                            <li>AI 분석 및 예측 강화 (장기 패턴 분석)</li>
+                            <li>현장 맞춤형 지원 (유지보수 계획 제안)</li>
+                            <li>원격 업데이트 및 유지보수 (펌웨어, AI 모델)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 현장 활용 예시 -->
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">현장 활용 예시</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                    <div class="bg-teal-50 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg text-teal-800 mb-2"><i class="fa-solid fa-building mr-2"></i>빌딩 주거 환경</h4>
+                        <p class="text-teal-700 text-sm">진동/음향/습도 모듈로 균열, 누수, 곰팡이 예측. 중앙 시스템이 단지 전체 모니터링 및 유지보수팀 배치.</p>
+                    </div>
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg text-blue-800 mb-2"><i class="fa-solid fa-industry mr-2"></i>공장 산업 설비</h4>
+                        <p class="text-blue-700 text-sm">진동/음향/화학 모듈로 기계 이상, 오염 수준 모니터링. 본체가 현장 엔지니어에게 즉시 경고. 예방 정비 계획 수립.</p>
+                    </div>
+                     <div class="bg-green-50 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg text-green-800 mb-2"><i class="fa-solid fa-monument mr-2"></i>공공 시설/외부 구조물</h4>
+                        <p class="text-green-700 text-sm">센서 모듈로 교량, 구조물의 균열, 부식 감지. 중앙 감시로 위험 집중구역 파악 및 점검 우선순위 제공.</p>
+                    </div>
+                </div>
+
+                <!-- 가정 내 설치 예시 갤러리 -->
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">가정 내 설치 예시</h3>
+                <p class="text-gray-600 mb-8">냉장고, 싱크대, 신발장, 창틀 등 위험 징후가 발생할 수 있는 집안 곳곳에 모듈을 설치하여 24시간 안전 및 환경을 모니터링합니다.</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <img src="j1.jpg" alt="신발장 설치 예시" class="w-full h-full object-cover rounded-lg shadow-md aspect-square">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j2.jpg" alt="설치 예시 2" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j3.jpg" alt="설치 예시 3" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j4.jpg" alt="설치 예시 4" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j5.jpg" alt="설치 예시 5" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j6.jpg" alt="설치 예시 6" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j7.jpg" alt="설치 예시 7" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j8.jpg" alt="설치 예시 8" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j9.jpg" alt="설치 예시 9" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j10.jpg" alt="설치 예시 10" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j11.jpg" alt="설치 예시 11" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                    <img src="https://placehold.co/400x400/f0f0f0/999999?text=j12.jpg" alt="설치 예시 12" class="w-full h-full object-cover rounded-lg shadow-md aspect-square bg-gray-200">
+                </div>
+            </section>
+
+            <!-- D. 현장별 문제점 및 기존 한계 -->
+            <section id="problems" class="py-16 md:py-24 border-b border-gray-200">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">D. 현장별 문제점 및 기존 한계</h2>
+                <p class="text-lg text-gray-600 mb-12 text-center">기존 시스템은 공간과 산업별 맞춤형 모니터링, 구조 안전과 환경오염 동시 관리, 설비 이상 조기 감지가 어렵습니다.<br>대부분의 공간에서 <strong class="text-red-600">사후 대응, 분리된 관리 체계, AI 예측 부재</strong>가 공통적 한계입니다.</p>
+                
+                <div class="space-y-10">
+                    <!-- 문제점 차트 (시각화) -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">현장별 공통적 한계 (기존 시스템)</h3>
+                        <div class="space-y-4">
+                            <!-- 한계 1 -->
+                            <div class="flex items-center">
+                                <span class="w-40 text-gray-700 font-medium text-right mr-4">통합 감시 불가</span>
+                                <div class="w-full bg-gray-200 rounded-full h-6">
+                                    <div class="bg-red-500 h-6 rounded-full text-right pr-2 text-white text-sm leading-6" style="width: 90%;">90%</div>
+                                </div>
+                            </div>
+                            <!-- 한계 2 -->
+                            <div class="flex items-center">
+                                <span class="w-40 text-gray-700 font-medium text-right mr-4">AI 사전 예측 부재</span>
+                                <div class="w-full bg-gray-200 rounded-full h-6">
+                                    <div class="bg-red-500 h-6 rounded-full text-right pr-2 text-white text-sm leading-6" style="width: 95%;">95%</div>
+                                </div>
+                            </div>
+                            <!-- 한계 3 -->
+                            <div class="flex items-center">
+                                <span class="w-40 text-gray-700 font-medium text-right mr-4">사후 대응 중심</span>
+                                <div class="w-full bg-gray-200 rounded-full h-6">
+                                    <div class="bg-red-500 h-6 rounded-full text-right pr-2 text-white text-sm leading-6" style="width: 85%;">85%</div>
+                                </div>
+                            </div>
+                            <!-- 한계 4 -->
+                            <div class="flex items-center">
+                                <span class="w-40 text-gray-700 font-medium text-right mr-4">모듈 확장 제한</span>
+                                <div class="w-full bg-gray-200 rounded-full h-6">
+                                    <div class="bg-red-500 h-6 rounded-full text-right pr-2 text-white text-sm leading-6" style="width: 80%;">80%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 현장별 리스트 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h4 class="font-bold text-lg text-gray-800 mb-2">1. 거주 공간 (주택, 아파트)</h4>
+                            <p class="text-gray-600 text-sm"><strong class="text-red-500">문제:</strong> 곰팡이, 누수, 설비 이상 초기 감지 어려움. <strong class="text-gray-500">한계:</strong> 통합 감시 불가, 실시간 경고 부재.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h4 class="font-bold text-lg text-gray-800 mb-2">2. 상업 공간 (상가, 오피스)</h4>
+                            <p class="text-gray-600 text-sm"><strong class="text-red-500">문제:</strong> 다수 설비(HVAC 등) 관리, 구조/환경 동시 관리 어려움. <strong class="text-gray-500">한계:</strong> 데이터 통합 불가, 인력 중심 사후 대응.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h4 class="font-bold text-lg text-gray-800 mb-2">3. 빌딩 / 고층 건물</h4>
+                            <p class="text-gray-600 text-sm"><strong class="text-red-500">문제:</strong> 구조 안정성(균열, 진동)과 설비 이상 동시 모니터링 필요. <strong class="text-gray-500">한계:</strong> 구조+환경 장비 분리, 관제센터 부재.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h4 class="font-bold text-lg text-gray-800 mb-2">4. 제조 공장 / 산업 현장</h4>
+                            <p class="text-gray-600 text-sm"><strong class="text-red-500">문제:</strong> 설비 고장(부식, 누수, 진동) 사전 감지, 환경/설비 동시 관리. <strong class="text-gray-500">한계:</strong> 단일 센서, AI 분석 부족, 사후 유지보수.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h4 class="font-bold text-lg text-gray-800 mb-2">5. 의료 / 복지 시설</h4>
+                            <p class="text-gray-600 text-sm"><strong class="text-red-500">문제:</strong> 위생, 공기질, 설비 안정성 사전 감지 필수. <strong class="text-gray-500">한계:</strong> 장비 분리, AI 예측 불가, 인력 의존.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h4 class="font-bold text-lg text-gray-800 mb-2">6. 건설 현장 / 일상 환경</h4>
+                            <p class="text-gray-600 text-sm"><strong class="text-red-500">문제:</strong> 구조물 변형, 공기질 등 초기 감지, 센서 관리 복잡. <strong class="text-gray-500">한계:</strong> 제한적 장비, 데이터 통합 및 AI 분석 미흡.</p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <!-- F. Competitive Advantage – 경쟁 우위 -->
+            <section id="advantage" class="py-16 md:py-24 border-b border-gray-200 bg-gray-100 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">F. Competitive Advantage – 경쟁 우위</h2>
+                <p class="text-lg text-gray-600 mb-12">당사의 Ai Eco-Predict는 기존 안전·환경 모니터링 시스템과 비교해 다방면에서 경쟁 우위를 가지고 있습니다.</p>
+
+                <!-- 비교표 -->
+                <div class="overflow-x-auto shadow-xl rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-800">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">항목</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">기존 시스템</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Ai Eco-Predict (당사)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">센서 종류</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-600">단일형 (1~2개)</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-teal-700 font-bold"><i class="fa-solid fa-check mr-2"></i>7종 이상 확장형, 모듈 추가 가능</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">예측 기능</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-600">알림 중심</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-teal-700 font-bold"><i class="fa-solid fa-check mr-2"></i>AI 기반 "사전 예측" 기능</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">확장성</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-600">제품별 독립 운영</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-teal-700 font-bold"><i class="fa-solid fa-check mr-2"></i>무한 모듈 연결, 현장 맞춤형 구성</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">적용 범위</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-600">주거/산업 개별 관리</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-teal-700 font-bold"><i class="fa-solid fa-check mr-2"></i>건물 + 가전 + 산업 설비 전반 통합 감지</td>
+                            </tr>
+                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">관제 기능</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-600">없음</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-teal-700 font-bold"><i class="fa-solid fa-check mr-2"></i>중앙 관제 시스템 제공 (SaaS)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 핵심 포인트 -->
+                <div class="mt-12">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">우위를 뒷받침하는 핵심 포인트</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h4 class="font-bold text-lg text-teal-700 mb-2"><i class="fa-solid fa-brain mr-2"></i>구조 손상 AI 예측</h4>
+                            <p class="text-gray-600">소리·진동·변형률 기반으로 초기 손상 가능성을 사전 감지</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h4 class="font-bold text-lg text-teal-700 mb-2"><i class="fa-solid fa-infinity mr-2"></i>무한 확장 모듈 구조</h4>
+                            <p class="text-gray-600">현장 환경과 요구에 맞춰 센서를 자유롭게 추가 (세계 최초 범용 구조)</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h4 class="font-bold text-lg text-teal-700 mb-2"><i class="fa-solid fa-border-all mr-2"></i>넓은 적용 범위</h4>
+                            <p class="text-gray-600">건물, 설비, 가구 등 다양한 환경과 산업 적용 가능</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h4 class="font-bold text-lg text-teal-700 mb-2"><i class="fa-solid fa-cloud mr-2"></i>중앙관제형 SaaS 모델</h4>
+                            <p class="text-gray-600">지속적인 서비스 제공 및 반복 매출 구조 확보</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- G. Development / Regulatory Pathway – 개발 로드맵 -->
+            <section id="roadmap" class="py-16 md:py-24 border-b border-gray-200">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-12">G. Development / Regulatory Pathway – 개발 로드맵</h2>
+                
+                <!-- 로드맵 시각화 -->
+                <div class="relative w-full overflow-hidden">
+                    <div class="absolute left-1/2 top-0 bottom-0 w-1 bg-gray-200 -ml-0.5 hidden md:block"></div>
+                    
+                    <div class="space-y-16 md:space-y-0">
+                        <!-- 1단계 -->
+                        <div class="relative md:flex md:items-center">
+                            <div class="md:w-1/2 md:pr-12 text-left md:text-right">
+                                <div class="p-6 bg-white rounded-lg shadow-xl border-l-4 border-teal-500">
+                                    <h3 class="text-xl font-bold text-teal-700 mb-2">1단계 (초기 개발)</h3>
+                                    <ul class="list-disc list-inside text-gray-600">
+                                        <li>7종 센서 모듈 완성</li>
+                                        <li>AI 기본 모델 구축</li>
+                                        <li>초기 위험 예측 기능 구현</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="hidden md:block absolute left-1/2 -ml-4 w-8 h-8 bg-teal-500 rounded-full border-4 border-white z-10 flex items-center justify-center text-white font-bold">1</div>
+                            <div class="md:w-1/2 md:pl-12 mt-4 md:mt-0"></div>
+                        </div>
+
+                        <!-- 2단계 -->
+                        <div class="relative md:flex md:items-center">
+                            <div class="md:w-1/2 md:pr-12 mt-4 md:mt-0"></div>
+                            <div class="hidden md:block absolute left-1/2 -ml-4 w-8 h-8 bg-teal-500 rounded-full border-4 border-white z-10 flex items-center justify-center text-white font-bold">2</div>
+                            <div class="md:w-1/2 md:pl-12 text-left">
+                                <div class="p-6 bg-white rounded-lg shadow-xl border-r-4 md:border-r-0 md:border-l-4 border-teal-500">
+                                    <h3 class="text-xl font-bold text-teal-700 mb-2">2단계 (데이터 확보/고도화)</h3>
+                                    <ul class="list-disc list-inside text-gray-600">
+                                        <li>건물 및 설비별 데이터셋 확보</li>
+                                        <li>시계열 기반 AI 모델 고도화</li>
+                                        <li>예측 정확도 향상</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3단계 -->
+                        <div class="relative md:flex md:items-center">
+                            <div class="md:w-1/2 md:pr-12 text-left md:text-right">
+                                <div class="p-6 bg-white rounded-lg shadow-xl border-l-4 border-teal-500">
+                                    <h3 class="text-xl font-bold text-teal-700 mb-2">3단계 (시스템 구축/상용화)</h3>
+                                    <ul class="list-disc list-inside text-gray-600">
+                                        <li>중앙 관제 시스템 구축</li>
+                                        <li>초기 상용 고객사 적용 (PoC)</li>
+                                        <li>현장 테스트 및 피드백 반영</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="hidden md:block absolute left-1/2 -ml-4 w-8 h-8 bg-teal-500 rounded-full border-4 border-white z-10 flex items-center justify-center text-white font-bold">3</div>
+                            <div class="md:w-1/2 md:pl-12 mt-4 md:mt-0"></div>
+                        </div>
+
+                        <!-- 4단계 -->
+                        <div class="relative md:flex md:items-center">
+                             <div class="md:w-1/2 md:pr-12 mt-4 md:mt-0"></div>
+                            <div class="hidden md:block absolute left-1/2 -ml-4 w-8 h-8 bg-teal-500 rounded-full border-4 border-white z-10 flex items-center justify-center text-white font-bold">4</div>
+                            <div class="md:w-1/2 md:pl-12 text-left">
+                                <div class="p-6 bg-white rounded-lg shadow-xl border-r-4 md:border-r-0 md:border-l-4 border-teal-500">
+                                    <h3 class="text-xl font-bold text-teal-700 mb-2">4단계 (인증 및 규제 대응)</h3>
+                                    <ul class="list-disc list-inside text-gray-600">
+                                        <li>국제 인증(전기 안전, EMC 등) 취득</li>
+                                        <li>안전 및 신뢰성 검증</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5단계 -->
+                        <div class="relative md:flex md:items-center">
+                            <div class="md:w-1/2 md:pr-12 text-left md:text-right">
+                                <div class="p-6 bg-white rounded-lg shadow-xl border-l-4 border-teal-500">
+                                    <h3 class="text-xl font-bold text-teal-700 mb-2">5단계 (글로벌 확장)</h3>
+                                    <ul class="list-disc list-inside text-gray-600">
+                                        <li>해외 시장 진출</li>
+                                        <li>글로벌 파트너십 및 판매 채널 확대</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="hidden md:block absolute left-1/2 -ml-4 w-8 h-8 bg-teal-500 rounded-full border-4 border-white z-10 flex items-center justify-center text-white font-bold">5</div>
+                             <div class="md:w-1/2 md:pl-12 mt-4 md:mt-0"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- H. Market Opportunity – 시장 기회 -->
+            <section id="market" class="py-16 md:py-24 border-b border-gray-200">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-12">H. Market Opportunity – 시장 기회</h2>
+
+                <!-- TAM/SAM/SOM -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center border-t-4 border-teal-600">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">TAM</h3>
+                        <p class="text-3xl font-extrabold text-teal-600 mb-2">$850억</p>
+                        <p class="text-gray-600">전 세계 시설 안전 및 환경 모니터링 시장</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center border-t-4 border-teal-400">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">SAM</h3>
+                        <p class="text-3xl font-extrabold text-teal-500 mb-2">$250억</p>
+                        <p class="text-gray-600">스마트 건물/팩토리 모니터링 시장 (IoT/센서 기반)</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center border-t-4 border-teal-200">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">SOM</h3>
+                        <p class="text-3xl font-extrabold text-teal-400 mb-2">1차 목표</p>
+                        <p class="text-gray-600">한국 내 건물 유지관리 + 소규모 공장 시장 (PoC 중심)</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 목표 고객 -->
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">목표 고객</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-center text-gray-700">
+                                <i class="fa-solid fa-users text-teal-500 mr-3 fa-lg"></i>
+                                <span>건물 관리본부, 공장, 주택관리사무소, 기계 장비 운영사</span>
+                            </li>
+                             <li class="flex items-center text-gray-700">
+                                <i class="fa-solid fa-user-shield text-teal-500 mr-3 fa-lg"></i>
+                                <span>보험사, 지자체 등 공공기관 (잠재 고객)</span>
+                            </li>
+                            <li class="flex items-center text-gray-700">
+                                <i class="fa-solid fa-bullseye text-teal-500 mr-3 fa-lg"></i>
+                                <span>산업 설비 고장 및 건물 안전사고를 사전에 감지하고 싶은 모든 고객</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- 매출 모델 -->
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">매출 모델</h3>
+                         <ul class="space-y-3">
+                            <li class="flex items-center text-gray-700">
+                                <i class="fa-solid fa-box text-teal-500 mr-3 fa-lg"></i>
+                                <span>장비 판매 (본체 + 모듈)</span>
+                            </li>
+                             <li class="flex items-center text-gray-700">
+                                <i class="fa-solid fa-rotate text-teal-500 mr-3 fa-lg"></i>
+                                <span>중앙 관제 SaaS 월 구독 서비스</span>
+                            </li>
+                            <li class="flex items-center text-gray-700">
+                                <i class="fa-solid fa-wrench text-teal-500 mr-3 fa-lg"></i>
+                                <span>유지보수 계약</span>
+                            </li>
+                            <li class="flex items-center text-gray-700">
+                                <i class="fa-solid fa-handshake text-teal-500 mr-3 fa-lg"></i>
+                                <span>데이터 기반 보험사 협업 모델</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- I. Pricing / Reimbursement – 가격 정책 -->
+            <section id="pricing" class="py-16 md:py-24 border-b border-gray-200 bg-gray-100 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-12">I. Pricing / Reimbursement – 가격 정책 및 고객 지불 의사</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 가격 정책 -->
+                    <div class="bg-white p-8 rounded-lg shadow-xl">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">1. 가격 정책 (예시)</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-md">
+                                <span class="text-lg font-medium text-gray-700">본체</span>
+                                <span class="text-lg font-bold text-teal-600">고정 가격</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-md">
+                                <span class="text-lg font-medium text-gray-700">모듈</span>
+                                <span class="text-lg font-bold text-teal-600">개별 구매 (추가 확장 가능)</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-md">
+                                <span class="text-lg font-medium text-gray-700">SaaS (관제 서비스)</span>
+                                <span class="text-lg font-bold text-teal-600">월 3~20만 원</span>
+                            </div>
+                        </div>
+                         <p class="text-sm text-gray-500 mt-4">* SaaS 비용은 설치 규모 및 센서 개수에 따라 변동</p>
+                    </div>
+                    <!-- 고객 지불 의사 -->
+                    <div class="bg-teal-700 text-white p-8 rounded-lg shadow-xl">
+                        <h3 class="text-2xl font-bold mb-6">2. 고객 지불 의사</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <i class="fa-solid fa-triangle-exclamation fa-2x mr-4 mt-1"></i>
+                                <div>
+                                    <h4 class="text-lg font-semibold">높은 사전 예측 수요</h4>
+                                    <p class="opacity-90">건물 사고 1건 평균 피해액 3~10억 원 발생. 사전 예측 솔루션 수요 매우 높음.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fa-solid fa-percent fa-2x mr-4 mt-1"></i>
+                                <div>
+                                    <h4 class="text-lg font-semibold">비용 절감 효과</h4>
+                                    <p class="opacity-90">보험사 연계 시 비용 부담 30~50% 절감 가능. 고객의 비용 대비 효용(ROI) 매우 높음.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- J. Team – 기술 및 운영 조직 구성 -->
+            <section id="team" class="py-16 md:py-24 border-b border-gray-200">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-12">J. Team – 기술 및 운영 조직 구성</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <i class="fa-solid fa-brain text-4xl text-teal-600 mb-4"></i>
+                        <h3 class="text-lg font-bold text-gray-800">AI/데이터팀</h3>
+                        <p class="text-sm text-gray-600">예측 알고리즘, 위험 스코어 모델 개발</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <i class="fa-solid fa-microchip text-4xl text-teal-600 mb-4"></i>
+                        <h3 class="text-lg font-bold text-gray-800">H/W 센서 개발팀</h3>
+                        <p class="text-sm text-gray-600">진동, 음향, 환경 센서 모듈 개발</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <i class="fa-solid fa-network-wired text-4xl text-teal-600 mb-4"></i>
+                        <h3 class="text-lg font-bold text-gray-800">IoT 통신팀</h3>
+                        <p class="text-sm text-gray-600">Wi-Fi/BLE 기반 모듈 통신 및 데이터 수집</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <i class="fa-solid fa-mobile-screen text-4xl text-teal-600 mb-4"></i>
+                        <h3 class="text-lg font-bold text-gray-800">UI/UX·App 개발팀</h3>
+                        <p class="text-sm text-gray-600">중앙 관제 시스템 및 고객 앱 개발</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <i class="fa-solid fa-hard-hat text-4xl text-teal-600 mb-4"></i>
+                        <h3 class="text-lg font-bold text-gray-800">시설 안전 엔지니어</h3>
+                        <p class="text-sm text-gray-600">현장 설치, 유지보수, 안전 진단</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <i class="fa-solid fa-briefcase text-4xl text-teal-600 mb-4"></i>
+                        <h3 class="text-lg font-bold text-gray-800">경영/영업팀</h3>
+                        <p class="text-sm text-gray-600">사업 운영, 고객사 관리, 마케팅 및 매출 확보</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- K. Milestone / Financing – 주요 단계 및 자금 계획 -->
+            <section id="milestone" class="py-16 md:py-24 border-b border-gray-200">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-12">K. Milestone / Financing – 주요 단계 및 자금 계획</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <!-- 자금 계획 -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">1. 현재 필요한 투자금 (총 10억 원)</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg text-gray-700">R&D</span>
+                                <span class="text-lg font-bold text-gray-900">5억 원</span>
+                            </div>
+                            <hr>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg text-gray-700">초기 양산 및 인증</span>
+                                <span class="text-lg font-bold text-gray-900">3억 원</span>
+                            </div>
+                            <hr>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg text-gray-700">관제 시스템 개발</span>
+                                <span class="text-lg font-bold text-gray-900">2억 원</span>
+                            </div>
+                            <hr>
+                            <div class="flex justify-between items-center text-xl font-extrabold text-teal-700">
+                                <span>총 투자금</span>
+                                <span>10억 원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 1~3년 내 목표 -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">2. 1~3년 내 목표</h3>
+                        <ul class="space-y-4 text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-rocket text-teal-500 mr-3 mt-1"></i>
+                                <span>7종 센서 모듈 완성 및 상용화</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-map-marker-alt text-teal-500 mr-3 mt-1"></i>
+                                <span>건물 및 기계 설비 1,000곳 설치</span>
+                            </li>
+                             <li class="flex items-start">
+                                <i class="fa-solid fa-handshake text-teal-500 mr-3 mt-1"></i>
+                                <span>보험사 및 지자체 협력 구축</span>
+                            </li>
+                             <li class="flex items-start">
+                                <i class="fa-solid fa-globe text-teal-500 mr-3 mt-1"></i>
+                                <span>해외 인증 획득, 글로벌 시장 진출 준비</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- L. Exit Plan – 엑시트 전략 -->
+            <section id="exit" class="py-16 md:py-24">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-12">L. Exit Plan – 엑시트 전략</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-xl text-center border-b-4 border-teal-500">
+                        <i class="fa-solid fa-building-circle-arrow-right text-5xl text-teal-600 mb-6"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">전략적 M&A</h3>
+                        <p class="text-gray-600">스마트홈, 건설사, 보안사, 보험사 등과의 전략적 인수합병 추진</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-xl text-center border-b-4 border-teal-500">
+                        <i class="fa-solid fa-chart-pie text-5xl text-teal-600 mb-6"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">IPO (기업공개)</h3>
+                        <p class="text-gray-600">관제 시스템 및 센서 기술 기반 기업 가치 상승 후 상장 추진</p>
+                    </div>
+                </div>
+            </section>
+
+        </div> <!-- /Container -->
     </main>
 
-    <!-- Footer for Language Switch -->
-    <footer class="fixed bottom-0 left-0 right-0 bg-white shadow-inner p-3 z-20">
-        <div class="max-w-7xl mx-auto flex justify-end items-center lang-footer space-x-2">
-            <span class="text-sm text-text-light mr-2">Language:</span>
-            <button data-lang="ko" class="active">KR</button>
-            <button data-lang="en">EN</button>
-            <button data-lang="jp">JP</button>
-            <button data-lang="zh">ZH</button>
+    <!-- 푸터 -->
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+            <!-- PDF 저장 버튼 -->
+            <div id="pdf-button-container" class="text-center mb-8">
+                <p class="text-gray-300 mb-4">아래 버튼을 클릭하면 현재 페이지의 각 섹션을 개별 페이지로 구성하여 PDF로 저장합니다.</p>
+                <button id="save-pdf-button" class="bg-teal-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-teal-700 transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75">
+                    <i class="fa-solid fa-file-pdf mr-2"></i> PDF로 저장하기
+                </button>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 (주)디에이치씨솔루션. All rights reserved.</p>
+                <p class="text-sm mt-1">Ai Eco-Predict – 지능형 통합 센서 기반 안전·환경 예측 시스템</p>
+            </div>
         </div>
     </footer>
 
     <script>
-        // --- 1. Language Translation Setup ---
-        const translations = {
-            'ko': {
-                header_title: "AI Eco-Predict 사업 계획",
-                nav_overview: "개요 및 비전",
-                nav_product: "제품 및 기술",
-                nav_finance: "재무 및 투자",
-                title_vision: "파괴적 예측: 지속가능한 미래를 위한 AI",
-                subtitle_problem: "눈에 보이지 않는 손상을 미리 감지하여 자산과 환경을 보호합니다.",
-                title_problem: "문제 정의",
-                text_problem: "건물 및 인프라의 노후화는 매년 수십억 달러의 수리 비용을 발생시키며, 이 중 상당 부분은 **미세한 환경 스트레스**로 인해 발생합니다. 기존 센서는 이미 손상이 발생한 후에만 감지합니다.",
-                title_solution: "우리의 솔루션",
-                text_solution: "Eco-Predict는 **AI 기반 예측 진단 모듈**로, 온도, 습도, 유해 가스(VOCs)와 같은 IoT 센서 데이터를 분석하여 **자산 손상을 예측**하고 유지보수 일정을 최적화합니다.",
-                title_market: "시장과 성장 전망",
-                stat_growth: "연간 성장률(%)", stat_clients: "주요 목표 고객", stat_accuracy: "AI 예측 정확도(%)",
-                stat_growth_val: "15%+", stat_clients_val: "B2B & B2G", stat_accuracy_val: "95%",
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIconOpen = document.getElementById('menu-icon-open');
+            const menuIconClose = document.getElementById('menu-icon-close');
+            const mobileLinks = mobileMenu.querySelectorAll('.mobile-link');
 
-                title_product: "제품 및 핵심 기술",
-                title_module: "하드웨어 모듈",
-                text_module: "작고, 설치가 용이하며, 배터리로 구동되는 미니멀한 센서 모듈입니다. 온도, 습도, 압력 및 VOCs를 포함한 4가지 환경 요소를 실시간으로 측정합니다.",
-                title_ai: "AI 예측 엔진",
-                text_ai: "AI 예측 엔진은 IoT 센서 데이터를 분석합니다. 고도화된 **RNN 모델**을 사용하여 위험 패턴을 정확하게 식별하고, 눈에 보이는 손상이 발생하기 전에 열화를 예측합니다.",
-                title_platform: "클라우드 플랫폼",
-                text_platform: "실시간 대시보드 및 알림 시스템을 제공합니다. 시설 관리자는 모바일 앱 또는 웹 인터페이스를 통해 모든 자산의 상태를 한 눈에 파악하고 선제적으로 대응할 수 있습니다.",
-                title_data: "데이터 가치 제안",
-                point_hardware: "하드웨어 생산 규모 확대", point_ai: "AI 예측 모델 고도화", point_market: "글로벌 시장 진출 가속화",
-                
-                title_finance_main: "재무 예측 및 투자 제안",
-                title_financial_overview: "재무 개요",
-                text_financial_overview: "전략적인 B2B 및 B2G 파트너십과 확장 가능한 SaaS 모델을 통해 향후 3년 동안 안정적인 수익 성장을 예측합니다. 높은 마진율과 데이터 기반 비즈니스를 통해 지속적인 가치를 창출합니다.",
-                title_invest: "투자 제안",
-                text_invest: "Eco-Predict는 큰 사회적 영향력을 가진 확장 가능한 데이터 중심 비즈니스 모델입니다. 귀하의 투자는 하드웨어 생산, **AI 모델 강화**, 그리고 국제 인증을 가속화할 것입니다. 지속 가능하고 수익성 있는 미래를 함께 만들어 갑시다.",
-            },
-            'en': {
-                header_title: "AI Eco-Predict Business Plan",
-                nav_overview: "Overview & Vision",
-                nav_product: "Product & Tech",
-                nav_finance: "Finance & Investment",
-                title_vision: "Disruptive Prediction: AI for a Sustainable Future",
-                subtitle_problem: "Protecting assets and environments by anticipating invisible damage.",
-                title_problem: "The Problem",
-                text_problem: "Building and infrastructure degradation costs billions in annual repairs, much of which stems from **subtle environmental stress**. Existing sensors only detect damage after it has occurred.",
-                title_solution: "Our Solution",
-                text_solution: "Eco-Predict is an **AI-powered predictive diagnostics module** that analyzes IoT sensor data (Temp, Humidity, VOCs) to **forecast asset degradation** and optimize maintenance schedules.",
-                title_market: "Market & Growth Outlook",
-                stat_growth: "Annual Growth Rate (%)", stat_clients: "Target Clients", stat_accuracy: "AI Prediction Accuracy (%)",
-                stat_growth_val: "15%+", stat_clients_val: "B2B & B2G", stat_accuracy_val: "95%",
-                
-                title_product: "Product & Core Technology",
-                title_module: "The Hardware Module",
-                text_module: "A small, easy-to-install, battery-powered minimal sensor module. Measures 4 environmental factors including Temperature, Humidity, Pressure, and VOCs in real-time.",
-                title_ai: "AI Prediction Engine",
-                text_ai: "The AI Prediction Engine analyzes IoT sensor data. It uses advanced **RNN models** to accurately identify risk patterns and predict degradation before visible damage occurs.",
-                title_platform: "Cloud Platform",
-                text_platform: "Provides a real-time dashboard and alert system. Facility managers can monitor the status of all assets at a glance and respond proactively via a mobile app or web interface.",
-                title_data: "Data Value Proposition",
-                point_hardware: "Scale Hardware Production", point_ai: "Enhance AI Models", point_market: "Accelerate Global Market Entry",
-                
-                title_finance_main: "Financial Forecast & Investment Proposal",
-                title_financial_overview: "Financial Overview",
-                text_financial_overview: "We project stable revenue growth over the next three years through strategic B2B and B2G partnerships and a scalable SaaS model. High margin rates are secured by our data-driven business model.",
-                title_invest: "Investment Proposal",
-                text_invest: "Eco-Predict is a scalable, data-driven business model with high social impact. Your investment will accelerate hardware production, **AI model enhancement**, and international certification. Let's build a sustainable and profitable future together.",
-            },
-            'jp': {
-                header_title: "AI Eco-Predict 事業計画",
-                nav_overview: "概要とビジョン",
-                nav_product: "製品と技術",
-                nav_finance: "財務と投資",
-                title_vision: "破壊的予測：持続可能な未来のためのAI",
-                subtitle_problem: "目に見えない損傷を事前に察知し、資産と環境を保護します。",
-                title_problem: "問題の定義",
-                text_problem: "建物やインフラの老朽化は、毎年数十億ドルもの修繕費用を発生させ、その多くは**微細な環境ストレス**に起因します。従来のセンサーは損傷が発生した後でしか検知できません。",
-                title_solution: "私たちのソリューション",
-                text_solution: "Eco-Predictは**AIベースの予測診断モジュール**で、温度、湿度、有害ガス(VOCs)などのIoTセンサーデータを分析し、**資産の劣化を予測**し、メンテナンススケジュールを最適化します。",
-                title_market: "市場と成長展望",
-                stat_growth: "年間成長率(%)", stat_clients: "主要なターゲット顧客", stat_accuracy: "AI予測精度(%)",
-                stat_growth_val: "15%以上", stat_clients_val: "B2BとB2G", stat_accuracy_val: "95%",
-                
-                title_product: "製品とコア技術",
-                title_module: "ハードウェアモジュール",
-                text_module: "小型で設置が容易な、バッテリー駆動のミニマルなセンサーモジュール。温度、湿度、圧力、VOCsを含む4つの環境要素をリアルタイムで測定します。",
-                title_ai: "AI予測エンジン",
-                text_ai: "AI予測エンジンはIoTセンサーデータを分析します。高度な**RNNモデル**を使用し、リスクパターンを正確に特定し、目に見える損傷が発生する前に劣化を予測します。",
-                title_platform: "クラウドプラットフォーム",
-                text_platform: "リアルタイムダッシュボードとアラートシステムを提供します。施設管理者は、モバイルアプリまたはウェブインターフェースを通じて、すべての資産のステータスを一目で把握し、先制的に対応できます。",
-                title_data: "データ価値提案",
-                point_hardware: "ハードウェア生産の規模拡大", point_ai: "AI予測モデルの強化", point_market: "グローバル市場参入の加速",
-
-                title_finance_main: "財務予測と投資提案",
-                title_financial_overview: "財務概要",
-                text_financial_overview: "戦略的なB2BおよびB2GパートナーシップとスケーラブルなSaaSモデルを通じて、今後3年間で安定した収益成長を予測しています。データ駆動型ビジネスモデルにより、高い利益率を確保します。",
-                title_invest: "投資提案",
-                text_invest: "Eco-Predictは、大きな社会的影響力を持つスケーラブルなデータ駆動型ビジネスモデルです。あなたの投資は、ハードウェア生産、**AIモデルの強化**、および国際認証を加速させます。持続可能で収益性の高い未来を共に築きましょう。",
-            },
-            'zh': {
-                header_title: "AI Eco-Predict 商业计划书",
-                nav_overview: "概览与愿景",
-                nav_product: "产品与技术",
-                nav_finance: "财务与投资",
-                title_vision: "颠覆性预测：为可持续未来赋能的AI",
-                subtitle_problem: "通过预测无形损坏来保护资产和环境。",
-                title_problem: "问题定义",
-                text_problem: "建筑和基础设施的退化每年造成数十亿美元的维修费用，其中很大一部分源于**微妙的环境压力**。现有传感器仅在损坏发生后才能检测到。",
-                title_solution: "我们的解决方案",
-                text_solution: "Eco-Predict是**AI驱动的预测诊断模块**，它分析IoT传感器数据（温度、湿度、VOCs等），以**预测资产劣化**并优化维护计划。",
-                title_market: "市场与增长前景",
-                stat_growth: "年增长率(%)", stat_clients: "目标客户", stat_accuracy: "AI预测准确率(%)",
-                stat_growth_val: "15%+", stat_clients_val: "B2B 和 B2G", stat_accuracy_val: "95%",
-                
-                title_product: "产品与核心技术",
-                title_module: "硬件模块",
-                text_module: "一款小型、易于安装、电池供电的极简传感器模块。实时测量温度、湿度、压力和VOCs等4种环境因素。",
-                title_ai: "AI预测引擎",
-                text_ai: "AI预测引擎分析IoT传感器数据。它使用先进的**RNN模型**精确识别风险模式，并在可见损坏发生前预测劣化。",
-                title_platform: "云平台",
-                text_platform: "提供实时仪表板和警报系统。设施管理者可以通过移动应用或网页界面一目了然地掌握所有资产状态，并采取先发制人的行动。",
-                title_data: "数据价值主张",
-                point_hardware: "扩大硬件生产规模", point_ai: "加强AI预测模型", point_market: "加速全球市场拓展",
-
-                title_finance_main: "财务预测与投资提案",
-                title_financial_overview: "财务概览",
-                text_financial_overview: "通过战略性的B2B和B2G伙伴关系以及可扩展的SaaS模型，我们预计未来三年内收入将稳定增长。数据驱动的商业模式确保了高利润率。",
-                title_invest: "投资提案",
-                text_invest: "Eco-Predict是一个具有巨大社会影响力的、可扩展的数据驱动型商业模式。您的投资将加速硬件生产、**AI模型增强**和国际认证。让我们共同建设一个可持续且盈利的未来。",
-            }
-        };
-
-        let revenueChart = null; // Chart instance holder
-
-        function updateLanguage(lang) {
-            // Update active state for buttons
-            document.querySelectorAll('.lang-footer button').forEach(b => {
-                b.classList.remove('active', 'bg-secondary', 'text-white', 'font-semibold');
-                if (b.dataset.lang === lang) {
-                    b.classList.add('active', 'bg-secondary', 'text-white', 'font-semibold');
-                }
+            // 모바일 메뉴 토글
+            mobileMenuButton.addEventListener('click', () => {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+                mobileMenu.classList.toggle('hidden');
+                menuIconOpen.classList.toggle('hidden');
+                menuIconClose.classList.toggle('hidden');
             });
 
-            // Update text content
-            const t = translations[lang] || translations['ko']; // Default to Korean
-            document.querySelectorAll('[data-key]').forEach(el => {
-                const key = el.dataset.key;
-                if (t[key]) {
-                    el.innerHTML = t[key];
-                }
+            // 모바일 메뉴 링크 클릭 시 메뉴 닫기
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    mobileMenu.classList.add('hidden');
+                    menuIconOpen.classList.remove('hidden');
+                    menuIconClose.classList.add('hidden');
+                });
             });
 
-            // Update HTML lang attribute
-            document.documentElement.lang = lang;
-            
-            // Re-render chart for language specific labels
-            renderRevenueChart(lang);
-        }
+            // --- 활성 메뉴 링크 하이라이트 ---
+            const sections = document.querySelectorAll('main section');
+            const navLinks = document.querySelectorAll('.nav-link');
 
-        function navigateTo(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page-content').forEach(page => {
-                page.classList.remove('active');
-            });
+            const observerOptions = {
+                root: null, // 뷰포트 기준
+                rootMargin: '-20% 0px -70% 0px', // 뷰포트 상단 20%, 하단 70% 영역에서 감지
+                threshold: 0
+            };
 
-            // Show target page
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-
-            // Update navigation active state
-            document.querySelectorAll('.navbar a').forEach(link => {
-                link.classList.remove('active');
-                if (link.dataset.page === pageId) {
-                    link.classList.add('active');
-                }
-            });
-
-            // Update URL hash
-            if (window.location.hash.substring(1) !== pageId) {
-                window.history.pushState(null, null, `#${pageId}`);
-            }
-        }
-        
-        function renderRevenueChart(lang) {
-            const ctx = document.getElementById('revenueChart');
-            const t = translations[lang] || translations['ko'];
-
-            if (revenueChart) {
-                revenueChart.destroy();
-            }
-
-            revenueChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4 (Target)'],
-                    datasets: [{
-                        label: 'Revenue (M $)',
-                        data: [1.2, 3.5, 7.8, 15.0],
-                        borderColor: 'var(--primary)',
-                        backgroundColor: 'rgba(0, 196, 154, 0.2)',
-                        tension: 0.3,
-                        pointBackgroundColor: 'var(--secondary)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'var(--secondary)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            labels: {
-                                color: 'var(--text-dark)'
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
                             }
-                        },
-                        title: {
-                            display: true,
-                            text: t.title_financial_overview,
-                            color: 'var(--text-dark)',
-                            font: { size: 16, weight: '600' }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- PDF 저장 기능 ---
+            const savePdfButton = document.getElementById('save-pdf-button');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const pdfProgress = document.getElementById('pdf-progress');
+
+            savePdfButton.addEventListener('click', async () => {
+                // jspdf 모듈 로드 확인
+                if (typeof window.jspdf === 'undefined' || typeof window.html2canvas === 'undefined') {
+                    console.error('jsPDF or html2canvas library not loaded.');
+                    // 사용자에게 알림 (예: 커스텀 모달)
+                    document.body.insertAdjacentHTML('beforeend', '<div style="position:fixed; top:10px; left:50%; transform:translateX(-50%); background:red; color:white; padding:10px; border-radius:5px; z-index:10001;">PDF 라이브러리 로드 실패</div>');
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                const sectionsToPrint = document.querySelectorAll('main section');
+                const totalSections = sectionsToPrint.length;
+                
+                loadingOverlay.classList.remove('hidden');
+                pdfProgress.textContent = `(0 / ${totalSections} 섹션 처리 중)`;
+
+                for (let i = 0; i < totalSections; i++) {
+                    const section = sectionsToPrint[i];
+                    pdfProgress.textContent = `(${i + 1} / ${totalSections} 섹션 처리 중: ${section.id})`;
+                    
+                    try {
+                        const canvas = await html2canvas(section, {
+                            scale: 2, // 고해상도 캡처
+                            useCORS: true,
+                            logging: false
+                        });
+                        
+                        const imgData = canvas.toDataURL('image/png');
+                        
+                        const imgProps = doc.getImageProperties(imgData);
+                        const pdfWidth = doc.internal.pageSize.getWidth();
+                        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                        const pageHeight = doc.internal.pageSize.getHeight();
+
+                        let heightLeft = pdfHeight;
+                        let position = 0;
+
+                        // 첫 페이지 추가 (i > 0 조건으로 첫 번째 섹션은 새 페이지 추가 안함)
+                        if (i > 0) {
+                            doc.addPage();
                         }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Revenue (M $)',
-                                color: 'var(--text-light)'
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Year',
-                                color: 'var(--text-light)'
-                            },
-                            grid: {
-                                display: false
+
+                        // 이미지가 페이지 높이보다 클 경우 분할하여 추가
+                        while (heightLeft > 0) {
+                            doc.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
+                            heightLeft -= pageHeight;
+                            
+                            if (heightLeft > 0) {
+                                doc.addPage();
+                                position = -heightLeft; // 다음 페이지에서 이미지의 나머지 부분 그리기
                             }
                         }
+                    } catch (error) {
+                        console.error(`Error processing section ${section.id}:`, error);
+                        // 오류 발생 시 다음 섹션으로 넘어감
+                        doc.addPage();
+                        doc.text(`Error processing section: ${section.id}`, 10, 10);
                     }
                 }
-            });
-        }
 
-
-        // --- 2. Event Listeners and Initialization ---
-        
-        // 1. Navigation Clicks
-        document.querySelectorAll('.navbar a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const pageId = e.target.dataset.page;
-                navigateTo(pageId);
+                // PDF 저장
+                doc.save('Ai-Eco-Predict_Report.pdf');
+                loadingOverlay.classList.add('hidden');
+                pdfProgress.textContent = '';
             });
         });
-
-        // 2. Handle Hash Change (Back/Forward browser buttons)
-        window.addEventListener('popstate', () => {
-            const hash = window.location.hash.substring(1) || 'overview';
-            navigateTo(hash);
-        });
-
-        // 3. DOM Load and Initial State Setup
-        document.addEventListener('DOMContentLoaded', () => {
-            // 초기 언어 설정
-            const preferredLanguage = navigator.language.split('-')[0];
-            let initialLang = 'ko'; 
-
-             if (translations[preferredLanguage]) {
-                 initialLang = preferredLanguage;
-             } else if (preferredLanguage === 'zh') {
-                 initialLang = preferredLanguage;
-             } else if (preferredLanguage === 'ja') {
-                 initialLang = preferredLanguage;
-             } else {
-                 initialLang = 'en'; 
-             }
-            
-            updateLanguage(initialLang);
-
-            // Initial Page Load (based on URL hash or default to overview)
-            const initialHash = window.location.hash.substring(1) || 'overview';
-            navigateTo(initialHash);
-        });
-        
-        // 4. Language Button Clicks
-        document.querySelectorAll('.lang-footer button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const lang = btn.dataset.lang;
-                updateLanguage(lang);
-            });
-        });
-        
     </script>
+
 </body>
 </html>
